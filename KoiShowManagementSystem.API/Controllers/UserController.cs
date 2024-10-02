@@ -12,8 +12,8 @@ namespace KoiShowManagementSystem.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userRepository;
-        public UserController(UserService userRepository)
+        private readonly IUserService _userRepository;
+        public UserController(IUserService userRepository)
         {
             _userRepository = userRepository;
         }
@@ -22,7 +22,7 @@ namespace KoiShowManagementSystem.API.Controllers
 
         // 1: LOGIN:-----------------------------------------------------------------
         [HttpPost("login")]
-        public async Task<ActionResult<object>> Login(LoginModel dto)
+        public async Task<IActionResult> Login(LoginModel dto)
         {
             ActionResult response;
             try
@@ -83,26 +83,37 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        /*
+        
         // 3: PERSONAL INFORMATION:---------------------------------------------------
         [Authorize]
-        [HttpGet("personal-information")]
-        public async Task<IActionResult> PersonalInfor()
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
         {
             IActionResult? response = null;
             try
             {
-                ProfileDTO result = await _userRepository.GetPersonalInfo();
-                response = Ok(new APIResponse
+                object result = await _userRepository.GetProfile();
+                if(result != null)
                 {
-                    Message = "Get Personal Information Successfully",
-                    Payload = result
-                });
+                    response = Ok(new ApiResponse
+                    {
+                        Message = "Get Profile Successfully",
+                        Payload = result
+                    });
+                }
+                else
+                {
+                    response = BadRequest(new ApiResponse
+                    {
+                        Message = "Get Profile Failed",
+                        Payload = result
+                    });
+                }
                 return response;
             }
             catch(Exception ex)
             {
-                response = BadRequest(new APIResponse()
+                response = BadRequest(new ApiResponse()
                 {
                     Message = ex.Message,
                 });
@@ -110,31 +121,31 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-
+        
         // 4: EDIT PERSONAL INFORMATION:-----------------------------------------------
         [Authorize]
-        [HttpPut("edit-personal-information")]
-        public async Task<IActionResult> EditPersonalInfor(EditedProfileModel dto)
+        [HttpPut("edit-profile")]
+        public async Task<IActionResult> EditPersonalInfor(EditProfileModel dto)
         {
             IActionResult? response = null;
             try
             {
-                var result = await _userRepository.EditPersonalInfo(dto);
+                var result = await _userRepository.EditProfile(dto);
                 if (result == true)
-                    response =  Ok(new APIResponse()
+                    response =  Ok(new ApiResponse()
                     {
-                        Message = "Update Information Sucessfully",
+                        Message = "Update Profile Sucessfully",
                     });
                 else 
-                    response =  BadRequest(new APIResponse()
+                    response =  BadRequest(new ApiResponse()
                     {
-                        Message = "Update Failed"
+                        Message = "Update Profile Failed"
                     });
                 return response;
             }
             catch(Exception ex)
             {
-                response =  BadRequest(new APIResponse()
+                response =  BadRequest(new ApiResponse()
                 {
                     Message = ex.Message,
                 });
@@ -142,32 +153,31 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-
+        
         // 5: CHANGE PASSWORD:-----------------------------------------------------------
         [Authorize]
         [HttpPut("change-password")]
-        public async Task<IActionResult> ChangePassword( ChangingPasswordModel dto)
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel dto)
         {
             IActionResult? response = null;
             try
             {
-                var result = await _userRepository.UpdatePassword(dto);
+                var result = await _userRepository.ChangePassword(dto);
                 if (result == true)
-
-                    response =  Ok(new APIResponse()
+                    response =  Ok(new ApiResponse()
                     {
                         Message = "Update Password Sucessfully",
                     });
                 else
-                    response =  BadRequest(new APIResponse()
+                    response =  BadRequest(new ApiResponse()
                     {
-                        Message = "Incorrect Password"
+                        Message = "Your current password is incorrect"
                     });
                 return response;
             }
             catch(Exception ex) 
             {
-                response =  BadRequest(new APIResponse()
+                response =  BadRequest(new ApiResponse()
                 {
                     Message= ex.Message,
                 });
@@ -175,7 +185,7 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-
+        /*
         // 6: GET KOI REGISTRATIONS:-------------------------------------------------------
         [Authorize]
         [HttpGet("koi-registration{status}")]

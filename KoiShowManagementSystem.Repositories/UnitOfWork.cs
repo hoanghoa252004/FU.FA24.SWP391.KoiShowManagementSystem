@@ -12,7 +12,12 @@ namespace KoiShowManagementSystem.Repositories
         private KoiShowManagementSystemContext _context;
         // (*) Fields:
         private IUserRepository? _users;
-        private IGenericRepository<Role>? _role;
+        private IRoleRepository? _role;
+        private IKoiRegistrationRepository? _koiRegistration;
+        private GenericRepository<Variety>? _variety;
+        private GenericRepository<Illustration>? _illustration;
+        private GenericRepository<Show>? _show;
+        private GenericRepository<Group>? _group;
         // ...
         // ...
         // End 
@@ -34,17 +39,78 @@ namespace KoiShowManagementSystem.Repositories
             }
         }
 
-        public IGenericRepository<Role> Roles
+        public IRoleRepository Roles
         {
             get
             {
                 if (this._role == null)
                 {
-                    this._role = new GenericRepository<Role>(_context);
+                    this._role = new RoleRepository(_context);
                 }
                 return this._role;
             }
         }
+
+        public IKoiRegistrationRepository KoiRegistrations
+        {
+            get
+            {
+                if (this._koiRegistration == null)
+                {
+                    this._koiRegistration = new KoiRegistrationRepository(_context);
+                }
+                return this._koiRegistration;
+            }
+        }
+
+        public IGenericRepository<Variety> Varieties
+        {
+            get
+            {
+                if (this._variety == null)
+                {
+                    this._variety = new GenericRepository<Variety>(_context);
+                }
+                return this._variety;
+            }
+        }
+
+        public IGenericRepository<Show> Shows
+        {
+            get
+            {
+                if (this._show == null)
+                {
+                    this._show = new GenericRepository<Show>(_context);
+                }
+                return this._show;
+            }
+        }
+
+        public IGenericRepository<Group> Groups
+        {
+            get
+            {
+                if (this._group == null)
+                {
+                    this._group = new GenericRepository<Group>(_context);
+                }
+                return this._group;
+            }
+        }
+
+        public IGenericRepository<Illustration> Illustrations
+        {
+            get
+            {
+                if (this._illustration == null)
+                {
+                    this._illustration = new GenericRepository<Illustration>(_context);
+                }
+                return this._illustration;
+            }
+        }
+
         // ..
         // ..
         // End

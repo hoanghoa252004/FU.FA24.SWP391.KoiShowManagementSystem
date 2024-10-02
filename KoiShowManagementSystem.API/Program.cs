@@ -30,10 +30,11 @@ namespace KoiShowManagementSystem.API
                 option.UseSqlServer(builder.Configuration.GetConnectionString("cnn"));
             });
             builder.Services.AddHttpContextAccessor();
-
+            // Đăng kí Services Layer: OK
             builder.Services.AddScoped<JwtServices>();
             builder.Services.AddScoped<UnitOfWork>();
-            builder.Services.AddScoped<UserService>();
+            builder.Services.AddScoped<IUserService,UserService>();
+            builder.Services.AddScoped<IKoiRegistrationService, KoiRegistrationService>();
 
             // Thêm Schema & Params dùng validate Token:
             builder.Services.AddAuthentication(options =>

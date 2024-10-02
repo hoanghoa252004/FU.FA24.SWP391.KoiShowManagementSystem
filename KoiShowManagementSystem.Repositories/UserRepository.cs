@@ -13,7 +13,7 @@ namespace KoiShowManagementSystem.Repositories
         public UserRepository(DbContext context) : base(context) { }
         public async Task<User?> GetByEmail(string email)
         {
-            return await _dbContext.Set<User>().FirstOrDefaultAsync(u => u.Email == email);
+            return await _dbContext.Set<User>().FirstOrDefaultAsync(user => user.Email == email);
         }
     }
 }

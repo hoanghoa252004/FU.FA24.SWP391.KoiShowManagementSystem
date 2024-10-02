@@ -11,5 +11,8 @@ namespace KoiShowManagementSystem.Services
     {
         Task<object> Login(LoginModel dto);
         Task<bool> SignUp(SignUpModel dto);
+        Task<object> GetProfile();
+        Task<bool> EditProfile(EditProfileModel dto);
+        Task<bool> ChangePassword(ChangePasswordModel dto);
     }
 }

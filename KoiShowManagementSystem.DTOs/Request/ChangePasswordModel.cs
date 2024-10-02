@@ -1,6 +1,6 @@
 ﻿namespace KoiShowManagementSystem.DTOs.Request
 {
-    public class ChangingPasswordModel
+    public class ChangePasswordModel
     {
 
         public string? CurentPassword { get; set; }
