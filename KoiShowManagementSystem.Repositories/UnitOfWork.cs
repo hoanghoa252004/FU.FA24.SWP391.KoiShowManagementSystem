@@ -18,6 +18,8 @@ namespace KoiShowManagementSystem.Repositories
         private GenericRepository<Illustration>? _illustration;
         private GenericRepository<Show>? _show;
         private GenericRepository<Group>? _group;
+        private GenericRepository<RefereeDetail>? _RefereeDetail;
+        private IKoiShowRepository _koiShow;
         // ...
         // ...
         // End 
@@ -108,6 +110,30 @@ namespace KoiShowManagementSystem.Repositories
                     this._illustration = new GenericRepository<Illustration>(_context);
                 }
                 return this._illustration;
+            }
+        }
+
+        public IGenericRepository<RefereeDetail> RefereeDetails
+        {
+            get
+            {
+                if (this._RefereeDetail == null)
+                {
+                    this._RefereeDetail = new GenericRepository<RefereeDetail>(_context);
+                }
+                return this._RefereeDetail;
+            }
+        }
+
+        public IKoiShowRepository KoiShow
+        {
+            get
+            {
+                if (this._koiShow == null)
+                {
+                    this._koiShow = new KoiShowRepository(_context);
+                }
+                return this._koiShow;
             }
         }
 
