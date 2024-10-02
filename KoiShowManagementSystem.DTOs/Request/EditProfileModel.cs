@@ -1,6 +1,6 @@
 ﻿namespace KoiShowManagementSystem.DTOs.Request
 {
-    public class EditedProfileModel
+    public class EditProfileModel
     {
         //  Edit password, name, phone number, gender, date of birth ( not  EMAIL ).
         public string? Name { get; set; }
