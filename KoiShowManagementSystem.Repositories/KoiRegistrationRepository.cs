@@ -19,8 +19,8 @@ namespace KoiShowManagementSystem.Repositories
             result = (await _dbContext.Set<KoiRegistration>().ToListAsync())
                         .Where(koiRegist => koiRegist.UserId == id);
             return result;
-            
         }
+
         public async Task<(int TotalItems, IEnumerable<object> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId)
         {
             // Query to get total koi count for pagination purposes

@@ -9,9 +9,9 @@ namespace KoiShowManagementSystem.API.Controllers
     [ApiController]
     public class KoiShowController : ControllerBase
     {
-        private readonly IKoiShowService _koiShowService;
+        private readonly IShowService _koiShowService;
 
-        public KoiShowController(IKoiShowService koiShowService)
+        public KoiShowController(IShowService koiShowService)
         {
             _koiShowService = koiShowService;
         }
