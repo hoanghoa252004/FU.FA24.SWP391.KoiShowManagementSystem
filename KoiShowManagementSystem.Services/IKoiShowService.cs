@@ -8,5 +8,9 @@ namespace KoiShowManagementSystem.Services
 {
     public interface IKoiShowService
     {
+        Task<object?> GetShowDetails(int showId);
+        Task<(int TotalItems, List<object> Shows)> SearchShow(int pageIndex, int pageSize, string keyword);
+        Task<(int TotalItems, IEnumerable<object> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId);
+        Task<object?> GetKoiDetail(int koiId);
     }
 }

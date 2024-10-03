@@ -19,14 +19,12 @@ namespace KoiShowManagementSystem.Services
         }
         public async Task<object?> GetShowDetails(int showId)
         {
-            // Lấy dữ liệu liên quan từ UnitOfWork
             var shows = await _unitOfWork.Shows.GetAll();
             var groups = await _unitOfWork.Groups.GetAll();
             var referees = await _unitOfWork.RefereeDetails.GetAll();
             var users = await _unitOfWork.Users.GetAll();
             var koiRegistrations = await _unitOfWork.KoiRegistrations.GetAll();
 
-            // Query dữ liệu show dựa trên showId
             var result = (from sho in shows
                           where sho.Id == showId
                           select new
@@ -38,9 +36,8 @@ namespace KoiShowManagementSystem.Services
                               StartDate = sho.StartDate,
                               RegistrationStartDate = sho.RegisterStartDate,
                               RegistrationCloseDate = sho.RegisterEndDate,
-                              ShowStatus = sho.Status == "Up Comming" ? 0 : sho.Status == "On Going" ? 1 : sho.Status == "Finished" ? 2 : -1,
+                              ShowStatus = sho.Status ,
 
-                              // Nhóm Show
                               ShowGroups = (from gro in groups
                                             where gro.ShowId == sho.Id
                                             select new
@@ -49,7 +46,6 @@ namespace KoiShowManagementSystem.Services
                                                 GroupName = gro.Name
                                             }).ToList(),
 
-                              // Trọng tài của Show
                               ShowReferee = (from refDetail in referees
                                              join usr in users on refDetail.UserId equals usr.Id
                                              where refDetail.ShowId == sho.Id
@@ -59,14 +55,16 @@ namespace KoiShowManagementSystem.Services
                                                  RefereeName = usr.Name
                                              }).ToList(),
 
-                              // Koi tham gia Show
                               Koi = (from koi in koiRegistrations
                                      join gro in groups on koi.GroupId equals gro.Id
                                      where gro.ShowId == sho.Id
                                      select new
                                      {
-                                         BestVote = koi.IsBestVote,
+                                         KoiID = koi.Id,
+                                         KoiName = koi.Name,
+                                         GroupName = gro.Name,
                                          Rank = koi.Rank,
+                                         BestVote = koi.IsBestVote
                                      }).ToList(),
                           }).FirstOrDefault();
 
@@ -87,42 +85,40 @@ namespace KoiShowManagementSystem.Services
             return (totalItems, result);
         }
 
-        //public async Task<(int TotalItems, List<object> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId)
-        //{
-        //    var totalItems = await _unitOfWork.KoiRegistrations.GetAll()
-        //        .Where(k => k.Group.ShowId == showId)
-        //        .CountAsync();
+        public async Task<(int TotalItems, IEnumerable<object> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId)
+        {
+            var query = _unitOfWork.KoiRegistrations
+                .Query()
+                .Include(k => k.Group)
+                .Include(k => k.Variety)
+                .Include(k => k.Illustration)
+                .Where(k => k.Group.ShowId == showId);
 
-        //    var koiList = await _unitOfWork.KoiRegistrations.GetAll()
-        //        .Include(k => k.Group)
-        //        .Include(k => k.Variety)
-        //        .Include(k => k.Illustration)
-        //        .Where(k => k.Group.ShowId == showId)
-        //        .Select(k => new
-        //        {
-        //            KoiID = k.Id,
-        //            KoiName = k.Name,
-        //            KoiImg = k.Illustration != null ? k.Illustration.ImageUrl : null,
-        //            KoiVariety = k.Variety != null ? k.Variety.Name : null,
-        //            KoiSize = k.Size,
-        //            TotalScore = k.TotalScore,
-        //            BestVoted = k.IsBestVote,
-        //            Status = k.Status == "Scored" ? new
-        //            {
-        //                Rank = k.Rank,
-        //                BestVote = k.IsBestVote
-        //            } : null
-        //        })
-        //        .Skip((pageIndex - 1) * pageSize)
-        //        .Take(pageSize)
-        //        .ToListAsync();
+            var totalItems = await query.CountAsync();
 
-        //    return (totalItems, koiList);
-        //}
+            var koiList = await query
+                .Select(k => new
+                {
+                    KoiID = k.Id,
+                    KoiName = k.Name,
+                    KoiImg = k.Illustration != null ? k.Illustration.ImageUrl : null,
+                    KoiVariety = k.Variety != null ? k.Variety.Name : "Unknown",
+                    KoiSize = k.Size,
+                    TotalScore = k.TotalScore,
+                    BestVoted = k.IsBestVote,
+                    KoiStatus = k.Status,
+                    KoiRank = k.Rank
+                })
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (totalItems, koiList);
+        }
 
         public async Task<object?> GetKoiDetail(int koiId)
         {
-            // Lấy dữ liệu liên quan từ UnitOfWork
+            // get data from UnitOfWork
             var koiRegistrations = await _unitOfWork.KoiRegistrations.GetAll();
             var users = await _unitOfWork.Users.GetAll();
             var groups = await _unitOfWork.Groups.GetAll();
@@ -130,7 +126,7 @@ namespace KoiShowManagementSystem.Services
             var varieties = await _unitOfWork.Varieties.GetAll();
             var illustrations = await _unitOfWork.Illustrations.GetAll();
 
-            // Query dữ liệu koi dựa trên koiId
+            // Query 
             var result = (from kr in koiRegistrations
                           join u in users on kr.UserId equals u.Id
                           join g in groups on kr.GroupId equals g.Id
