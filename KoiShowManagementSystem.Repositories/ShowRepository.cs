@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public class KoiShowRepository : GenericRepository<Show>, IKoiShowRepository
+    public class ShowRepository : GenericRepository<Show>, IShowRepository
     {
-        public KoiShowRepository(DbContext context) : base(context) { }
+        public ShowRepository(DbContext context) : base(context) { }
 
         public async Task<Show?> GetShowById(int showId)
         {

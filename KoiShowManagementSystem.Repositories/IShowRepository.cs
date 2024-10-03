@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public interface IKoiShowRepository
+    public interface IShowRepository
     {
         Task<Show?> GetShowById(int showId);
 

@@ -19,7 +19,7 @@ namespace KoiShowManagementSystem.Repositories
         private GenericRepository<Show>? _show;
         private GenericRepository<Group>? _group;
         private GenericRepository<RefereeDetail>? _RefereeDetail;
-        private IKoiShowRepository _koiShow;
+        private IShowRepository _koiShow;
         // ...
         // ...
         // End 
@@ -125,7 +125,7 @@ namespace KoiShowManagementSystem.Repositories
             }
         }
 
-        public IKoiShowRepository KoiShow
+        public IShowRepository KoiShow
         {
             get
             {

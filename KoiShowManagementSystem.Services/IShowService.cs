@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Services
 {
-    public interface IKoiShowService
+    public interface IShowService
     {
         Task<object?> GetShowDetails(int showId);
         Task<(int TotalItems, List<object> Shows)> SearchShow(int pageIndex, int pageSize, string keyword);

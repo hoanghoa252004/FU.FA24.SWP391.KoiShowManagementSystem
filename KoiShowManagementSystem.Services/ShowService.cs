@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Services
 {
-    public class KoiShowService : IKoiShowService
+    public class ShowService : IShowService
     {
         private readonly UnitOfWork _unitOfWork;
-        public KoiShowService(UnitOfWork unitOfWork, JwtServices jwtServices)
+        public ShowService(UnitOfWork unitOfWork, JwtServices jwtServices)
         {
             _unitOfWork = unitOfWork;
         }
