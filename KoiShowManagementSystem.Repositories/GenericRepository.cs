@@ -21,7 +21,10 @@ namespace KoiShowManagementSystem.Repositories
         {
             return await _dbContext.Set<T>().ToListAsync();
         }
-
+        public IQueryable<T> Query()
+        {
+            return _dbContext.Set<T>().AsQueryable();
+        }
         public async Task<T> GetById(int id)
         {
             var item = await _dbContext.Set<T>().FindAsync(id); // Hàm Find nhận vào primary key để tìm.

@@ -9,6 +9,7 @@ namespace KoiShowManagementSystem.Repositories
     public interface IGenericRepository<T> where T : class
     {
         Task<IEnumerable<T>> GetAll();
+        IQueryable<T> Query();
         Task<T> GetById(int id);
         //Task<T> GetByName(string name);
         Task Add(T entity);
