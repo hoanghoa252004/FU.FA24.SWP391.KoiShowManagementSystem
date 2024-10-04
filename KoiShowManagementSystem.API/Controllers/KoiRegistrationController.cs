@@ -25,7 +25,7 @@ namespace KoiShowManagementSystem.API.Controllers
             IActionResult? response = null;
             try
             {
-                var result = await _koiRegistrationService.GetKoiRegistrationByUser(status);
+                var result = await _koiRegistrationService.GetMyKoiRegistration(status);
                 if (result != null)
                     response = Ok(new ApiResponse()
                     {

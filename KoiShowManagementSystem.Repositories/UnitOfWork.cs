@@ -131,7 +131,7 @@ namespace KoiShowManagementSystem.Repositories
             {
                 if (this._koiShow == null)
                 {
-                    this._koiShow = new KoiShowRepository(_context);
+                    this._koiShow = new ShowRepository(_context);
                 }
                 return this._koiShow;
             }
