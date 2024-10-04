@@ -36,14 +36,23 @@ namespace KoiShowManagementSystem.Services
                               StartDate = sho.StartDate,
                               RegistrationStartDate = sho.RegisterStartDate,
                               RegistrationCloseDate = sho.RegisterEndDate,
-                              ShowStatus = sho.Status ,
+                              ShowStatus = sho.Status,
 
                               ShowGroups = (from gro in groups
                                             where gro.ShowId == sho.Id
                                             select new
                                             {
                                                 GroupId = gro.Id,
-                                                GroupName = gro.Name
+                                                GroupName = gro.Name,
+                                                KoiDetails = (from koi in koiRegistrations
+                                                              where koi.GroupId == gro.Id
+                                                              select new
+                                                              {
+                                                                  KoiID = koi.Id,
+                                                                  KoiName = koi.Name,
+                                                                  Rank = koi.Rank,
+                                                                  BestVote = koi.IsBestVote
+                                                              }).ToList()
                                             }).ToList(),
 
                               ShowReferee = (from refDetail in referees
@@ -54,22 +63,11 @@ namespace KoiShowManagementSystem.Services
                                                  RefereeId = refDetail.Id,
                                                  RefereeName = usr.Name
                                              }).ToList(),
-
-                              Koi = (from koi in koiRegistrations
-                                     join gro in groups on koi.GroupId equals gro.Id
-                                     where gro.ShowId == sho.Id
-                                     select new
-                                     {
-                                         KoiID = koi.Id,
-                                         KoiName = koi.Name,
-                                         GroupName = gro.Name,
-                                         Rank = koi.Rank,
-                                         BestVote = koi.IsBestVote
-                                     }).ToList(),
                           }).FirstOrDefault();
 
             return result;
         }
+
 
         public async Task<(int TotalItems, List<object> Shows)> SearchShow(int pageIndex, int pageSize, string keyword)
         {
