@@ -102,7 +102,7 @@ namespace KoiShowManagementSystem.Services
             if (user != null)
             {
                 // 3.3 Lấy Role Title:
-                var role = (await _unitOfWork.Roles.GetById(id)).Title;
+                var role = (await _unitOfWork.Roles.GetById(user.RoleId)).Title;
                 // 3.4 Trích những thông tin cần lấy:
                 result = new
                 {
