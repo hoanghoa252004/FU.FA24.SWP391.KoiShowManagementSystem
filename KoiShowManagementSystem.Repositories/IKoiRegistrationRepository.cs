@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public interface IKoiRegistrationRepository : IGenericRepository<KoiRegistration>
+    public interface IKoiRegistrationRepository
     {
         Task<IEnumerable<KoiRegistration>> GetByUserID(int id);
     }

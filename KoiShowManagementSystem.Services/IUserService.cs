@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.DTOs.Request;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,10 @@ namespace KoiShowManagementSystem.Services
 {
     public interface IUserService
     {
-        Task<object> Login(LoginModel dto);
-        Task<bool> SignUp(SignUpModel dto);
-        Task<object> GetProfile();
-        Task<bool> EditProfile(EditProfileModel dto);
-        Task<bool> ChangePassword(ChangePasswordModel dto);
+        Task<UserModel> Login(LoginModel dto);
+        Task SignUp(SignUpModel dto);
+        //Task<object> GetProfile();
+        //Task<bool> EditProfile(EditProfileModel dto);
+        //Task<bool> ChangePassword(ChangePasswordModel dto);
     }
 }

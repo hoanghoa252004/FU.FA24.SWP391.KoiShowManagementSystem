@@ -1,4 +1,6 @@
-﻿using KoiShowManagementSystem.Entities;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
+using KoiShowManagementSystem.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public interface IUserRepository : IGenericRepository<User>
+    public interface IUserRepository 
     {
-        Task<User?> GetByEmail(string email);
+        Task<UserModel> GetAccount(LoginModel dto);
+        Task AddUser(SignUpModel dto);
     }
 }
