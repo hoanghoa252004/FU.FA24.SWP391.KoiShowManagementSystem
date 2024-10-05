@@ -15,7 +15,7 @@ public partial class KoiRegistration
 
     public int GroupId { get; set; }
 
-    public DateTime? CreateDate { get; set; }
+    public DateOnly? CreateDate { get; set; }
 
     public decimal? TotalScore { get; set; }
 
