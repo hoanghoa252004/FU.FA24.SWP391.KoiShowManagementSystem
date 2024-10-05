@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.Entities;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,11 +19,39 @@ namespace KoiShowManagementSystem.Repositories
             this._context = context;
         }
 
-        public async Task<IEnumerable<KoiRegistration>> GetByUserID(int id)
+        public async Task<IEnumerable<KoiRegistModel>> GetKoiRegistrationByUserID(int id)
         {
-            IEnumerable<KoiRegistration> result = null!;
-            result = (await _context.Set<KoiRegistration>().ToListAsync())
+            // Lấy đơn của User:
+            IEnumerable<KoiRegistration> koiRegistrations = (await _context.Set<KoiRegistration>().ToListAsync())
                         .Where(koiRegist => koiRegist.UserId == id);
+            // Join lấy thông tin:
+            IEnumerable<Show> shows = await _context.Set<Show>().ToListAsync();
+            IEnumerable<Group> groups = await _context.Set<Group>().ToListAsync();
+            IEnumerable<Illustration> illustrations = await _context.Set<Illustration>().ToListAsync();
+            IEnumerable<Variety> varieties = await _context.Set<Variety>().ToListAsync();
+            IEnumerable<KoiRegistModel> result = from koi in koiRegistrations
+                         join var in varieties on koi.VarietyId equals var.Id
+                         join illus in illustrations on koi.Id equals illus.KoiId
+                         join grp in groups on koi.GroupId equals grp.Id
+                         join show in shows on grp.ShowId equals show.Id
+                         select new KoiRegistModel()
+                         {
+                            Id = koi.Id,
+                            Name = koi.Name,
+                            Description = koi.Description,
+                            Size = koi.Size,
+                            Variety = var.Name,
+                            ShowId = show.Id,
+                            Show = show.Title,
+                            Group = grp.Name,
+                            CreateDate = koi.CreateDate,
+                            Rank = koi.Rank,
+                            TotalScore = koi.TotalScore,
+                            Status = koi.Status,
+                            IsBestVote = koi.IsBestVote,
+                            ImageUrl = illus.ImageUrl,
+                            VideoUrl = illus.VideoUrl,
+                         };
             return result;
         }
 

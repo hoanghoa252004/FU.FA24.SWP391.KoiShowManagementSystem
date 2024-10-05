@@ -13,5 +13,9 @@ namespace KoiShowManagementSystem.Repositories
     {
         Task<UserModel> GetAccount(LoginModel dto);
         Task AddUser(SignUpModel dto);
+        Task<ProfileModel> GetProfile(int id);
+        Task<ProfileModel> EditProfile(int userId, EditProfileModel dto);
+        Task<string> GetPasswordById(int id);
+        Task UpdatePasswordById(int id, string newPassword);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace KoiShowManagementSystem.Services
 {
     public interface IKoiRegistrationService
     {
-        Task<IEnumerable<object>> GetMyKoiRegistration(string status);
+        Task<IEnumerable<KoiRegistModel>> GetMyKoiRegistration(string status);
     }
 }
