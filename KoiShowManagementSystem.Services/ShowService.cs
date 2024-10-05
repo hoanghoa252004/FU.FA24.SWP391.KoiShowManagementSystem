@@ -33,18 +33,18 @@ namespace KoiShowManagementSystem.Services
         {
             var (totalItems, shows) = await _repository.KoiShow.SearchShowAsync(pageIndex, pageSize, keyword);
 
-            var result = shows.Select(s => new ShowModel
-            {
-                ShowId = s.ShowId,
-                ShowTitle = s.ShowTitle,
-                ShowBanner = s.ShowBanner,
-                StartDate = s.StartDate,
-                RegistrationStartDate = s.RegistrationStartDate,
-                RegistrationCloseDate = s.RegistrationCloseDate,
-                ShowStatus = s.ShowStatus
-            }).ToList();
+            //var result = shows.Select(s => new ShowModel
+            //{
+            //    ShowId = s.ShowId,
+            //    ShowTitle = s.ShowTitle,
+            //    ShowBanner = s.ShowBanner,
+            //    StartDate = s.StartDate,
+            //    RegistrationStartDate = s.RegistrationStartDate,
+            //    RegistrationCloseDate = s.RegistrationCloseDate,
+            //    ShowStatus = s.ShowStatus
+            //}).ToList();
 
-            return (totalItems, result);
+            return (totalItems, shows);
         }
 
 
