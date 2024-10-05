@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.DTOs.Response;
 using KoiShowManagementSystem.Services;
+using KoiShowManagementSystem.DTOs.BusinessModels;
 
 namespace KoiShowManagementSystem.API.Controllers
 {
@@ -24,32 +25,24 @@ namespace KoiShowManagementSystem.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginModel dto)
         {
-            ActionResult response;
             try
             {
                 var result = await _userService.Login(dto);
-                if (result != null)
-                    response = Ok(new ApiResponse()
+                return Ok(new ApiResponse()
                     {
                         Message = "Login Successfully",
                         Payload = result,
                     });
-                else
-                    response = Unauthorized(new ApiResponse()
-                    {
-                        Message = "Incorrect Email or Password",
-                    });
-                return response;
             }
             catch (Exception ex)
             {
                 // TH1: User đã bị banned.
+                // TH2: Email / password sai.
                 // Default: Other exceptions.
-                response = BadRequest(new ApiResponse()
+                return BadRequest(new ApiResponse()
                 {
                     Message = ex.Message,
                 });
-                return response;
             }
         }
 
@@ -77,41 +70,27 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        /*
+        
         // 3: PERSONAL INFORMATION:---------------------------------------------------
         [Authorize]
         [HttpGet("profile")]
         public async Task<IActionResult> GetProfile()
         {
-            IActionResult? response = null;
             try
             {
-                object result = await _userRepository.GetProfile();
-                if(result != null)
+                ProfileModel result = await _userService.GetProfile();
+                return Ok(new ApiResponse
                 {
-                    response = Ok(new ApiResponse
-                    {
-                        Message = "Get Profile Successfully",
-                        Payload = result
-                    });
-                }
-                else
-                {
-                    response = BadRequest(new ApiResponse
-                    {
-                        Message = "Get Profile Failed",
-                        Payload = result
-                    });
-                }
-                return response;
+                    Message = "Get Profile Successfully",
+                    Payload = result
+                });
             }
             catch(Exception ex)
             {
-                response = BadRequest(new ApiResponse()
+                return BadRequest(new ApiResponse()
                 {
                     Message = ex.Message,
                 });
-                return response;
             }
         }
 
@@ -121,29 +100,21 @@ namespace KoiShowManagementSystem.API.Controllers
         [HttpPut("edit-profile")]
         public async Task<IActionResult> EditPersonalInfor(EditProfileModel dto)
         {
-            IActionResult? response = null;
             try
             {
-                var result = await _userRepository.EditProfile(dto);
-                if (result == true)
-                    response =  Ok(new ApiResponse()
-                    {
-                        Message = "Update Profile Sucessfully",
-                    });
-                else 
-                    response =  BadRequest(new ApiResponse()
-                    {
-                        Message = "Update Profile Failed"
-                    });
-                return response;
+                ProfileModel result = await _userService.EditProfile(dto);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Update Profile Sucessfully",
+                    Payload = result
+                });
             }
             catch(Exception ex)
             {
-                response =  BadRequest(new ApiResponse()
+                return BadRequest(new ApiResponse()
                 {
                     Message = ex.Message,
                 });
-                return response;
             }
         }
 
@@ -156,7 +127,7 @@ namespace KoiShowManagementSystem.API.Controllers
             IActionResult? response = null;
             try
             {
-                var result = await _userRepository.ChangePassword(dto);
+                bool result = await _userService.ChangePassword(dto);
                 if (result == true)
                     response =  Ok(new ApiResponse()
                     {

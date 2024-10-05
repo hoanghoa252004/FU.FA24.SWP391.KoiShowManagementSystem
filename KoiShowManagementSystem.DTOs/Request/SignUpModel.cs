@@ -6,7 +6,7 @@
         public string? Password { get; set; }
         public string? Phone { get; set; }
         public string? Name { get; set; }
-        public DateOnly DateOfBirth { get; set; }
-        public bool Gender { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
+        public bool? Gender { get; set; }
     }
 }
