@@ -11,15 +11,17 @@ public partial class Show
 
     public string? Description { get; set; }
 
-    public DateTime? StartDate { get; set; }
+    public DateOnly? StartDate { get; set; }
 
-    public DateTime? RegisterStartDate { get; set; }
+    public DateOnly? RegisterStartDate { get; set; }
 
-    public DateTime? RegisterEndDate { get; set; }
+    public DateOnly? RegisterEndDate { get; set; }
 
     public string? Banner { get; set; }
 
     public string? Status { get; set; }
+
+    public DateOnly? EndDate { get; set; }
 
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
 

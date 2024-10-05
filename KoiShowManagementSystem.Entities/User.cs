@@ -19,7 +19,7 @@ public partial class User
 
     public bool? Gender { get; set; }
 
-    public DateTime? DateOfBirth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
 
     public bool Status { get; set; }
 
