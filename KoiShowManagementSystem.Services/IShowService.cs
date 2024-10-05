@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,10 @@ namespace KoiShowManagementSystem.Services
 {
     public interface IShowService
     {
-        Task<object?> GetShowDetails(int showId);
-        Task<(int TotalItems, List<object> Shows)> SearchShow(int pageIndex, int pageSize, string keyword);
-        Task<(int TotalItems, IEnumerable<object> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId);
-        Task<object?> GetKoiDetail(int koiId);
+        Task<ShowModel?> GetShowDetails(int showId);
+        Task<(int TotalItems, List<ShowModel> Shows)> SearchShow(int pageIndex, int pageSize, string keyword);
+        Task<(int TotalItems, IEnumerable<KoiModel> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId);
+        Task<KoiModel?> GetKoiDetail(int koiId);
+        Task<List<ShowModel>> GetClosestShow();
     }
 }

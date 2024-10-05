@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.Entities;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,39 +18,187 @@ namespace KoiShowManagementSystem.Repositories
             this._context = context;
         }
 
-        public async Task<Show?> GetShowById(int showId)
+        public async Task<ShowModel?> GetShowDetailsAsync(int showId)
         {
-            return await _context.Set<Show>().FindAsync(showId);
+            var result = await (from sho in _context.Shows
+                                join gro in _context.Groups on sho.Id equals gro.ShowId
+                                join koi in _context.KoiRegistrations on gro.Id equals koi.GroupId
+                                join refDetail in _context.RefereeDetails on sho.Id equals refDetail.ShowId
+                                join usr in _context.Users on refDetail.UserId equals usr.Id
+                                where sho.Id == showId
+                                select new ShowModel
+                                {
+                                    ShowId = sho.Id,
+                                    ShowTitle = sho.Title,
+                                    ShowBanner = sho.Banner!,
+                                    ShowDesc = sho.Description!,
+                                    StartDate = sho.ScoreStartDate,
+                                    RegistrationStartDate = sho.RegisterStartDate,
+                                    RegistrationCloseDate = sho.RegisterEndDate,
+                                    ShowStatus = sho.Status!,
+                                    EndDate = sho.ScoreEndDate,
+                                    ShowGroups = (from gro in _context.Groups
+                                                  where gro.ShowId == sho.Id
+                                                  select new GroupModel
+                                                  {
+                                                      GroupId = gro.Id,
+                                                      GroupName = gro.Name,
+                                                      KoiDetails = (from koi in _context.KoiRegistrations
+                                                                    where koi.GroupId == gro.Id
+                                                                    select new KoiModel
+                                                                    {
+                                                                        KoiID = koi.Id,
+                                                                        KoiName = koi.Name,
+                                                                        Rank = koi.Rank,
+                                                                        BestVote = koi.IsBestVote
+                                                                    }).ToList()
+                                                  }).ToList(),
+
+                                    ShowReferee = (from refDetail in _context.RefereeDetails
+                                                   join usr in _context.Users on refDetail.UserId equals usr.Id
+                                                   where refDetail.ShowId == sho.Id
+                                                   select new RefereeModel
+                                                   {
+                                                       RefereeId = refDetail.Id,
+                                                       RefereeName = usr.Name
+                                                   }).ToList(),
+                                }).FirstOrDefaultAsync();
+
+            return result!;
         }
 
-        public async Task<List<Group>> GetGroupsByShowId(int showId)
+        public async Task<(int TotalItems, List<ShowModel>)> SearchShowAsync(int pageIndex, int pageSize, string keyword)
         {
-            return await _context.Set<Group>()
-                                   .Where(g => g.ShowId == showId)
-                                   .ToListAsync();
-        }
+            var query = _context.Shows.Where(s => s.Title.Contains(keyword));
 
-        public async Task<List<RefereeDetail>> GetRefereesByShowId(int showId)
-        {
-            return await _context.Set<RefereeDetail>()
-                                   .Where(r => r.ShowId == showId)
-                                   .ToListAsync();
-        }
-
-        public async Task<KoiRegistration?> GetKoiDetailById(int koiId)
-        {
-            return await _context.Set<KoiRegistration>()
-                                   .FirstOrDefaultAsync(kr => kr.Id == koiId);
-        }
-
-        public async Task<(int TotalItems, List<Show>Shows)> SearchShow(int pageIndex, int pageSize, string keyword)
-        {
-            var query = _context.Set<Show>().Where(s => s.Title.Contains(keyword));
             var totalItems = await query.CountAsync();
-            var shows = await query.Skip((pageIndex - 1) * pageSize)
-                                   .Take(pageSize)
-                                   .ToListAsync();
+
+            var shows = await query
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .Select(s => new ShowModel
+                {
+                    ShowId = s.Id,
+                    ShowTitle = s.Title,
+                    ShowBanner = s.Banner,
+                    ShowStatus = s.Status
+                }).ToListAsync();
+
             return (totalItems, shows);
+        }
+
+        public async Task<KoiModel?> GetKoiDetailAsync(int koiId)
+        {
+            var result = await (from kr in _context.KoiRegistrations
+                                join u in _context.Users on kr.UserId equals u.Id
+                                join g in _context.Groups on kr.GroupId equals g.Id
+                                join s in _context.Shows on g.ShowId equals s.Id
+                                join v in _context.Varieties on kr.VarietyId equals v.Id
+                                where kr.Id == koiId && kr.Size >= g.SizeMin && kr.Size <= g.SizeMax
+                                select new KoiModel
+                                {
+                                    KoiID = kr.Id,
+                                    KoiName = kr.Name,
+                                    KoiImg = _context.Illustrations.Where(i => i.KoiId == kr.Id).Select(i => i.ImageUrl).FirstOrDefault(),
+                                    KoiVideo = _context.Illustrations.Where(i => i.KoiId == kr.Id).Select(i => i.VideoUrl).FirstOrDefault(),
+                                    KoiVariety = v.Name,
+                                    KoiDesc = kr.Description,
+                                    KoiSize = kr.Size,
+                                    TotalScore = kr.TotalScore,
+                                    BestVote = kr.IsBestVote,
+                                    RegistrationStatus = kr.Status,
+                                    Rank = kr.Rank
+                                }).FirstOrDefaultAsync();
+
+            return result;
+        }
+
+        public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId)
+        {
+            var query = _context.KoiRegistrations
+                .Include(k => k.Group)
+                .Include(k => k.Variety)
+                .Include(k => k.Illustration)
+                .Where(k => k.Group.ShowId == showId);
+
+            var totalItems = await query.CountAsync();
+
+            var koiList = await query
+                .Select(k => new KoiModel
+                {
+                    KoiID = k.Id,
+                    KoiName = k.Name,
+                    KoiImg = k.Illustration != null ? k.Illustration.ImageUrl : null,
+                    KoiVariety = k.Variety != null ? k.Variety.Name : "Unknown",
+                    KoiSize = k.Size,
+                    TotalScore = k.TotalScore,
+                    IsBestVote = k.IsBestVote,
+                    KoiStatus = k.Status,
+                    Rank = k.Rank
+                })
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (totalItems, koiList);
+        }
+
+        public async Task<List<ShowModel>> GetClosestShowAsync()
+        {
+            var shows = await _context.Shows
+                .Where(s => s.Status != "Draft")
+                .Include(s => s.Groups)
+                .OrderByDescending(s => s.RegisterStartDate).Take(5)
+                .Select(s => new ShowModel
+                {
+                    ShowId = s.Id,
+                    ShowTitle = s.Title,
+                    ShowBanner = s.Banner,
+                    ShowDesc = s.Description,
+                    ShowStatus = s.Status
+                }).ToListAsync();
+            // get the first show
+            var firstShow = shows.FirstOrDefault();
+            if (firstShow == null)
+            {
+                throw new Exception("No show found");
+            }
+            if (firstShow.ShowStatus == "Finished")
+            {
+                //get group of firstShow  and top rank 1,2,3, best vote of each groupModel
+                firstShow.ShowGroups = _context.Groups
+                    .Where(g => g.ShowId == firstShow.ShowId)
+                    .Include(g => g.KoiRegistrations)
+                    .Select(g => new GroupModel
+                    {
+                        GroupId = g.Id,
+                        GroupName = g.Name,
+                        KoiDetails = g.KoiRegistrations
+                            .Where(k => k.Rank == 1 || k.Rank == 2 || k.Rank == 3 || k.IsBestVote == true)
+                            .OrderBy(k => k.Rank)
+                            .Select(k => new KoiModel
+                            {
+                                KoiID = k.Id,
+                                KoiName = k.Name,
+                                Rank = k.Rank,
+                                BestVote = k.IsBestVote
+                            }).ToList()
+                    }).ToList();
+            }
+            else
+            {
+                firstShow.ShowReferee = _context.RefereeDetails
+                    .Where(r => r.ShowId == firstShow.ShowId)
+                    .Include(r => r.User)
+                    .Select(r => new RefereeModel
+                    {
+                        RefereeId = r.Id,
+                        RefereeName = r.User.Name
+                    }).ToList();
+            }
+
+
+            return shows;
         }
     }
 }
