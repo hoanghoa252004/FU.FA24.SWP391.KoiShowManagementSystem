@@ -154,6 +154,7 @@ namespace KoiShowManagementSystem.Repositories
                     ShowId = s.Id,
                     ShowTitle = s.Title,
                     ShowBanner = s.Banner,
+                    ShowDesc = s.Description,
                     ShowStatus = s.Status
                 }).ToListAsync();
             // get the first show
