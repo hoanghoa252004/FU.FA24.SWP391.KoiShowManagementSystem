@@ -12,10 +12,10 @@ namespace KoiShowManagementSystem.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userRepository;
-        public UserController(IUserService userRepository)
+        private readonly IUserService _userService;
+        public UserController(IUserService userService)
         {
-            _userRepository = userRepository;
+            _userService = userService;
         }
 
         #region API
@@ -27,7 +27,7 @@ namespace KoiShowManagementSystem.API.Controllers
             ActionResult response;
             try
             {
-                var result = await _userRepository.Login(dto);
+                var result = await _userService.Login(dto);
                 if (result != null)
                     response = Ok(new ApiResponse()
                     {
@@ -58,32 +58,26 @@ namespace KoiShowManagementSystem.API.Controllers
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp(SignUpModel dto)
         {
-            IActionResult? response = null;
             try
             {
-                var result = await _userRepository.SignUp(dto);
-                if (result == true)
+                await _userService.SignUp(dto);
+                return Ok(new ApiResponse()
                 {
-                    response = Ok(new ApiResponse()
-                    {
-                        Message = "Sign up successfully",
-                    });
-                }
-                return response!;
+                    Message = "Sign up successfully",
+                });
             }
             catch(Exception ex)
             {
                 // TH1: Email tồn tại.
                 // Default: Other exceptions.
-                response = BadRequest(new ApiResponse()
+                return BadRequest(new ApiResponse()
                 {
                     Message = ex.Message,
                 });
-                return response;
             }
         }
 
-        
+        /*
         // 3: PERSONAL INFORMATION:---------------------------------------------------
         [Authorize]
         [HttpGet("profile")]

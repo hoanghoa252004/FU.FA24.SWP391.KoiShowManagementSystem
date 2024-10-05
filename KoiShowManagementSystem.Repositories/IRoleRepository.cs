@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public interface IRoleRepository : IGenericRepository<Role>
+    public interface IRoleRepository
     {
-        //Task<string> GetRoleTitle(int id);
+        Task<string> GetRoleTitle(int id);
         Task<int> GetRoleId(string title);
     }
 }

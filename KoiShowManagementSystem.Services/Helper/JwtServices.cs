@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using KoiShowManagementSystem.DTOs.BusinessModels;
 
 namespace KoiShowManagementSystem.Services.Helper;
 
@@ -19,15 +20,15 @@ public class JwtServices
     }
 
     // 1. GENERATE ACCESS TOKEN:---------------------------------------------------
-    public string GenerateAccessToken(string email, string name, int id, string role)
+    public string GenerateAccessToken(UserModel dto)
     {
         // Tạo Claims cho Payload:
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, email),
-            new Claim(JwtRegisteredClaimNames.Name, name),
-            new Claim("id", id.ToString()),
-            new Claim(ClaimTypes.Role, role),
+            new Claim(JwtRegisteredClaimNames.Sub, dto.Email!),
+            new Claim(JwtRegisteredClaimNames.Name, dto.Name!),
+            new Claim("id", dto.Id.ToString()),
+            new Claim(ClaimTypes.Role, dto.Role!),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

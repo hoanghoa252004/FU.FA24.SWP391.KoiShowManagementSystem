@@ -1,4 +1,5 @@
 ﻿using KoiShowManagementSystem.Entities;
+using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
@@ -9,18 +10,23 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public class KoiRegistrationRepository : GenericRepository<KoiRegistration>, IKoiRegistrationRepository
+    public class KoiRegistrationRepository : IKoiRegistrationRepository
     {
-        public KoiRegistrationRepository(DbContext dbContext) : base(dbContext) { }
+        private KoiShowManagementSystemContext _context;
+        public KoiRegistrationRepository(KoiShowManagementSystemContext context)
+        {
+            this._context = context;
+        }
 
         public async Task<IEnumerable<KoiRegistration>> GetByUserID(int id)
         {
             IEnumerable<KoiRegistration> result = null!;
-            result = (await _dbContext.Set<KoiRegistration>().ToListAsync())
+            result = (await _context.Set<KoiRegistration>().ToListAsync())
                         .Where(koiRegist => koiRegist.UserId == id);
             return result;
         }
 
+        /* Hàm này có dùng không Tín, nếu dùng thì sửa lại rồi qua interface đăng kí thêm hàm này.
         public async Task<(int TotalItems, IEnumerable<object> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId)
         {
             // Query to get total koi count for pagination purposes
@@ -51,7 +57,7 @@ namespace KoiShowManagementSystem.Repositories
                 .ToListAsync();        
             return (totalItems, koiList);
         }
-
+        */
 
     }
 }
