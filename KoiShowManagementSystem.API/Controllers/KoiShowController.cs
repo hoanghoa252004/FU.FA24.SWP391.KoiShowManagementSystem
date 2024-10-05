@@ -94,8 +94,8 @@ namespace KoiShowManagementSystem.API.Controllers
                 Message = "Success",
                 Payload = new
                 {
-                    TotalItems = result.TotalItems,  
-                    Kois = result.Kois                
+                    TotalItems = result.TotalItems,
+                    Kois = result.Kois
                 }
             });
         }
@@ -131,5 +131,31 @@ namespace KoiShowManagementSystem.API.Controllers
         //    });
         //}
 
+
+
+        // implemt api getclosestshow
+
+        [HttpGet("closest-show")]
+        public async Task<IActionResult> ClosestShow()
+        {
+            //catch the exception from the service
+            try
+            {
+                var result = await _koiShowService.GetClosestShow();
+                return Ok(new ApiResponse()
+                {
+                    Message = "Success",
+                    Payload = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+
+            }
+        }
     }
 }

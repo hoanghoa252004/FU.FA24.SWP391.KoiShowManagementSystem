@@ -142,5 +142,62 @@ namespace KoiShowManagementSystem.Repositories
 
             return (totalItems, koiList);
         }
+
+        public async Task<List<ShowModel>> GetClosestShowAsync()
+        {
+            var shows = await _context.Shows
+                .Where(s => s.Status != "Draft")
+                .Include(s => s.Groups)
+                .OrderByDescending(s => s.RegisterStartDate).Take(5)
+                .Select(s => new ShowModel
+                {
+                    ShowId = s.Id,
+                    ShowTitle = s.Title,
+                    ShowBanner = s.Banner,
+                    ShowStatus = s.Status
+                }).ToListAsync();
+            // get the first show
+            var firstShow = shows.FirstOrDefault();
+            if (firstShow == null)
+            {
+                throw new Exception("No show found");
+            }
+            if (firstShow.ShowStatus == "Finished")
+            {
+                //get group of firstShow  and top rank 1,2,3, best vote of each groupModel
+                firstShow.ShowGroups = _context.Groups
+                    .Where(g => g.ShowId == firstShow.ShowId)
+                    .Include(g => g.KoiRegistrations)
+                    .Select(g => new GroupModel
+                    {
+                        GroupId = g.Id,
+                        GroupName = g.Name,
+                        KoiDetails = g.KoiRegistrations
+                            .Where(k => k.Rank == 1 || k.Rank == 2 || k.Rank == 3 || k.IsBestVote == true)
+                            .OrderBy(k => k.Rank)
+                            .Select(k => new KoiModel
+                            {
+                                KoiID = k.Id,
+                                KoiName = k.Name,
+                                Rank = k.Rank,
+                                BestVote = k.IsBestVote
+                            }).ToList()
+                    }).ToList();
+            }
+            else
+            {
+                firstShow.ShowReferee = _context.RefereeDetails
+                    .Where(r => r.ShowId == firstShow.ShowId)
+                    .Include(r => r.User)
+                    .Select(r => new RefereeModel
+                    {
+                        RefereeId = r.Id,
+                        RefereeName = r.User.Name
+                    }).ToList();
+            }
+
+
+            return shows;
+        }
     }
 }
