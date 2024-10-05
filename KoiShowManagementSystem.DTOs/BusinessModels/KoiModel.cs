@@ -11,7 +11,6 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public int KoiID { get; set; }
         public string? KoiName { get; set; }
         public int? Rank { get; set; }
-        public bool? BestVote { get; set; }
         public string? KoiImg { get; set; }
         public string? KoiVideo { get; set; }
         public string? KoiVariety { get; set; }

@@ -21,10 +21,6 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<ShowModel?> GetShowDetailsAsync(int showId)
         {
             var result = await (from sho in _context.Shows
-                                join gro in _context.Groups on sho.Id equals gro.ShowId
-                                join koi in _context.KoiRegistrations on gro.Id equals koi.GroupId
-                                join refDetail in _context.RefereeDetails on sho.Id equals refDetail.ShowId
-                                join usr in _context.Users on refDetail.UserId equals usr.Id
                                 where sho.Id == showId
                                 select new ShowModel
                                 {
@@ -37,6 +33,7 @@ namespace KoiShowManagementSystem.Repositories
                                     RegistrationCloseDate = sho.RegisterEndDate,
                                     ShowStatus = sho.Status!,
                                     EndDate = sho.ScoreEndDate,
+
                                     ShowGroups = (from gro in _context.Groups
                                                   where gro.ShowId == sho.Id
                                                   select new GroupModel
@@ -50,22 +47,24 @@ namespace KoiShowManagementSystem.Repositories
                                                                         KoiID = koi.Id,
                                                                         KoiName = koi.Name,
                                                                         Rank = koi.Rank,
-                                                                        BestVote = koi.IsBestVote
+                                                                        IsBestVote = koi.IsBestVote
                                                                     }).ToList()
                                                   }).ToList(),
 
                                     ShowReferee = (from refDetail in _context.RefereeDetails
-                                                   join usr in _context.Users on refDetail.UserId equals usr.Id
+                                                   join usr in _context.Users on refDetail.UserId equals usr.Id into referees
+                                                   from usr in referees.DefaultIfEmpty() 
                                                    where refDetail.ShowId == sho.Id
                                                    select new RefereeModel
                                                    {
                                                        RefereeId = refDetail.Id,
-                                                       RefereeName = usr.Name
-                                                   }).ToList(),
+                                                       RefereeName = usr != null ? usr.Name : "No Referee" 
+                                                   }).ToList()
                                 }).FirstOrDefaultAsync();
 
-            return result!;
+            return result;
         }
+
 
         public async Task<(int TotalItems, List<ShowModel>)> SearchShowAsync(int pageIndex, int pageSize, string keyword)
         {
@@ -105,7 +104,7 @@ namespace KoiShowManagementSystem.Repositories
                                     KoiDesc = kr.Description,
                                     KoiSize = kr.Size,
                                     TotalScore = kr.TotalScore,
-                                    BestVote = kr.IsBestVote,
+                                    IsBestVote = kr.IsBestVote,
                                     RegistrationStatus = kr.Status,
                                     Rank = kr.Rank
                                 }).FirstOrDefaultAsync();
@@ -181,7 +180,7 @@ namespace KoiShowManagementSystem.Repositories
                                 KoiID = k.Id,
                                 KoiName = k.Name,
                                 Rank = k.Rank,
-                                BestVote = k.IsBestVote
+                                IsBestVote = k.IsBestVote
                             }).ToList()
                     }).ToList();
             }
