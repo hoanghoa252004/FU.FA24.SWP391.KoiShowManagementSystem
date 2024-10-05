@@ -81,6 +81,7 @@ namespace KoiShowManagementSystem.Repositories
                     ShowTitle = s.Title,
                     ShowBanner = s.Banner,
                     ShowStatus = s.Status
+
                 }).ToListAsync();
 
             return (totalItems, shows);
@@ -89,18 +90,22 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<KoiModel?> GetKoiDetailAsync(int koiId)
         {
             var result = await (from kr in _context.KoiRegistrations
-                                join u in _context.Users on kr.UserId equals u.Id
-                                join g in _context.Groups on kr.GroupId equals g.Id
-                                join s in _context.Shows on g.ShowId equals s.Id
-                                join v in _context.Varieties on kr.VarietyId equals v.Id
-                                where kr.Id == koiId && kr.Size >= g.SizeMin && kr.Size <= g.SizeMax
+                                join u in _context.Users on kr.UserId equals u.Id into users
+                                from u in users.DefaultIfEmpty() 
+                                join g in _context.Groups on kr.GroupId equals g.Id into groups
+                                from g in groups.DefaultIfEmpty() 
+                                join s in _context.Shows on g.ShowId equals s.Id into shows
+                                from s in shows.DefaultIfEmpty() 
+                                join v in _context.Varieties on kr.VarietyId equals v.Id into varieties
+                                from v in varieties.DefaultIfEmpty() 
+                                where kr.Id == koiId && (kr.Size >= g.SizeMin && kr.Size <= g.SizeMax) || g == null
                                 select new KoiModel
                                 {
                                     KoiID = kr.Id,
                                     KoiName = kr.Name,
                                     KoiImg = _context.Illustrations.Where(i => i.KoiId == kr.Id).Select(i => i.ImageUrl).FirstOrDefault(),
                                     KoiVideo = _context.Illustrations.Where(i => i.KoiId == kr.Id).Select(i => i.VideoUrl).FirstOrDefault(),
-                                    KoiVariety = v.Name,
+                                    KoiVariety = v != null ? v.Name : "Unknown Variety", // Handle null variety
                                     KoiDesc = kr.Description,
                                     KoiSize = kr.Size,
                                     TotalScore = kr.TotalScore,
@@ -112,13 +117,14 @@ namespace KoiShowManagementSystem.Repositories
             return result;
         }
 
+
         public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId)
         {
             var query = _context.KoiRegistrations
                 .Include(k => k.Group)
                 .Include(k => k.Variety)
                 .Include(k => k.Illustration)
-                .Where(k => k.Group.ShowId == showId);
+                .Where(k => k.Group.ShowId == showId && k.IsPaid == true); // Filter for IsPaid = true
 
             var totalItems = await query.CountAsync();
 
@@ -133,7 +139,9 @@ namespace KoiShowManagementSystem.Repositories
                     TotalScore = k.TotalScore,
                     IsBestVote = k.IsBestVote,
                     KoiStatus = k.Status,
-                    Rank = k.Rank
+                    Rank = k.Rank,
+                    GroupName = k.Group.Name
+                    
                 })
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
@@ -141,6 +149,7 @@ namespace KoiShowManagementSystem.Repositories
 
             return (totalItems, koiList);
         }
+
 
         public async Task<List<ShowModel>> GetClosestShowAsync()
         {
