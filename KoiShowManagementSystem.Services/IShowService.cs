@@ -13,5 +13,6 @@ namespace KoiShowManagementSystem.Services
         Task<(int TotalItems, List<ShowModel> Shows)> SearchShow(int pageIndex, int pageSize, string keyword);
         Task<(int TotalItems, IEnumerable<KoiModel> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId);
         Task<KoiModel?> GetKoiDetail(int koiId);
+        Task<List<ShowModel>> GetClosestShow();
     }
 }

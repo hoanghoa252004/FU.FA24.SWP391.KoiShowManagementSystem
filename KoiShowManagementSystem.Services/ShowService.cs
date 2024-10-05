@@ -61,7 +61,19 @@ namespace KoiShowManagementSystem.Services
             return result;
         }
 
-
+        public async Task<List<ShowModel>> GetClosestShow()
+        {
+            // catch the exception from the repository
+            try
+            {
+                var result = await _repository.KoiShow.GetClosestShowAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
 
 
