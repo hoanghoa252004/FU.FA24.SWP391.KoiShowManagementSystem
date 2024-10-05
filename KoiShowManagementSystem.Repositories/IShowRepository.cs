@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.Entities;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,9 @@ namespace KoiShowManagementSystem.Repositories
 {
     public interface IShowRepository
     {
-        Task<Show?> GetShowById(int showId);
-
-        Task<List<Group>> GetGroupsByShowId(int showId);
-
-        Task<List<RefereeDetail>> GetRefereesByShowId(int showId);
-
-        Task<KoiRegistration?> GetKoiDetailById(int koiId);
-
-        Task<(int TotalItems, List<Show>Shows)> SearchShow(int pageIndex, int pageSize, string keyword);
+        Task<ShowModel?> GetShowDetailsAsync(int showId);
+        Task<(int TotalItems, List<ShowModel>)> SearchShowAsync(int pageIndex, int pageSize, string keyword);
+        Task<KoiModel?> GetKoiDetailAsync(int koiId);
+        Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId);
     }
 }
