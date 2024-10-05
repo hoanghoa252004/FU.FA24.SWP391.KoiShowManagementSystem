@@ -20,7 +20,8 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public string? RegistrationStatus { get; set; }
         public string? KoiStatus { get; set; }
         public bool? IsBestVote { get; set; }
-
+        public bool? IsPaid { get; set; }
+        public string? GroupName { get; set; }
 
     }
 }
