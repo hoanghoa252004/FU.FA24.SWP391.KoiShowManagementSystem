@@ -44,10 +44,10 @@ namespace KoiShowManagementSystem.API.Controllers
             if (result != null)
             {
                 return Ok(new ApiResponse
-                {
-                    Message = "Success",
-                    Payload = result
-                });
+            {
+                Message = "Success",
+                Payload = result
+            });
             }
 
             return NotFound(new ApiResponse { Message = "Show not found." });
