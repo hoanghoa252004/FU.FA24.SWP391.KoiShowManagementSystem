@@ -75,7 +75,7 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         [HttpGet("koibyshow")]
-        public async Task<IActionResult> KoiByShow(int pageIndex , int pageSize  , int showID)
+        public async Task<IActionResult> KoiByShow(int pageIndex, int pageSize, int showID)
         {
             if (showID <= 0)
             {
@@ -89,48 +89,47 @@ namespace KoiShowManagementSystem.API.Controllers
 
             var result = await _koiShowService.GetKoiByShowId(pageIndex, pageSize, showID);
 
-            // Kiểm tra nếu result không null và có danh sách Koi
             return Ok(new
             {
                 Message = "Success",
                 Payload = new
                 {
-                    TotalItems = result.TotalItems,  // Tổng số lượng koi
-                    Kois = result.Kois                 // Danh sách koi
+                    TotalItems = result.TotalItems,  
+                    Kois = result.Kois                
                 }
             });
         }
 
-            //// method get the closest show return showDTO 
-            //[HttpGet]
-            //[Route("closest-show")]
-            //public async Task<IActionResult> ClosestShow()
-            //{
-            //    var result = await _koiShowRepository.GetClosestShow();
-            //    if (result != null)
-            //    {
-            //        return Ok(new APIResponse()
-            //        {
-            //            Message = "Success",
-            //            Payload = result
-            //        });
-            //    }
-            //    return BadRequest(new APIResponse() { Message = "Có lỗi rồi kài" });
-            //}
+        //// method get the closest show return showDTO 
+        //[HttpGet]
+        //[Route("closest-show")]
+        //public async Task<IActionResult> ClosestShow()
+        //{
+        //    var result = await _koiShowRepository.GetClosestShow();
+        //    if (result != null)
+        //    {
+        //        return Ok(new APIResponse()
+        //        {
+        //            Message = "Success",
+        //            Payload = result
+        //        });
+        //    }
+        //    return BadRequest(new APIResponse() { Message = "Có lỗi rồi kài" });
+        //}
 
-            ////function get paging show 
-            //[HttpGet]
-            //[Route("paging-show/page")]
+        ////function get paging show 
+        //[HttpGet]
+        //[Route("paging-show/page")]
 
-            //public async Task<IActionResult> PagingShow([FromQuery] int page)
-            //{
-            //    var result = await _koiShowRepository.GetPagingShow(page);
-            //    return Ok(new APIResponse()
-            //    {
-            //        Message = "Success",
-            //        Payload = result
-            //    });
-            //}
+        //public async Task<IActionResult> PagingShow([FromQuery] int page)
+        //{
+        //    var result = await _koiShowRepository.GetPagingShow(page);
+        //    return Ok(new APIResponse()
+        //    {
+        //        Message = "Success",
+        //        Payload = result
+        //    });
+        //}
 
-        }
+    }
 }
