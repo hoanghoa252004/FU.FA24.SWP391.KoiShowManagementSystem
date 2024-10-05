@@ -1,5 +1,4 @@
-﻿using KoiShowManagementSystem.Entities;
-using KoiShowManagementSystem.Repositories.MyDbContext;
+﻿using KoiShowManagementSystem.Repositories.MyDbContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;

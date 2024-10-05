@@ -11,7 +11,7 @@ public partial class Show
 
     public string? Description { get; set; }
 
-    public DateOnly? StartDate { get; set; }
+    public DateOnly? ScoreStartDate { get; set; }
 
     public DateOnly? RegisterStartDate { get; set; }
 
@@ -21,7 +21,7 @@ public partial class Show
 
     public string? Status { get; set; }
 
-    public DateOnly? EndDate { get; set; }
+    public DateOnly? ScoreEndDate { get; set; }
 
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
 

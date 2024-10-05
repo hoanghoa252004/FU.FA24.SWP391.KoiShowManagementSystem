@@ -1,13 +1,12 @@
-﻿using KoiShowManagementSystem.Entities;
-using KoiShowManagementSystem.Repositories;
+﻿using KoiShowManagementSystem.Repositories;
 using KoiShowManagementSystem.Services.Helper;
 using KoiShowManagementSystem.Services;
-using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using KoiShowManagementSystem.Repositories.MyDbContext;
 
 namespace KoiShowManagementSystem.API
 {
@@ -25,15 +24,16 @@ namespace KoiShowManagementSystem.API
             builder.Services.AddSwaggerGen();
 
             //*************
+            // Đăng kí DBContext: OK
+            builder.Services.AddDbContext<KoiShowManagementSystemContext>(option =>
+            {
+                option.UseSqlServer(builder.Configuration.GetConnectionString("cnn"));
+            });
             builder.Services.AddHttpContextAccessor();
-
-            // Deps Injection:
-            
-            builder.Services.AddScoped<KoiShowManagementSystemContext>();
+            // Đăng kí Services Layer: OK
             builder.Services.AddScoped<JwtServices>();
             builder.Services.AddScoped<Repository>();
-            builder.Services.AddScoped<IUserService, UserService>();
-
+            builder.Services.AddScoped<IUserService,UserService>();
             //builder.Services.AddScoped<IKoiRegistrationService, KoiRegistrationService>();
             //builder.Services.AddScoped<IShowService, ShowService>();
 
@@ -67,7 +67,7 @@ namespace KoiShowManagementSystem.API
                           .AllowAnyMethod()
                           .AllowCredentials()); // If you're using credentials (cookies, Authorization headers, etc.)
             });
-            //*******************
+            //
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
