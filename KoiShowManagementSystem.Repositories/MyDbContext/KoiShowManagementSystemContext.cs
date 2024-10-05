@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using KoiShowManagementSystem.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using KoiShowManagementSystem.Entities;
 
 namespace KoiShowManagementSystem.Repositories.MyDbContext;
 
@@ -70,10 +70,10 @@ public partial class KoiShowManagementSystemContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.ShowId).HasColumnName("Show_id");
             entity.Property(e => e.SizeMax)
-                .HasColumnType("decimal(3, 2)")
+                .HasColumnType("decimal(5, 2)")
                 .HasColumnName("Size_max");
             entity.Property(e => e.SizeMin)
-                .HasColumnType("decimal(3, 2)")
+                .HasColumnType("decimal(5, 2)")
                 .HasColumnName("Size_min");
 
             entity.HasOne(d => d.Show).WithMany(p => p.Groups)
@@ -127,9 +127,7 @@ public partial class KoiShowManagementSystemContext : DbContext
 
             entity.ToTable("KoiRegistration");
 
-            entity.Property(e => e.CreateDate)
-                .HasColumnType("datetime")
-                .HasColumnName("Create_date");
+            entity.Property(e => e.CreateDate).HasColumnName("Create_date");
             entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.GroupId).HasColumnName("Group_id");
             entity.Property(e => e.IsBestVote).HasDefaultValue(false);
@@ -243,15 +241,10 @@ public partial class KoiShowManagementSystemContext : DbContext
 
             entity.Property(e => e.Banner).HasMaxLength(255);
             entity.Property(e => e.Description).HasColumnType("text");
-            entity.Property(e => e.RegisterEndDate)
-                .HasColumnType("datetime")
-                .HasColumnName("Register_end_date");
-            entity.Property(e => e.RegisterStartDate)
-                .HasColumnType("datetime")
-                .HasColumnName("Register_start_date");
-            entity.Property(e => e.StartDate)
-                .HasColumnType("datetime")
-                .HasColumnName("Start_date");
+            entity.Property(e => e.RegisterEndDate).HasColumnName("Register_end_date");
+            entity.Property(e => e.RegisterStartDate).HasColumnName("Register_start_date");
+            entity.Property(e => e.ScoreEndDate).HasColumnName("Score_end_date");
+            entity.Property(e => e.ScoreStartDate).HasColumnName("Score_start_date");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -264,11 +257,8 @@ public partial class KoiShowManagementSystemContext : DbContext
 
             entity.ToTable("User");
 
-            entity.HasIndex(e => e.Phone, "UQ__User__5C7E359E5EC1B67A").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__User__Email").IsUnique();
 
-            entity.HasIndex(e => e.Email, "UQ__User__A9D105347747CE78").IsUnique();
-
-            entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.Password).HasMaxLength(255);
