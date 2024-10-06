@@ -2,6 +2,7 @@
 using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories;
 using KoiShowManagementSystem.Services.Helper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,12 @@ namespace KoiShowManagementSystem.Services
     {
 
         private readonly Repository _repository;
+        private readonly S3UploadService _s3Service;
 
-        public ShowService(Repository repository, JwtServices jwtServices)
+        public ShowService(Repository repository, JwtServices jwtServices, S3UploadService s3Service)
         {
             _repository = repository;
+            _s3Service = s3Service;
         }
 
         public async Task<ShowModel?> GetShowDetails(int showId)
@@ -75,7 +78,7 @@ namespace KoiShowManagementSystem.Services
             }
         }
 
-
+        
 
 
     }
