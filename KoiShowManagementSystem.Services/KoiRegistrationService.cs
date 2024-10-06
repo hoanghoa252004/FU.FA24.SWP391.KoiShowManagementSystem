@@ -1,6 +1,7 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
 using KoiShowManagementSystem.Repositories;
 using KoiShowManagementSystem.Services.Helper;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,12 @@ namespace KoiShowManagementSystem.Services
     {
         private readonly Repository _repository;
         private readonly JwtServices _jwtServices;
-        public KoiRegistrationService(JwtServices jwtServices, Repository repository)
+        private readonly S3UploadService _s3Service;
+        public KoiRegistrationService(JwtServices jwtServices, Repository repository, S3UploadService s3Service)
         {
             _jwtServices = jwtServices;
             _repository = repository;
+            _s3Service = s3Service;
         }
 
         // 1. GET KOI REGISTRATION BY MEMBER:
@@ -46,5 +49,8 @@ namespace KoiShowManagementSystem.Services
             }
             return result;
         }
+
+        
+
     }
 }

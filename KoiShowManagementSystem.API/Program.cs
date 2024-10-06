@@ -19,6 +19,8 @@ namespace KoiShowManagementSystem.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            builder.Configuration.AddJsonFile("appsettings.Secret.json", optional: true, reloadOnChange: true);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -38,6 +40,7 @@ namespace KoiShowManagementSystem.API
             // Đăng kí Services Layer: OK
             builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("MailSettings"));
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<S3UploadService>();
             builder.Services.AddScoped<JwtServices>();
             builder.Services.AddScoped<Repository>();
             builder.Services.AddScoped<IUserService,UserService>();
