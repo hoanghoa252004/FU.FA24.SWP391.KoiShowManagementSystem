@@ -6,6 +6,8 @@ using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.DTOs.Response;
 using KoiShowManagementSystem.Services;
 using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.API.Helper;
+using System.Numerics;
 
 namespace KoiShowManagementSystem.API.Controllers
 {
@@ -14,9 +16,11 @@ namespace KoiShowManagementSystem.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IEmailService _emailService;
+        public UserController(IUserService userService, IEmailService emailService)
         {
             _userService = userService;
+            _emailService = emailService;
         }
 
         #region API
@@ -54,6 +58,20 @@ namespace KoiShowManagementSystem.API.Controllers
             try
             {
                 await _userService.SignUp(dto);
+                await _emailService.SendEmail(new EmailModel()
+                {
+                    To = dto.Email,
+                    Subject = "[SIGN UP] KOI SHOW MANAGEMENT SYSTEM",
+                    Content = $"Dear {dto.Name}, \n\n" +
+                             $"You just have sign up the Website [KOI SHOW MANAGEMENT SYSTEM] with these information:\n\n" +
+                             $"\tEmail: {dto.Email}\n" +
+                             $"\tFull Name: {dto.Name}\n" +
+                             $"\tPhone: {dto.Phone}\n" +
+                             $"\tPassword: {dto.Password}\n" +
+                             $"\tDate Of Birth: {dto.DateOfBirth}\n\n" +
+                             $"Wish you have a wonderful experience with our services !"
+
+                });
                 return Ok(new ApiResponse()
                 {
                     Message = "Sign up successfully",
@@ -150,34 +168,24 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        /*
-        // 6: GET KOI REGISTRATIONS:-------------------------------------------------------
-        [Authorize]
-        [HttpGet("koi-registration{status}")]
-        public async Task<IActionResult> GetKoiRegistration(string status)
-        {
-            IActionResult response = null!;
-            try
-            {
-                var result = await _userRepository.GetInProcessKoiRegistration(status);
-                if (result != null)
-                    response =  Ok(new APIResponse()
-                    {
-                        Message = "Get Pending Koi Registration Successfully",
-                        Payload = result
-                    });
-                return response;
-            }
-            catch (Exception ex)
-            {
-                response = BadRequest(new APIResponse()
-                {
-                    Message = ex.Message,
-                });
-                return response;
-            }
-        }
-        */
+        //// 5: CONFIRM EMAIL:-----------------------------------------------------------
+        //[HttpGet("confirm-email")]
+        //public async Task<IActionResult> ConfirmMail(ConfirmMailModel dto)
+        //{
+        //    IActionResult? response = null;
+        //    try
+        //    {
+        //        var user = await _emailService.ConfirmEmail(dto);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response = BadRequest(new ApiResponse()
+        //        {
+        //            Message = ex.Message,
+        //        });
+        //        return response;
+        //    }
+        //}
         #endregion
     }
 }

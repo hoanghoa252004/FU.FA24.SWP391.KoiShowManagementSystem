@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using KoiShowManagementSystem.Repositories.MyDbContext;
+using KoiShowManagementSystem.API.Helper;
+using Microsoft.AspNetCore.Identity;
 
 namespace KoiShowManagementSystem.API
 {
@@ -24,6 +26,9 @@ namespace KoiShowManagementSystem.API
             builder.Services.AddSwaggerGen();
 
             //*************
+            builder.Services.Configure<IdentityOptions>(
+                opt => opt.SignIn.RequireConfirmedEmail = true
+                );
             // Đăng kí DBContext: OK
             builder.Services.AddDbContext<KoiShowManagementSystemContext>(option =>
             {
@@ -31,6 +36,8 @@ namespace KoiShowManagementSystem.API
             });
             builder.Services.AddHttpContextAccessor();
             // Đăng kí Services Layer: OK
+            builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("MailSettings"));
+            builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<JwtServices>();
             builder.Services.AddScoped<Repository>();
             builder.Services.AddScoped<IUserService,UserService>();
