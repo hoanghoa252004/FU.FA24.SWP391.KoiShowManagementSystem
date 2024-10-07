@@ -9,6 +9,7 @@ using System.Text;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using KoiShowManagementSystem.API.Helper;
 using Microsoft.AspNetCore.Identity;
+using System.Text.Json.Serialization;
 
 namespace KoiShowManagementSystem.API
 {
@@ -22,7 +23,10 @@ namespace KoiShowManagementSystem.API
             builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             builder.Configuration.AddJsonFile("appsettings.Secret.json", optional: true, reloadOnChange: true);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            }); ; ;
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

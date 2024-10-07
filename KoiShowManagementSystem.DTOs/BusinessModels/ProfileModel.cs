@@ -8,6 +8,7 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
 {
     public class ProfileModel
     {
+
         public string Phone { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string? Role { get; set; }
