@@ -8,6 +8,7 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
 {
     public class RefereeModel
     {
+
         public int RefereeId { get; set; }
         public string? RefereeName { get; set; }
     }
