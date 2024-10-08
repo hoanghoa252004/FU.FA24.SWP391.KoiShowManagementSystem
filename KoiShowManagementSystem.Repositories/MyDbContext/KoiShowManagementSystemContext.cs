@@ -174,6 +174,7 @@ public partial class KoiShowManagementSystemContext : DbContext
 
             entity.ToTable("Registration");
 
+            entity.Property(e => e.Size).HasColumnType("decimal(5, 2)").HasColumnName("Size");
             entity.Property(e => e.CreateDate).HasColumnName("Create_date");
             entity.Property(e => e.GroupId).HasColumnName("Group_id");
             entity.Property(e => e.KoiId).HasColumnName("Koi_id");
@@ -229,11 +230,11 @@ public partial class KoiShowManagementSystemContext : DbContext
 
             entity.ToTable("Score");
 
-            entity.HasIndex(e => new { e.RegistrationId, e.RefereeDetailId, e.CriteriaId }, "uq_KoiRefereeCriteria").IsUnique();
+            entity.HasIndex(e => new { e.Id, e.RefereeDetailId, e.CriteriaId }, "uq_KoiRefereeCriteria").IsUnique();
 
             entity.Property(e => e.CriteriaId).HasColumnName("Criteria_id");
             entity.Property(e => e.RefereeDetailId).HasColumnName("Referee_detail_id");
-            entity.Property(e => e.RegistrationId).HasColumnName("Registration_Id");
+            entity.Property(e => e.Id).HasColumnName("Registration_Id");
             entity.Property(e => e.Score1)
                 .HasColumnType("decimal(2, 1)")
                 .HasColumnName("Score");

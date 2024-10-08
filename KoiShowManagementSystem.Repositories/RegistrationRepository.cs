@@ -1,5 +1,6 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
 using KoiShowManagementSystem.Entities;
+using KoiShowManagementSystem.Repositories.Helper;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,10 +14,39 @@ namespace KoiShowManagementSystem.Repositories
 {
     public class RegistrationRepository : IRegistrationRepository
     {
+        private readonly S3UploadService _s3UploadService;
         private KoiShowManagementSystemContext _context;
-        public RegistrationRepository(KoiShowManagementSystemContext context)
+        public RegistrationRepository(KoiShowManagementSystemContext context, S3UploadService _s3UploadService)
         {
             this._context = context;
+            this._s3UploadService = _s3UploadService;
+        }
+
+        public async Task CreateRegistrationAsync(RegistrationFormModel dto)
+        {
+            string image1 = await _s3UploadService.UploadKoiImage(dto.Image1!);
+            string image2 = await _s3UploadService.UploadKoiImage(dto.Image2!);
+            string image3 = await _s3UploadService.UploadKoiImage(dto.Image3!);
+            Registration newRegistration = new Registration()
+            {
+                CreateDate = DateOnly.FromDateTime(DateTime.Now),
+                Size = dto.Size,
+                KoiId = dto.KoiId,
+                // Phân loại tự động: đang gán tự động là 1
+                GroupId = 1,
+            };
+            await _context.Set<Registration>().AddAsync(newRegistration);
+            await _context.SaveChangesAsync();
+            // Add Media:
+            await _context.Set<Media>().AddAsync(new Media()
+            {
+                RegistrationId = newRegistration.Id,
+                Image1 = image1,
+                Image2 = image2,
+                Image3 = image3,
+                Video = dto.Video!,
+            });
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<RegistrationModel>> GetRegistrationByUserIdAsync(int id)
@@ -113,16 +143,16 @@ namespace KoiShowManagementSystem.Repositories
                             VarietyId = var.Id,
                             VarietyName = var.Name,
                         });
-                        sizeList.Add(new GroupModel()
-                        {
-                            GroupId = grp.Id,
-                            GroupName = grp.Name,
-                            SizeMax = grp.SizeMax,
-                            SizeMin = grp.SizeMin,
-                            Unit = "cm"
-                        });
                     }
                 }
+                sizeList.Add(new GroupModel()
+                {
+                    GroupId = grp.Id,
+                    GroupName = grp.Name,
+                    SizeMax = grp.SizeMax,
+                    SizeMin = grp.SizeMin,
+                    Unit = "cm"
+                });
             }
 
             return new RegistrationFormModel()

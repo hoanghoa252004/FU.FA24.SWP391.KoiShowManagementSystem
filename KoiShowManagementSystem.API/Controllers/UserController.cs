@@ -18,12 +18,10 @@ namespace KoiShowManagementSystem.API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
-        private readonly S3UploadService _s3UploadService;
-        public UserController(IUserService userService, IEmailService emailService, S3UploadService s3UploadService)
+        public UserController(IUserService userService, IEmailService emailService)
         {
             _userService = userService;
             _emailService = emailService;
-            _s3UploadService = s3UploadService;
         }
 
         #region API
@@ -191,15 +189,15 @@ namespace KoiShowManagementSystem.API.Controllers
         //}
         #endregion
 
-        // TEST:-----------------------------------------------------------
-        [HttpPut("test")]
-        public async Task<IActionResult> Test([FromForm]TestModel dto)
-        {
-            string a = await _s3UploadService.UploadShowBannerImage(dto.file!);
-            return Ok(new ApiResponse()
-            {
-                Message = a
-            });
-        }
+        //// TEST:-----------------------------------------------------------
+        //[HttpPut("test")]
+        //public async Task<IActionResult> Test([FromForm]TestModel dto)
+        //{
+        //    string a = await _s3UploadService.UploadShowBannerImage(dto.file!);
+        //    return Ok(new ApiResponse()
+        //    {
+        //        Message = a
+        //    });
+        //}
     }
 }

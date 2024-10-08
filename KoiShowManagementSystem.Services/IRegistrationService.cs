@@ -11,5 +11,7 @@ namespace KoiShowManagementSystem.Services
     {
         Task<IEnumerable<RegistrationModel>> GetMyKoiRegistration(string status);
         Task<RegistrationFormModel?> GetRegistrationForm(int showId);
+
+        Task CreateRegistration(RegistrationFormModel dto);
     }
 }

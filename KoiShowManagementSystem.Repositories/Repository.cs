@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.Repositories.MyDbContext;
+﻿using KoiShowManagementSystem.Repositories.Helper;
+using KoiShowManagementSystem.Repositories.MyDbContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,11 @@ namespace KoiShowManagementSystem.Repositories
         private IRoleRepository? _role;
         private IRegistrationRepository? _registration;
         private IShowRepository? _show;
-        public Repository(KoiShowManagementSystemContext context)
+        private S3UploadService _uploadService;
+        public Repository(KoiShowManagementSystemContext context, S3UploadService _uploadService)
         {
             _context = context;
+            this._uploadService = _uploadService;
         }
         // (*) Properties:
         public IUserRepository Users
@@ -47,7 +50,7 @@ namespace KoiShowManagementSystem.Repositories
             {
                 if (this._registration == null)
                 {
-                    this._registration = new RegistrationRepository(_context);
+                    this._registration = new RegistrationRepository(_context, _uploadService);
                 }
                 return this._registration;
             }

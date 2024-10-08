@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace KoiShowManagementSystem.Services.Helper
+namespace KoiShowManagementSystem.Repositories.Helper
 {
     public class S3UploadService
     {
@@ -20,7 +20,7 @@ namespace KoiShowManagementSystem.Services.Helper
             var awsAccessKey = configuration["AWS:AccessKey"];
             var awsSecretKey = configuration["AWS:SecretKey"];
             var awsRegion = configuration["AWS:Region"];
-            _bucketName = configuration["AWS:BucketName"];
+            _bucketName = configuration["AWS:BucketName"]!;
 
             _s3Client = new AmazonS3Client(awsAccessKey, awsSecretKey, RegionEndpoint.GetBySystemName(awsRegion));
         }
