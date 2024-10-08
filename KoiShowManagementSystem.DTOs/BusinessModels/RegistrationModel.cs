@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.DTOs.BusinessModels
 {
-    public class KoiRegistModel
+    public class RegistrationModel
     {
         public int Id { get; set; }
         public string? Name { get; set; }
@@ -21,7 +21,9 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public decimal? TotalScore { get; set; }
         public string? Status { get; set; }
         public bool? IsBestVote { get; set; }
-        public string? ImageUrl { get; set; }
-        public string? VideoUrl { get; set; }
+        public string? Image1 { get; set; }
+        public string? Image2 { get; set; }
+        public string? Image3 { get; set; }
+        public string? Video { get; set; }
     }
 }

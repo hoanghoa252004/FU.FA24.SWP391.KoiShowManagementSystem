@@ -9,6 +9,6 @@ namespace KoiShowManagementSystem.Services
 {
     public interface IKoiRegistrationService
     {
-        Task<IEnumerable<KoiRegistModel>> GetMyKoiRegistration(string status);
+        Task<IEnumerable<RegistrationModel>> GetMyKoiRegistration(string status);
     }
 }

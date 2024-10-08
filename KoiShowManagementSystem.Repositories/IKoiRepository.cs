@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public interface IKoiRegistrationRepository
+    public interface IKoiRepository
     {
-        Task<IEnumerable<KoiRegistModel>> GetKoiRegistrationByUserID(int id);
+        Task<IEnumerable<RegistrationModel>> GetKoiByUserID(int id);
     }
 }
