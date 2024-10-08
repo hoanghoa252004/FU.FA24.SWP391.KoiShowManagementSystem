@@ -19,10 +19,9 @@ namespace KoiShowManagementSystem.Services
         private readonly Repository _repository;
         private readonly S3UploadService _s3Service;
 
-        public ShowService(Repository repository, JwtServices jwtServices, S3UploadService s3Service)
+        public ShowService(Repository repository, JwtServices jwtServices)
         {
             _repository = repository;
-            _s3Service = s3Service;
         }
 
         public async Task<ShowModel?> GetShowDetails(int showId)
@@ -52,18 +51,18 @@ namespace KoiShowManagementSystem.Services
         }
 
 
-        public async Task<(int TotalItems, IEnumerable<KoiModel> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId)
-        {
-            var result = await _repository.Show.GetKoiByShowIdAsync(pageIndex,pageSize,showId);
+        //public async Task<(int TotalItems, IEnumerable<KoiModel> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId)
+        //{
+        //    var result = await _repository.Show.GetKoiByShowIdAsync(pageIndex,pageSize,showId);
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        public async Task<KoiModel?> GetKoiDetail(int koiId)
-        {
-            var result = await _repository.Show.GetKoiDetailAsync(koiId);
-            return result;
-        }
+        //public async Task<KoiModel?> GetKoiDetail(int koiId)
+        //{
+        //    var result = await _repository.Show.GetKoiDetailAsync(koiId);
+        //    return result;
+        //}
 
         public async Task<List<ShowModel>> GetClosestShow()
         {

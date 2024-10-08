@@ -29,7 +29,7 @@ public partial class Registration
 
     public virtual Group? Group { get; set; }
 
-    public virtual Koi? Koi { get; set; }
+    public virtual Koi Koi { get; set; }
 
     public virtual ICollection<Media> Media { get; set; } = new List<Media>();
 

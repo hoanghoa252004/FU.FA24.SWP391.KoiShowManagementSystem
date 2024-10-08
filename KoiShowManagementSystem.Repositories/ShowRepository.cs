@@ -2,6 +2,7 @@
 using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +19,7 @@ namespace KoiShowManagementSystem.Repositories
             this._context = context;
         }
 
-        public Task<List<ShowModel>> GetClosestShowAsync()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId)
         {
@@ -47,6 +45,11 @@ namespace KoiShowManagementSystem.Repositories
         {
             throw new NotImplementedException();
         }
+
+
+
+
+
         /*
 public async Task<ShowModel?> GetShowDetailsAsync(int showId)
 {
@@ -179,107 +182,172 @@ public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int page
 
    return (totalItems, koiList);
 }
-
-
-public async Task<List<ShowModel>> GetClosestShowAsync()
-{
-   var shows = await _context.Shows
-       .Where(s => s.Status != "Draft")
-       .Include(s => s.Groups)
-       .OrderByDescending(s => s.RegisterStartDate).Take(5)
-       .Select(s => new ShowModel
-       {
-           ShowId = s.Id,
-           ShowTitle = s.Title,
-           ShowBanner = s.Banner,
-           ShowDesc = s.Description,
-           ShowStatus = s.Status
-       }).ToListAsync();
-   // get the first show
-   var firstShow = shows.FirstOrDefault();
-   if (firstShow == null)
-   {
-       throw new Exception("No show found");
-   }
-   if (firstShow.ShowStatus == "Finished")
-   {
-       //get group of firstShow  and top rank 1,2,3, best vote of each groupModel
-       firstShow.ShowGroups = _context.Groups
-           .Where(g => g.ShowId == firstShow.ShowId)
-           .Include(g => g.KoiRegistrations)
-           .Select(g => new GroupModel
-           {
-               GroupId = g.Id,
-               GroupName = g.Name,
-               KoiDetails = g.KoiRegistrations
-                   .Where(k => k.Rank == 1 || k.Rank == 2 || k.Rank == 3 || k.IsBestVote == true)
-                   .OrderBy(k => k.Rank)
-                   .Select(k => new KoiModel
-                   {
-                       KoiID = k.Id,
-                       KoiName = k.Name,
-                       Rank = k.Rank,
-                       IsBestVote = k.IsBestVote
-                   }).ToList()
-           }).ToList();
-   }
-   else
-   {
-       firstShow.ShowReferee = _context.RefereeDetails
-           .Where(r => r.ShowId == firstShow.ShowId)
-           .Include(r => r.User)
-           .Select(r => new RefereeModel
-           {
-               RefereeId = r.Id,
-               RefereeName = r.User.Name
-           }).ToList();
-   }
-
-
-   return shows;
-}
-
-public async Task<RegistrationFormModel?> GetRegistrationFormAsync(int showId)
-{
-   // Lấy show:
-   var show = await _context.Shows.SingleOrDefaultAsync(show => show.Id == showId);
-   // Tìm những groups của show để lấy bảng size:
-   var groupList = _context.Groups.Where(group => group.ShowId == showId);
-   List<GroupModel> sizeList = new List<GroupModel>();
-   List<VarietyModel> varietyModels = new List<VarietyModel>();
-   var varietiesList = _context.Varieties.Include(var => var.Groups).ToList();
-
-   foreach (var grp in groupList)
-   {
-       foreach (var var in varietiesList)
-       {
-           if (grp.Varieties.Contains(var))
-           {
-               varietyModels.Add(new VarietyModel()
-               {
-                   VarietyId = var.Id,
-                   VarietyName = var.Name,
-               });
-               sizeList.Add(new GroupModel()
-               {
-                   GroupId = grp.Id,
-                   GroupName = grp.Name,
-                   SizeMax = grp.SizeMax,
-                   SizeMin = grp.SizeMin,
-                   Unit = "cm"
-               });
-           }
-       }
-   }
-
-   return new RegistrationFormModel()
-   {
-       ShowId = showId,
-       ShowName = show!.Title,
-       SizeList = sizeList,
-       VarietyList = varietyModels,
-   };
-}
 */
+
+
+
+        public async Task<List<ShowModel>> GetClosestShowAsync()
+        {
+            var shows = await _context.Shows
+                .Where(s => s.Status != "Draft")
+                .Include(s => s.Groups)
+                .OrderByDescending(s => s.RegisterStartDate).Take(5)
+                .Select(s => new ShowModel
+                {
+                    ShowId = s.Id,
+                    ShowTitle = s.Title,
+                    ShowBanner = s.Banner,
+                    ShowDesc = s.Description,
+                    ShowStatus = s.Status
+                }).ToListAsync();
+
+            var firstShow = shows.FirstOrDefault();
+
+            if (firstShow == null)
+            {
+                throw new Exception("No show found");
+            }
+
+            if (firstShow.ShowStatus == "Finished")
+            {
+                var groups  = _context.Groups
+                   .Where(g => g.ShowId == firstShow.ShowId)
+                   .Select(g => new GroupModel
+                   {
+                       GroupId = g.Id,
+                       GroupName = g.Name,
+                       KoiDetails = g.Registrations
+                           .Where(r => r.Rank == 1 || r.Rank == 2 || r.Rank == 3 || r.IsBestVote == true)
+                           .OrderBy(r=> r.Rank)
+                           .Select(r => new RegistrationModel
+                           {
+                               Id = r.Id,
+                               Name = r.Koi.Name,
+                               Rank = r.Rank,
+                               IsBestVote = r.IsBestVote
+                           }).ToList()
+                   }).ToList();
+                if (!groups.IsNullOrEmpty())
+                {
+                    firstShow.ShowGroups = groups;
+                }
+            }
+            else
+            {
+                firstShow.ShowReferee = _context.RefereeDetails
+                    .Where(r => r.ShowId == firstShow.ShowId)
+                    .Include(r => r.User)
+                    .Select(r => new RefereeModel
+                    {
+                        RefereeId = r.Id,
+                        RefereeName = r.User.Name
+                    }).ToList();
+            }
+            return shows;
+        }
+
+
+
+        /*
+        public async Task<List<ShowModel>> GetClosestShowAsync()
+        {
+           var shows = await _context.Shows
+               .Where(s => s.Status != "Draft")
+               .Include(s => s.Groups)
+               .OrderByDescending(s => s.RegisterStartDate).Take(5)
+               .Select(s => new ShowModel
+               {
+                   ShowId = s.Id,
+                   ShowTitle = s.Title,
+                   ShowBanner = s.Banner,
+                   ShowDesc = s.Description,
+                   ShowStatus = s.Status
+               }).ToListAsync();
+           // get the first show
+           var firstShow = shows.FirstOrDefault();
+           if (firstShow == null)
+           {
+               throw new Exception("No show found");
+           }
+           if (firstShow.ShowStatus == "Finished")
+           {
+               //get group of firstShow  and top rank 1,2,3, best vote of each groupModel
+               firstShow.ShowGroups = _context.Groups
+                   .Where(g => g.ShowId == firstShow.ShowId)
+                   .Include(g => g.KoiRegistrations)
+                   .Select(g => new GroupModel
+                   {
+                       GroupId = g.Id,
+                       GroupName = g.Name,
+                       KoiDetails = g.KoiRegistrations
+                           .Where(k => k.Rank == 1 || k.Rank == 2 || k.Rank == 3 || k.IsBestVote == true)
+                           .OrderBy(k => k.Rank)
+                           .Select(k => new KoiModel
+                           {
+                               KoiID = k.Id,
+                               KoiName = k.Name,
+                               Rank = k.Rank,
+                               IsBestVote = k.IsBestVote
+                           }).ToList()
+                   }).ToList();
+           }
+           else
+           {
+               firstShow.ShowReferee = _context.RefereeDetails
+                   .Where(r => r.ShowId == firstShow.ShowId)
+                   .Include(r => r.User)
+                   .Select(r => new RefereeModel
+                   {
+                       RefereeId = r.Id,
+                       RefereeName = r.User.Name
+                   }).ToList();
+           }
+
+
+           return shows;
+        }
+
+        public async Task<RegistrationFormModel?> GetRegistrationFormAsync(int showId)
+        {
+           // Lấy show:
+           var show = await _context.Shows.SingleOrDefaultAsync(show => show.Id == showId);
+           // Tìm những groups của show để lấy bảng size:
+           var groupList = _context.Groups.Where(group => group.ShowId == showId);
+           List<GroupModel> sizeList = new List<GroupModel>();
+           List<VarietyModel> varietyModels = new List<VarietyModel>();
+           var varietiesList = _context.Varieties.Include(var => var.Groups).ToList();
+
+           foreach (var grp in groupList)
+           {
+               foreach (var var in varietiesList)
+               {
+                   if (grp.Varieties.Contains(var))
+                   {
+                       varietyModels.Add(new VarietyModel()
+                       {
+                           VarietyId = var.Id,
+                           VarietyName = var.Name,
+                       });
+                       sizeList.Add(new GroupModel()
+                       {
+                           GroupId = grp.Id,
+                           GroupName = grp.Name,
+                           SizeMax = grp.SizeMax,
+                           SizeMin = grp.SizeMin,
+                           Unit = "cm"
+                       });
+                   }
+               }
+           }
+
+           return new RegistrationFormModel()
+           {
+               ShowId = showId,
+               ShowName = show!.Title,
+               SizeList = sizeList,
+               VarietyList = varietyModels,
+           };
+        }
+        */
     }
 }

@@ -12,8 +12,8 @@ namespace KoiShowManagementSystem.Repositories
     {
         Task<ShowModel?> GetShowDetailsAsync(int showId);
         Task<(int TotalItems, List<ShowModel>)> SearchShowAsync(int pageIndex, int pageSize, string keyword);
-        Task<KoiModel?> GetKoiDetailAsync(int koiId);
-        Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId);
+        //Task<KoiModel?> GetKoiDetailAsync(int koiId);
+        //Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId);
         Task<List<ShowModel>> GetClosestShowAsync();
         
     }
