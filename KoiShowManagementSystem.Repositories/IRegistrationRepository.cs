@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public interface IKoiRepository
+    public interface IRegistrationRepository
     {
         Task<IEnumerable<RegistrationModel>> GetKoiByUserID(int id);
     }

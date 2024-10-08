@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public class KoiRepository : IKoiRepository
+    public class RegistrationRepository : IRegistrationRepository
     {
         private KoiShowManagementSystemContext _context;
-        public KoiRepository(KoiShowManagementSystemContext context)
+        public RegistrationRepository(KoiShowManagementSystemContext context)
         {
             this._context = context;
         }
