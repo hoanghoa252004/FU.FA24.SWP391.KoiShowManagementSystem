@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.DTOs.Response;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Response;
 using KoiShowManagementSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +20,7 @@ namespace KoiShowManagementSystem.API.Controllers
         #region API
         // 1. GET KOI REGISTRATION:-----------------------------------------------
         [Authorize]
-        [HttpGet("koi-registration")]
+        [HttpGet("get-registration")]
         public async Task<IActionResult> GetKoiRegistrationByUser(string status)
         {
             IActionResult? response = null;
@@ -49,7 +50,7 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        [HttpGet("registration-form")]
+        [HttpGet("get-registration-form")]
         public async Task<IActionResult> GetRegistrationForm(int showId)
         {
             try
@@ -68,6 +69,26 @@ namespace KoiShowManagementSystem.API.Controllers
                     Message = ex.Message,
                 });
 
+            }
+        }
+
+        [HttpPost("create-registration")]
+        public async Task<IActionResult> CreateRegistration([FromForm]RegistrationFormModel dto)
+        {
+            try
+            {
+                await _registrationService.CreateRegistration(dto);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Get Registration Form Successfully",
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
             }
         }
         #endregion

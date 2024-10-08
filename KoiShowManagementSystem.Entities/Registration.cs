@@ -13,6 +13,8 @@ public partial class Registration
 
     public decimal? TotalScore { get; set; }
 
+    public decimal Size { get; set; }
+
     public bool? IsPaid { get; set; }
 
     public string? Status { get; set; }
