@@ -10,10 +10,10 @@ namespace KoiShowManagementSystem.API.Controllers
     [ApiController]
     public class RegistrationController : ControllerBase
     {
-        private readonly IRegistrationService _koiRegistrationService;
-        public RegistrationController(IRegistrationService koiRegistrationService)
+        private readonly IRegistrationService _registrationService;
+        public RegistrationController(IRegistrationService registrationService)
         {
-            _koiRegistrationService = koiRegistrationService;
+            _registrationService = registrationService;
         }
 
         #region API
@@ -25,7 +25,7 @@ namespace KoiShowManagementSystem.API.Controllers
             IActionResult? response = null;
             try
             {
-                var result = await _koiRegistrationService.GetMyKoiRegistration(status);
+                var result = await _registrationService.GetMyKoiRegistration(status);
                 if (result != null)
                     response = Ok(new ApiResponse()
                     {
@@ -46,6 +46,28 @@ namespace KoiShowManagementSystem.API.Controllers
                     Message = ex.Message,
                 });
                 return response;
+            }
+        }
+
+        [HttpGet("registration-form")]
+        public async Task<IActionResult> GetRegistrationForm(int showId)
+        {
+            try
+            {
+                var result = await _registrationService.GetRegistrationForm(showId);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Get Registration Form Successfully",
+                    Payload = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+
             }
         }
         #endregion

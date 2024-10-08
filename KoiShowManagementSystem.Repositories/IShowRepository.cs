@@ -15,6 +15,6 @@ namespace KoiShowManagementSystem.Repositories
         Task<KoiModel?> GetKoiDetailAsync(int koiId);
         Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId);
         Task<List<ShowModel>> GetClosestShowAsync();
-        Task<RegistrationFormModel?> GetRegistrationFormAsync(int showId);
+        
     }
 }

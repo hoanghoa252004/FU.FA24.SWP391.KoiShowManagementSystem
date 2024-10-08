@@ -41,7 +41,7 @@ namespace KoiShowManagementSystem.Repositories
                 return this._role;
             }
         }
-        public IRegistrationRepository KoiRegistrations
+        public IRegistrationRepository Registrations
         {
             get
             {
@@ -52,7 +52,7 @@ namespace KoiShowManagementSystem.Repositories
                 return this._registration;
             }
         }
-        public IShowRepository KoiShow
+        public IShowRepository Show
         {
             get
             {

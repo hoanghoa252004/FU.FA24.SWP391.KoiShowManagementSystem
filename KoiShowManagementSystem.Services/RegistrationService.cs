@@ -27,7 +27,7 @@ namespace KoiShowManagementSystem.Services
         {
             IEnumerable<RegistrationModel> result= null!;
             int id = _jwtServices.GetIdAndRoleFromToken().userId;
-            IEnumerable<RegistrationModel> myKoiRegistrations = await _repository.KoiRegistrations.GetKoiByUserID(id);
+            IEnumerable<RegistrationModel> myKoiRegistrations = await _repository.Registrations.GetRegistrationByUserIdAsync(id);
             status = status.ToLower();
             switch (status)
             {
@@ -49,8 +49,12 @@ namespace KoiShowManagementSystem.Services
             }
             return result;
         }
+        public Task<RegistrationFormModel?> GetRegistrationForm(int showId)
+        {
+            var registrationForm = _repository.Registrations.GetRegistrationFormAsync(showId);
+            return registrationForm!;
+        }
 
-        
 
     }
 }
