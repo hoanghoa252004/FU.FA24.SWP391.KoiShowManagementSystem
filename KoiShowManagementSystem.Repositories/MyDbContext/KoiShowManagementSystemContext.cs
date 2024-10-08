@@ -8,16 +8,16 @@ namespace KoiShowManagementSystem.Repositories.MyDbContext;
 
 public partial class KoiShowManagementSystemContext : DbContext
 {
-    private readonly IConfiguration _configuration;
+    private readonly IConfiguration configuration;
     public KoiShowManagementSystemContext(IConfiguration configuration)
     {
-        _configuration = configuration;
+        this.configuration = configuration;
     }
 
     public KoiShowManagementSystemContext(DbContextOptions<KoiShowManagementSystemContext> options, IConfiguration configuration)
         : base(options)
     {
-        _configuration = configuration;
+        this.configuration = configuration;
     }
 
     public virtual DbSet<Criterion> Criteria { get; set; }
@@ -43,8 +43,8 @@ public partial class KoiShowManagementSystemContext : DbContext
     public virtual DbSet<Variety> Varieties { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        // #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer(_configuration.GetConnectionString("cnn"));
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer(configuration.GetConnectionString("cnn"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -178,7 +178,6 @@ public partial class KoiShowManagementSystemContext : DbContext
             entity.Property(e => e.GroupId).HasColumnName("Group_id");
             entity.Property(e => e.KoiId).HasColumnName("Koi_id");
             entity.Property(e => e.Note).HasMaxLength(300);
-            entity.Property(e => e.ShowId).HasColumnName("Show_id");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -186,13 +185,13 @@ public partial class KoiShowManagementSystemContext : DbContext
                 .HasColumnType("decimal(5, 2)")
                 .HasColumnName("Total_score");
 
+            entity.HasOne(d => d.Group).WithMany(p => p.Registrations)
+                .HasForeignKey(d => d.GroupId)
+                .HasConstraintName("FK_Registration_Group");
+
             entity.HasOne(d => d.Koi).WithMany(p => p.Registrations)
                 .HasForeignKey(d => d.KoiId)
                 .HasConstraintName("FK_Registration_Koi");
-
-            entity.HasOne(d => d.Show).WithMany(p => p.Registrations)
-                .HasForeignKey(d => d.ShowId)
-                .HasConstraintName("FK_Registration_Show");
 
             entity.HasMany(d => d.Users).WithMany(p => p.Registrations)
                 .UsingEntity<Dictionary<string, object>>(
