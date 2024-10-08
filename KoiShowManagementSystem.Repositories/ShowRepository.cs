@@ -208,5 +208,47 @@ namespace KoiShowManagementSystem.Repositories
 
             return shows;
         }
+
+        public async Task<RegistrationFormModel?> GetRegistrationFormAsync(int showId)
+        {
+            // Lấy show:
+            var show = await _context.Shows.SingleOrDefaultAsync(show => show.Id == showId);
+            // Tìm những groups của show để lấy bảng size:
+            var groupList = _context.Groups.Where( group => group.ShowId == showId);
+            List<GroupModel> sizeList = new List<GroupModel>();
+            List<VarietyModel> varietyModels = new List<VarietyModel>();
+            var varietiesList = _context.Varieties.Include( var => var.Groups).ToList();
+            
+            foreach(var grp in groupList)
+            {
+                foreach (var var in varietiesList)
+                {
+                    if (grp.Varieties.Contains(var))
+                    {
+                        varietyModels.Add(new VarietyModel()
+                        {
+                            VarietyId = var.Id,
+                            VarietyName = var.Name,
+                        });
+                        sizeList.Add(new GroupModel()
+                        {
+                            GroupId = grp.Id,
+                            GroupName = grp.Name,
+                            SizeMax = grp.SizeMax,
+                            SizeMin = grp.SizeMin,
+                            Unit = "cm"
+                        });
+                    }
+                }
+            }
+
+            return new RegistrationFormModel()
+            {
+                ShowId = showId,
+                ShowName = show!.Title,
+                SizeList = sizeList,
+                VarietyList = varietyModels,
+            };
+        }
     }
 }

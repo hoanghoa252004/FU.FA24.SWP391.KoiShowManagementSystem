@@ -78,8 +78,10 @@ namespace KoiShowManagementSystem.Services
             }
         }
 
-        
-
-
+        public Task<RegistrationFormModel?> GetRegistrationForm(int showId)
+        {
+            var registrationForm = _repository.KoiShow.GetRegistrationFormAsync(showId);
+            return registrationForm;
+        }
     }
 }

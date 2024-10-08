@@ -157,5 +157,27 @@ namespace KoiShowManagementSystem.API.Controllers
 
             }
         }
+
+        [HttpGet("registration-form")]
+        public async Task<IActionResult> GetRegistrationForm(int showId)
+        {
+            try
+            {
+                var result = await _koiShowService.GetRegistrationForm(showId);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Get Registration Form Successfully",
+                    Payload = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ using KoiShowManagementSystem.Services;
 using KoiShowManagementSystem.DTOs.BusinessModels;
 using KoiShowManagementSystem.API.Helper;
 using System.Numerics;
+using KoiShowManagementSystem.Services.Helper;
 
 namespace KoiShowManagementSystem.API.Controllers
 {
@@ -17,10 +18,12 @@ namespace KoiShowManagementSystem.API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
-        public UserController(IUserService userService, IEmailService emailService)
+        private readonly S3UploadService _s3UploadService;
+        public UserController(IUserService userService, IEmailService emailService, S3UploadService s3UploadService)
         {
             _userService = userService;
             _emailService = emailService;
+            _s3UploadService = s3UploadService;
         }
 
         #region API
@@ -168,7 +171,7 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        //// 5: CONFIRM EMAIL:-----------------------------------------------------------
+        //// 6: CONFIRM EMAIL:-----------------------------------------------------------
         //[HttpGet("confirm-email")]
         //public async Task<IActionResult> ConfirmMail(ConfirmMailModel dto)
         //{
@@ -187,5 +190,16 @@ namespace KoiShowManagementSystem.API.Controllers
         //    }
         //}
         #endregion
+
+        // TEST:-----------------------------------------------------------
+        [HttpPut("test")]
+        public async Task<IActionResult> Test([FromForm]TestModel dto)
+        {
+            string a = await _s3UploadService.UploadShowBannerImage(dto.file!);
+            return Ok(new ApiResponse()
+            {
+                Message = a
+            });
+        }
     }
 }
