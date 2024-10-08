@@ -23,11 +23,11 @@ public partial class User
 
     public bool Status { get; set; }
 
-    public virtual ICollection<KoiRegistration> KoiRegistrations { get; set; } = new List<KoiRegistration>();
+    public virtual ICollection<Koi> Kois { get; set; } = new List<Koi>();
 
     public virtual ICollection<RefereeDetail> RefereeDetails { get; set; } = new List<RefereeDetail>();
 
     public virtual Role Role { get; set; } = null!;
 
-    public virtual ICollection<KoiRegistration> Kois { get; set; } = new List<KoiRegistration>();
+    public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 }

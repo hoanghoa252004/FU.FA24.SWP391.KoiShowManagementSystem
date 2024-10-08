@@ -26,4 +26,6 @@ public partial class Show
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
 
     public virtual ICollection<RefereeDetail> RefereeDetails { get; set; } = new List<RefereeDetail>();
+
+    public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 }

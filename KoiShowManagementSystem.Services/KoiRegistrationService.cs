@@ -23,11 +23,11 @@ namespace KoiShowManagementSystem.Services
         }
 
         // 1. GET KOI REGISTRATION BY MEMBER:
-        public async Task<IEnumerable<KoiRegistModel>> GetMyKoiRegistration(string status)
+        public async Task<IEnumerable<RegistrationModel>> GetMyKoiRegistration(string status)
         {
-            IEnumerable<KoiRegistModel> result= null!;
+            IEnumerable<RegistrationModel> result= null!;
             int id = _jwtServices.GetIdAndRoleFromToken().userId;
-            IEnumerable<KoiRegistModel> myKoiRegistrations = await _repository.KoiRegistrations.GetKoiRegistrationByUserID(id);
+            IEnumerable<RegistrationModel> myKoiRegistrations = await _repository.KoiRegistrations.GetKoiByUserID(id);
             status = status.ToLower();
             switch (status)
             {

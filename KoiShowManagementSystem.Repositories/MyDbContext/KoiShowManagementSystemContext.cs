@@ -11,24 +11,26 @@ public partial class KoiShowManagementSystemContext : DbContext
     private readonly IConfiguration _configuration;
     public KoiShowManagementSystemContext(IConfiguration configuration)
     {
-        this._configuration = configuration;
+        _configuration = configuration;
     }
 
     public KoiShowManagementSystemContext(DbContextOptions<KoiShowManagementSystemContext> options, IConfiguration configuration)
         : base(options)
     {
-        this._configuration = configuration;
+        _configuration = configuration;
     }
 
     public virtual DbSet<Criterion> Criteria { get; set; }
 
     public virtual DbSet<Group> Groups { get; set; }
 
-    public virtual DbSet<Illustration> Illustrations { get; set; }
+    public virtual DbSet<Koi> Kois { get; set; }
 
-    public virtual DbSet<KoiRegistration> KoiRegistrations { get; set; }
+    public virtual DbSet<Media> Media { get; set; }
 
     public virtual DbSet<RefereeDetail> RefereeDetails { get; set; }
+
+    public virtual DbSet<Registration> Registrations { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
 
@@ -41,7 +43,7 @@ public partial class KoiShowManagementSystemContext : DbContext
     public virtual DbSet<Variety> Varieties { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    // #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        // #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer(_configuration.GetConnectionString("cnn"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -100,79 +102,50 @@ public partial class KoiShowManagementSystemContext : DbContext
                     });
         });
 
-        modelBuilder.Entity<Illustration>(entity =>
+        modelBuilder.Entity<Koi>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Illustra__3214EC07064AF5B6");
+            entity.HasKey(e => e.Id).HasName("PK__Koi__3214EC073451D192");
 
-            entity.ToTable("Illustration");
+            entity.ToTable("Koi");
 
-            entity.HasIndex(e => e.KoiId, "UQ_Koi").IsUnique();
+            entity.Property(e => e.Description).HasMaxLength(150);
+            entity.Property(e => e.Name).HasMaxLength(50);
+            entity.Property(e => e.Size).HasColumnType("decimal(5, 2)");
+            entity.Property(e => e.Status).HasDefaultValue(true);
+            entity.Property(e => e.UserId).HasColumnName("User_Id");
+            entity.Property(e => e.VarietyId).HasColumnName("Variety_Id");
 
-            entity.Property(e => e.ImageUrl)
-                .HasColumnType("text")
-                .HasColumnName("Image_URL");
-            entity.Property(e => e.KoiId).HasColumnName("Koi_id");
-            entity.Property(e => e.VideoUrl)
-                .HasColumnType("text")
-                .HasColumnName("Video_URL");
+            entity.HasOne(d => d.User).WithMany(p => p.Kois)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Koi__User_Id__03BB8E22");
 
-            entity.HasOne(d => d.Koi).WithOne(p => p.Illustration)
-                .HasForeignKey<Illustration>(d => d.KoiId)
-                .HasConstraintName("FK__Illustrat__Koi_i__534D60F1");
+            entity.HasOne(d => d.Variety).WithMany(p => p.Kois)
+                .HasForeignKey(d => d.VarietyId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Koi__Variety_Id__04AFB25B");
         });
 
-        modelBuilder.Entity<KoiRegistration>(entity =>
+        modelBuilder.Entity<Media>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__KoiRegis__3214EC07C2137D47");
+            entity.HasKey(e => e.Id).HasName("PK__Media__3214EC0752EC7CDB");
 
-            entity.ToTable("KoiRegistration");
+            entity.Property(e => e.Image1)
+                .HasColumnType("text")
+                .HasColumnName("Image_1");
+            entity.Property(e => e.Image2)
+                .HasColumnType("text")
+                .HasColumnName("Image_2");
+            entity.Property(e => e.Image3)
+                .HasColumnType("text")
+                .HasColumnName("Image_3");
+            entity.Property(e => e.RegistrationId).HasColumnName("Registration_Id");
+            entity.Property(e => e.Video).HasColumnType("text");
 
-            entity.Property(e => e.CreateDate).HasColumnName("Create_date");
-            entity.Property(e => e.Description).HasColumnType("text");
-            entity.Property(e => e.GroupId).HasColumnName("Group_id");
-            entity.Property(e => e.IsBestVote).HasDefaultValue(false);
-            entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.Size).HasColumnType("decimal(5, 2)");
-            entity.Property(e => e.Status)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.TotalScore)
-                .HasColumnType("decimal(5, 2)")
-                .HasColumnName("Total_score");
-            entity.Property(e => e.UserId).HasColumnName("User_id");
-            entity.Property(e => e.VarietyId).HasColumnName("Variety_id");
-
-            entity.HasOne(d => d.Group).WithMany(p => p.KoiRegistrations)
-                .HasForeignKey(d => d.GroupId)
+            entity.HasOne(d => d.Registration).WithMany(p => p.Media)
+                .HasForeignKey(d => d.RegistrationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__KoiRegist__Group__47DBAE45");
-
-            entity.HasOne(d => d.User).WithMany(p => p.KoiRegistrations)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__KoiRegist__User___49C3F6B7");
-
-            entity.HasOne(d => d.Variety).WithMany(p => p.KoiRegistrations)
-                .HasForeignKey(d => d.VarietyId)
-                .HasConstraintName("FK__KoiRegist__Varie__4AB81AF0");
-
-            entity.HasMany(d => d.Users).WithMany(p => p.Kois)
-                .UsingEntity<Dictionary<string, object>>(
-                    "Vote",
-                    r => r.HasOne<User>().WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__Vote__User_id__4F7CD00D"),
-                    l => l.HasOne<KoiRegistration>().WithMany()
-                        .HasForeignKey("KoiId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__Vote__Koi_id__4E88ABD4"),
-                    j =>
-                    {
-                        j.HasKey("KoiId", "UserId").HasName("PK__Vote__928E3B0695F4F845");
-                        j.ToTable("Vote");
-                        j.IndexerProperty<int>("KoiId").HasColumnName("Koi_id");
-                        j.IndexerProperty<int>("UserId").HasColumnName("User_id");
-                    });
+                .HasConstraintName("FK__Media__Registrat__1D7B6025");
         });
 
         modelBuilder.Entity<RefereeDetail>(entity =>
@@ -195,6 +168,52 @@ public partial class KoiShowManagementSystemContext : DbContext
                 .HasConstraintName("FK__RefereeDe__User___571DF1D5");
         });
 
+        modelBuilder.Entity<Registration>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__KoiRegis__3214EC07C2137D47");
+
+            entity.ToTable("Registration");
+
+            entity.Property(e => e.CreateDate).HasColumnName("Create_date");
+            entity.Property(e => e.GroupId).HasColumnName("Group_id");
+            entity.Property(e => e.KoiId).HasColumnName("Koi_id");
+            entity.Property(e => e.Note).HasMaxLength(300);
+            entity.Property(e => e.ShowId).HasColumnName("Show_id");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.TotalScore)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("Total_score");
+
+            entity.HasOne(d => d.Koi).WithMany(p => p.Registrations)
+                .HasForeignKey(d => d.KoiId)
+                .HasConstraintName("FK_Registration_Koi");
+
+            entity.HasOne(d => d.Show).WithMany(p => p.Registrations)
+                .HasForeignKey(d => d.ShowId)
+                .HasConstraintName("FK_Registration_Show");
+
+            entity.HasMany(d => d.Users).WithMany(p => p.Registrations)
+                .UsingEntity<Dictionary<string, object>>(
+                    "Vote",
+                    r => r.HasOne<User>().WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__Vote__User_id__4F7CD00D"),
+                    l => l.HasOne<Registration>().WithMany()
+                        .HasForeignKey("RegistrationId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__Vote__Koi_id__4E88ABD4"),
+                    j =>
+                    {
+                        j.HasKey("RegistrationId", "UserId").HasName("PK__Vote__928E3B0695F4F845");
+                        j.ToTable("Vote");
+                        j.IndexerProperty<int>("RegistrationId").HasColumnName("Registration_Id");
+                        j.IndexerProperty<int>("UserId").HasColumnName("User_id");
+                    });
+        });
+
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Role__3214EC07012FB05A");
@@ -211,11 +230,11 @@ public partial class KoiShowManagementSystemContext : DbContext
 
             entity.ToTable("Score");
 
-            entity.HasIndex(e => new { e.KoiId, e.RefereeDetailId, e.CriteriaId }, "uq_KoiRefereeCriteria").IsUnique();
+            entity.HasIndex(e => new { e.RegistrationId, e.RefereeDetailId, e.CriteriaId }, "uq_KoiRefereeCriteria").IsUnique();
 
             entity.Property(e => e.CriteriaId).HasColumnName("Criteria_id");
-            entity.Property(e => e.KoiId).HasColumnName("Koi_id");
             entity.Property(e => e.RefereeDetailId).HasColumnName("Referee_detail_id");
+            entity.Property(e => e.RegistrationId).HasColumnName("Registration_Id");
             entity.Property(e => e.Score1)
                 .HasColumnType("decimal(2, 1)")
                 .HasColumnName("Score");
@@ -224,13 +243,13 @@ public partial class KoiShowManagementSystemContext : DbContext
                 .HasForeignKey(d => d.CriteriaId)
                 .HasConstraintName("FK__Score__Criteria___656C112C");
 
-            entity.HasOne(d => d.Koi).WithMany(p => p.Scores)
-                .HasForeignKey(d => d.KoiId)
-                .HasConstraintName("FK__Score__Koi_id__6383C8BA");
-
             entity.HasOne(d => d.RefereeDetail).WithMany(p => p.Scores)
                 .HasForeignKey(d => d.RefereeDetailId)
                 .HasConstraintName("FK__Score__Referee_d__6477ECF3");
+
+            entity.HasOne(d => d.Registration).WithMany(p => p.Scores)
+                .HasForeignKey(d => d.RegistrationId)
+                .HasConstraintName("FK__Score__Koi_id__6383C8BA");
         });
 
         modelBuilder.Entity<Show>(entity =>

@@ -13,7 +13,7 @@ public partial class Variety
 
     public bool Status { get; set; }
 
-    public virtual ICollection<KoiRegistration> KoiRegistrations { get; set; } = new List<KoiRegistration>();
+    public virtual ICollection<Koi> Kois { get; set; } = new List<Koi>();
 
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
 }

@@ -15,9 +15,9 @@ public partial class Group
 
     public decimal? SizeMax { get; set; }
 
-    public virtual ICollection<Criterion> Criteria { get; set; } = new List<Criterion>();
+    public bool? Status { get; set; }
 
-    public virtual ICollection<KoiRegistration> KoiRegistrations { get; set; } = new List<KoiRegistration>();
+    public virtual ICollection<Criterion> Criteria { get; set; } = new List<Criterion>();
 
     public virtual Show? Show { get; set; }
 

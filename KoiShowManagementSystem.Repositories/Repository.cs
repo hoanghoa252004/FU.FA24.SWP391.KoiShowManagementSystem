@@ -12,8 +12,8 @@ namespace KoiShowManagementSystem.Repositories
         private KoiShowManagementSystemContext _context;
         private IUserRepository? _users;
         private IRoleRepository? _role;
-        private IKoiRegistrationRepository? _koiRegistration;
-        private IShowRepository? _koiShow;
+        private IKoiRepository? _koiRegistration;
+        private IShowRepository? _Show;
         public Repository(KoiShowManagementSystemContext context)
         {
             _context = context;
@@ -41,13 +41,13 @@ namespace KoiShowManagementSystem.Repositories
                 return this._role;
             }
         }
-        public IKoiRegistrationRepository KoiRegistrations
+        public IKoiRepository KoiRegistrations
         {
             get
             {
                 if (this._koiRegistration == null)
                 {
-                    this._koiRegistration = new KoiRegistrationRepository(_context);
+                    this._koiRegistration = new KoiRepository(_context);
                 }
                 return this._koiRegistration;
             }
@@ -56,11 +56,11 @@ namespace KoiShowManagementSystem.Repositories
         {
             get
             {
-                if (this._koiShow == null)
+                if (this._Show == null)
                 {
-                    this._koiShow = new ShowRepository(_context);
+                    this._Show = new ShowRepository(_context);
                 }
-                return this._koiShow;
+                return this._Show;
             }
         }
     }

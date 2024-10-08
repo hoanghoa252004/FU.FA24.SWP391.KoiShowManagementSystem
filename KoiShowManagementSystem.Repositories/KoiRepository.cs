@@ -11,30 +11,32 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public class KoiRegistrationRepository : IKoiRegistrationRepository
+    public class KoiRepository : IKoiRepository
     {
         private KoiShowManagementSystemContext _context;
-        public KoiRegistrationRepository(KoiShowManagementSystemContext context)
+        public KoiRepository(KoiShowManagementSystemContext context)
         {
             this._context = context;
         }
 
-        public async Task<IEnumerable<KoiRegistModel>> GetKoiRegistrationByUserID(int id)
+        public async Task<IEnumerable<RegistrationModel>> GetKoiByUserID(int id)
         {
             // Lấy đơn của User:
-            IEnumerable<KoiRegistration> koiRegistrations = (await _context.Set<KoiRegistration>().ToListAsync())
+            IEnumerable<Koi> kois = (await _context.Set<Koi>().ToListAsync())
                         .Where(koiRegist => koiRegist.UserId == id);
             // Join lấy thông tin:
+            IEnumerable<Registration> registrations = await _context.Set<Registration>().ToListAsync();
             IEnumerable<Show> shows = await _context.Set<Show>().ToListAsync();
             IEnumerable<Group> groups = await _context.Set<Group>().ToListAsync();
-            IEnumerable<Illustration> illustrations = await _context.Set<Illustration>().ToListAsync();
+            IEnumerable<Media> media = await _context.Set<Media>().ToListAsync();
             IEnumerable<Variety> varieties = await _context.Set<Variety>().ToListAsync();
-            IEnumerable<KoiRegistModel> result = from koi in koiRegistrations
+            IEnumerable<RegistrationModel> result = from koi in kois
                          join var in varieties on koi.VarietyId equals var.Id
-                         join illus in illustrations on koi.Id equals illus.KoiId
-                         join grp in groups on koi.GroupId equals grp.Id
+                         join regist in registrations on  koi.Id equals regist.KoiId
+                         join med in media on regist.Id equals med.RegistrationId
+                         join grp in groups on regist.GroupId equals grp.Id
                          join show in shows on grp.ShowId equals show.Id
-                         select new KoiRegistModel()
+                         select new RegistrationModel()
                          {
                             Id = koi.Id,
                             Name = koi.Name,
@@ -44,13 +46,15 @@ namespace KoiShowManagementSystem.Repositories
                             ShowId = show.Id,
                             Show = show.Title,
                             Group = grp.Name,
-                            CreateDate = koi.CreateDate,
-                            Rank = koi.Rank,
-                            TotalScore = koi.TotalScore,
-                            Status = koi.Status,
-                            IsBestVote = koi.IsBestVote,
-                            ImageUrl = illus.ImageUrl,
-                            VideoUrl = illus.VideoUrl,
+                            CreateDate = regist.CreateDate,
+                            Rank = regist.Rank,
+                            TotalScore = regist.TotalScore,
+                            Status = regist.Status,
+                            IsBestVote = regist.IsBestVote,
+                            Image1 = med.Image1,
+                            Image2 = med.Image1,
+                            Image3 = med.Image1,
+                            Video = med.Video,
                          };
             return result;
         }
