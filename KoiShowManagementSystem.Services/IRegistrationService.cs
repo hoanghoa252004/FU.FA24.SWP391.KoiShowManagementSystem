@@ -10,5 +10,6 @@ namespace KoiShowManagementSystem.Services
     public interface IRegistrationService
     {
         Task<IEnumerable<RegistrationModel>> GetMyKoiRegistration(string status);
+        Task<RegistrationFormModel?> GetRegistrationForm(int showId);
     }
 }

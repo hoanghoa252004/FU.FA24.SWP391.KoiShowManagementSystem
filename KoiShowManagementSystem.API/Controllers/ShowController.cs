@@ -7,11 +7,11 @@ namespace KoiShowManagementSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class KoiShowController : ControllerBase
+    public class ShowController : ControllerBase
     {
         private readonly IShowService _koiShowService;
 
-        public KoiShowController(IShowService koiShowService)
+        public ShowController(IShowService koiShowService)
         {
             _koiShowService = koiShowService;
         }
@@ -158,26 +158,6 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        [HttpGet("registration-form")]
-        public async Task<IActionResult> GetRegistrationForm(int showId)
-        {
-            try
-            {
-                var result = await _koiShowService.GetRegistrationForm(showId);
-                return Ok(new ApiResponse()
-                {
-                    Message = "Get Registration Form Successfully",
-                    Payload = result
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse()
-                {
-                    Message = ex.Message,
-                });
-
-            }
-        }
+        
     }
 }
