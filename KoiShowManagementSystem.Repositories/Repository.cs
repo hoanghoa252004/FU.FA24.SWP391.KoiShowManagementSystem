@@ -15,6 +15,7 @@ namespace KoiShowManagementSystem.Repositories
         private IRoleRepository? _role;
         private IRegistrationRepository? _registration;
         private IShowRepository? _show;
+        private IKoiRepository? _koi;
         private S3UploadService _uploadService;
         public Repository(KoiShowManagementSystemContext context, S3UploadService _uploadService)
         {
@@ -31,6 +32,17 @@ namespace KoiShowManagementSystem.Repositories
                     this._users = new UserRepository(_context);
                 }
                 return this._users;
+            }
+        }
+        public IKoiRepository Koi
+        {
+            get
+            {
+                if (this._koi == null)
+                {
+                    this._koi = new KoiRepository(_context);
+                }
+                return this._koi;
             }
         }
         public IRoleRepository Roles

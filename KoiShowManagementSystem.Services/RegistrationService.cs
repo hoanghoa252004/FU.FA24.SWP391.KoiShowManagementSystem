@@ -15,7 +15,7 @@ namespace KoiShowManagementSystem.Services
     {
         private readonly Repository _repository;
         private readonly JwtServices _jwtServices;
-        public RegistrationService(JwtServices jwtServices, Repository repository, S3UploadService s3Service)
+        public RegistrationService(JwtServices jwtServices, Repository repository)
         {
             _jwtServices = jwtServices;
             _repository = repository;

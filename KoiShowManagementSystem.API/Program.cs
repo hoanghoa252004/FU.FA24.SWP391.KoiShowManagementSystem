@@ -48,6 +48,8 @@ namespace KoiShowManagementSystem.API
             builder.Services.AddScoped<S3UploadService>();
             builder.Services.AddScoped<JwtServices>();
             builder.Services.AddScoped<Repository>();
+            builder.Services.AddScoped<IShowService, ShowService>();
+            builder.Services.AddScoped<IKoiService, KoiService>();
             builder.Services.AddScoped<IUserService,UserService>();
             builder.Services.AddScoped<IRegistrationService, RegistrationService>();
             //builder.Services.AddScoped<IShowService, ShowService>();
