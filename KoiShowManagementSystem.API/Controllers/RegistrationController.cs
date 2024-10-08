@@ -8,10 +8,10 @@ namespace KoiShowManagementSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class KoiRegistrationController : ControllerBase
+    public class RegistrationController : ControllerBase
     {
-        private readonly IKoiRegistrationService _koiRegistrationService;
-        public KoiRegistrationController(IKoiRegistrationService koiRegistrationService)
+        private readonly IRegistrationService _koiRegistrationService;
+        public RegistrationController(IRegistrationService koiRegistrationService)
         {
             _koiRegistrationService = koiRegistrationService;
         }

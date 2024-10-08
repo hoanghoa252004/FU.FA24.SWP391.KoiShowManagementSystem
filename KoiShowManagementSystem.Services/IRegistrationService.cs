@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Services
 {
-    public interface IKoiRegistrationService
+    public interface IRegistrationService
     {
         Task<IEnumerable<RegistrationModel>> GetMyKoiRegistration(string status);
     }

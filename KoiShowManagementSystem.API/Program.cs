@@ -48,7 +48,7 @@ namespace KoiShowManagementSystem.API
             builder.Services.AddScoped<JwtServices>();
             builder.Services.AddScoped<Repository>();
             builder.Services.AddScoped<IUserService,UserService>();
-            builder.Services.AddScoped<IKoiRegistrationService, KoiRegistrationService>();
+            builder.Services.AddScoped<IRegistrationService, RegistrationService>();
             //builder.Services.AddScoped<IShowService, ShowService>();
 
             // Thêm Schema & Params dùng validate Token:
