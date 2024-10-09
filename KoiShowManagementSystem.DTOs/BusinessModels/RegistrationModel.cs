@@ -25,5 +25,7 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public string? Image2 { get; set; }
         public string? Image3 { get; set; }
         public string? Video { get; set; }
+        public int KoiID { get; set; }
+        public string? GroupName { get; set; }
     }
 }

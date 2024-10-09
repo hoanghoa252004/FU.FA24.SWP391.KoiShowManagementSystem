@@ -17,90 +17,90 @@ namespace KoiShowManagementSystem.API.Controllers
             _koiShowService = koiShowService;
         }
 
-        //[HttpGet("search")]
-        //public async Task<IActionResult> SearchShow(int pageIndex = 1, int pageSize = 4, string keyword = "")
-        //{
-        //    if (pageIndex < 1 || pageSize < 1)
-        //    {
-        //        return BadRequest(new ApiResponse { Message = "Page index or Page size must be greater than or equal to 1." });
-        //    }
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchShow(int pageIndex = 1, int pageSize = 4, string keyword = "")
+        {
+            if (pageIndex < 1 || pageSize < 1)
+            {
+                return BadRequest(new ApiResponse { Message = "Page index or Page size must be greater than or equal to 1." });
+            }
 
-        //    var result = await _koiShowService.SearchShow(pageIndex, pageSize, keyword);
-        //    return Ok(new ApiResponse
-        //    {
-        //        Message = "Success",
-        //        Payload = new { result.TotalItems, result.Shows }
-        //    });
-        //}
+            var result = await _koiShowService.SearchShow(pageIndex, pageSize, keyword);
+            return Ok(new ApiResponse
+            {
+                Message = "Success",
+                Payload = new { result.TotalItems, result.Shows }
+            });
+        }
 
-        //[HttpGet("show-detail")]
-        //public async Task<IActionResult> ShowDetail(int showID)
-        //{
-        //    if (showID <= 0)
-        //    {
-        //        return BadRequest(new ApiResponse { Message = "Invalid show ID." });
-        //    }
+        [HttpGet("show-detail")]
+        public async Task<IActionResult> ShowDetail(int showID)
+        {
+            if (showID <= 0)
+            {
+                return BadRequest(new ApiResponse { Message = "Invalid show ID." });
+            }
 
-        //    var result = await _koiShowService.GetShowDetails(showID);
-        //    if (result != null)
-        //    {
-        //        return Ok(new ApiResponse
-        //    {
-        //        Message = "Success",
-        //        Payload = result
-        //    });
-        //    }
+            var result = await _koiShowService.GetShowDetails(showID);
+            if (result != null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Message = "Success",
+                    Payload = result
+                });
+            }
 
-        //    return NotFound(new ApiResponse { Message = "Show not found." });
-        //}
+            return NotFound(new ApiResponse { Message = "Show not found." });
+        }
 
-        //[HttpGet("koi-detail")]
-        //public async Task<IActionResult> KoiDetail(int koiId)
-        //{
-        //    if (koiId <= 0)
-        //    {
-        //        return BadRequest(new ApiResponse { Message = "Invalid Koi ID." });
-        //    }
+        [HttpGet("koi-detail")]
+        public async Task<IActionResult> KoiDetail(int koiId)
+        {
+            if (koiId <= 0)
+            {
+                return BadRequest(new ApiResponse { Message = "Invalid Koi ID." });
+            }
 
-        //    var result = await _koiShowService.GetKoiDetail(koiId);
-        //    if (result != null)
-        //    {
-        //        return Ok(new ApiResponse
-        //        {
-        //            Message = "Success",
-        //            Payload = result
-        //        });
-        //    }
+            var result = await _koiShowService.GetKoiDetail(koiId);
+            if (result != null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Message = "Success",
+                    Payload = result
+                });
+            }
 
-        //    return NotFound(new ApiResponse { Message = "Koi not found." });
-        //}
+            return NotFound(new ApiResponse { Message = "Koi not found." });
+        }
 
-        //[HttpGet("koibyshow")]
-        //public async Task<IActionResult> KoiByShow(int pageIndex, int pageSize, int showID)
-        //{
-        //    if (showID <= 0)
-        //    {
-        //        return BadRequest(new ApiResponse { Message = "Invalid show ID." });
-        //    }
+        [HttpGet("koibyshow")]
+        public async Task<IActionResult> KoiByShow(int pageIndex, int pageSize, int showID)
+        {
+            if (showID <= 0)
+            {
+                return BadRequest(new ApiResponse { Message = "Invalid show ID." });
+            }
 
-        //    if (pageIndex < 1 || pageSize < 1)
-        //    {
-        //        return BadRequest(new ApiResponse { Message = "Page index or Page size must be greater than or equal to 1." });
-        //    }
+            if (pageIndex < 1 || pageSize < 1)
+            {
+                return BadRequest(new ApiResponse { Message = "Page index or Page size must be greater than or equal to 1." });
+            }
 
-        //    var result = await _koiShowService.GetKoiByShowId(pageIndex, pageSize, showID);
+            var result = await _koiShowService.GetKoiByShowId(pageIndex, pageSize, showID);
 
-        //    return Ok(new
-        //    {
-        //        Message = "Success",
-        //        Payload = new
-        //        {
-        //            TotalItems = result.TotalItems,
-        //            Kois = result.Kois
-        //        }
-        //    });
+            return Ok(new
+            {
+                Message = "Success",
+                Payload = new
+                {
+                    TotalItems = result.TotalItems,
+                    Kois = result.Kois
+                }
+            });
+        }
 
-        //}
         //// method get the closest show return showDTO 
         //[HttpGet]
         //[Route("closest-show")]
