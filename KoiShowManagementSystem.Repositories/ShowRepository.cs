@@ -296,6 +296,13 @@ public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int page
             return reuslt;
         }
 
+       
+
+        Task<bool> IShowRepository.EditAShow(ShowDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+
 
 
 

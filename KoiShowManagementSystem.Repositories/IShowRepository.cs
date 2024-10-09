@@ -18,5 +18,8 @@ namespace KoiShowManagementSystem.Repositories
         Task<List<ShowModel>> GetClosestShowAsync();
         Task<int> AddNewShow(ShowDTO dto);
         Task<List<VarietyModel>> GetAllVarietiesAsync();
+
+        Task<bool> EditAShow(ShowDTO dto);
+
     }
 }
