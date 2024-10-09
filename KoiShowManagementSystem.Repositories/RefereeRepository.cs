@@ -69,7 +69,7 @@ namespace KoiShowManagementSystem.Repositories
             {
                 // Fetch the registration for the given Koi
                 var registration = await _context.Registrations
-                    .FirstOrDefaultAsync(r => r.KoiId == koiId);
+                    .Where(r => r.KoiId == koiId).FirstOrDefaultAsync();
 
                 if (registration == null)
                 {

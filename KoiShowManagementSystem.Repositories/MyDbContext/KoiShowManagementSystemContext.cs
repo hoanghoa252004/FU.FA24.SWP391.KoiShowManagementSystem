@@ -237,7 +237,7 @@ public partial class KoiShowManagementSystemContext : DbContext
 
             entity.Property(e => e.CriteriaId).HasColumnName("Criteria_id");
             entity.Property(e => e.RefereeDetailId).HasColumnName("Referee_detail_id");
-            entity.Property(e => e.Id).HasColumnName("Registration_Id");
+            entity.Property(e => e.RegistrationId).HasColumnName("Registration_Id");
             entity.Property(e => e.Score1)
                 .HasColumnType("decimal(2, 1)")
                 .HasColumnName("Score");
