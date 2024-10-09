@@ -108,6 +108,9 @@ public partial class KoiShowManagementSystemContext : DbContext
 
             entity.ToTable("Koi");
 
+            entity.Property(e => e.Image)
+                .HasColumnType("text")
+                .HasColumnName("Image_1");
             entity.Property(e => e.Description).HasMaxLength(150);
             entity.Property(e => e.Name).HasMaxLength(50);
             entity.Property(e => e.Size).HasColumnType("decimal(5, 2)");

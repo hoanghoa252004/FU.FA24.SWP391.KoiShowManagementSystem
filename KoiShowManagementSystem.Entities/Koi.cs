@@ -13,6 +13,8 @@ public partial class Koi
 
     public decimal Size { get; set; }
 
+    public string? Image { get; set; }
+
     public int UserId { get; set; }
 
     public int VarietyId { get; set; }
