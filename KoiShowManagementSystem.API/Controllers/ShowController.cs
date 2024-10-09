@@ -55,7 +55,7 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         [HttpGet("koi-detail")]
-        public async Task<IActionResult> KoiDetail(int koiId)
+        public async Task<IActionResult> KoiDetailInShow(int koiId)
         {
             if (koiId <= 0)
             {
