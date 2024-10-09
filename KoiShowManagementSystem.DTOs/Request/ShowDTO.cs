@@ -9,7 +9,10 @@ using System.Threading.Tasks;
 namespace KoiShowManagementSystem.DTOs.Request
 {
     public class ShowDTO
+
     {
+        [Required]
+        public int Id { get; set; }
         [Required]
         public string Title { get; set; }
         [Required]

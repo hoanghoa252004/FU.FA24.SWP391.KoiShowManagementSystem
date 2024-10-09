@@ -252,6 +252,20 @@ public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int page
 
         public async Task<int> AddNewShow(ShowDTO dto)
         {
+            if (dto == null)
+            {
+                throw new ArgumentNullException("ShowDTO is null");
+            }
+            if (dto.RegisterStartDate > dto.RegisterEndDate)
+            {
+                throw new ArgumentException("Start date cannot be greater than end date");
+            }
+
+            if (dto.ScoreStartDate > dto.ScoreEndDate)
+            {
+                throw new ArgumentException("Start date cannot be greater than end date");
+            }
+
             int result = 0;
             Show show = new()
             {
@@ -262,7 +276,7 @@ public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int page
                 RegisterEndDate = dto.RegisterEndDate,
                 ScoreEndDate = dto.ScoreEndDate,
                 Banner = await _s3Service.UploadShowBannerImage(dto.Banner),
-                Status = "up comming",
+                Status = "draft",
                 Groups = dto.Groups.Select(g => new Group
                 {
                     Name = g.Name,
@@ -296,13 +310,131 @@ public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int page
             return reuslt;
         }
 
-       
-
-        Task<bool> IShowRepository.EditAShow(ShowDTO dto)
+        public async Task<bool> ChangeShowStatus(string status, int showId)
         {
-            throw new NotImplementedException();
+            string[] validStatus = { "draft", "up comming", "on going", "finished" };
+
+            if (!validStatus.Contains(status))
+            {
+                throw new ArgumentException("Invalid status");
+            }
+            var show = _context.Shows.Find(showId);
+            if (show == null)
+            {
+                throw new Exception("Show not found");
+            }
+            show.Status = status;
+            int result = await _context.SaveChangesAsync();
+            return result > 0;
         }
 
+        public Task<List<ShowModel>> GetAllShow()
+        {
+            return _context.Shows.Select(s => new ShowModel
+            {
+                ShowId = s.Id,
+                ShowTitle = s.Title,
+                ShowBanner = s.Banner,
+                ShowDesc = s.Description,
+                ShowStatus = s.Status
+            }).ToListAsync();
+        }
+
+
+
+
+
+
+
+
+
+
+
+        //async Task<bool> EditAShow(ShowDTO dto)
+        //       {
+        //           var show = await _context.Shows.FindAsync(dto.Id);
+
+        //           if (show == null)
+        //           {
+        //               throw new Exception("Show not found");
+        //           }
+        //            if (show.Status == "on going")
+        //           {
+        //               throw new Exception("Show is on going");
+        //           }
+
+
+        //           if (dto.RegisterStartDate > dto.RegisterEndDate)
+        //           {
+        //               throw new ArgumentException("Start date cannot be greater than end date");
+        //           }
+
+        //           if (dto.ScoreStartDate > dto.ScoreEndDate)
+        //           {
+        //               throw new ArgumentException("Start date cannot be greater than end date");
+        //           }
+
+
+        //           show.Title = dto.Title;
+        //           show.Description = dto.Description;
+        //           show.ScoreStartDate = dto.ScoreStartDate;
+        //           show.RegisterStartDate = dto.RegisterStartDate;
+        //           show.RegisterEndDate = dto.RegisterEndDate;
+        //           show.ScoreEndDate = dto.ScoreEndDate;
+
+        //           // Add new groups
+        //           var newGroups = dto.Groups.Select(g => new Group
+        //           {
+        //               Name = g.Name,
+        //               SizeMin = g.MinSize,
+        //               SizeMax = g.MaxSize,
+        //               Varieties = _context.Varieties.Where(v => g.Varieties.Contains(v.Id)).ToList(),
+        //               Criteria = g.Criterias.Select(c => new Criterion
+        //               {
+        //                   Name = c.Name,
+        //                   Percentage = c.Percentage,
+        //                   Description = c.Description,
+        //                   Status = true
+        //               }).ToList()
+        //           }).ToList();
+
+        //           _context.Groups.AddRange(newGroups);
+
+        //           // Remove old groups
+        //           var oldGroups = _context.Groups.Where(g => g.ShowId == show.Id && !newGroups.Any(ng => ng.Id == g.Id)).ToList();
+        //           _context.Groups.RemoveRange(oldGroups);
+
+        //           // Update existing groups
+        //           foreach (var group in show.Groups)
+        //           {
+        //               var updatedGroup = dto.Groups.FirstOrDefault(g => g.Id == group.Id);
+        //               if (updatedGroup != null)
+        //               {
+        //                   group.Name = updatedGroup.Name;
+        //                   group.SizeMin = updatedGroup.MinSize;
+        //                   group.SizeMax = updatedGroup.MaxSize;
+        //                   group.Varieties = _context.Varieties.Where(v => updatedGroup.Varieties.Contains(v.Id)).ToList();
+
+        //                   // Add new criteria
+        //                   var newCriterias = updatedGroup.Criterias.Where(c => !group.Criteria.Any(gc => gc.Id == c.Id)).Select(c => new Criterion
+        //                   {
+        //                       Name = c.Name,
+        //                       Percentage = c.Percentage,
+        //                       Description = c.Description,
+        //                       Status = true
+        //                   }).ToList();
+        //                   group.Criteria.AddRange(newCriterias);
+
+        //                   // Remove old criteria
+        //                   var oldCriterias = group.Criteria.Where(c => !updatedGroup.Criterias.Any(uc => uc.Id == c.Id)).ToList();
+        //                   group.Criteria.RemoveAll(c => oldCriterias.Contains(c));
+        //               }
+        //           }
+
+        //           await _context.SaveChangesAsync();
+
+        //           return true;
+        //       }
 
 
 
