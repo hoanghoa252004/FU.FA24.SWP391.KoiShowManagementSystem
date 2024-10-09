@@ -1,4 +1,5 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace KoiShowManagementSystem.Repositories
         //Task<KoiModel?> GetKoiDetailAsync(int koiId);
         //Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId);
         Task<List<ShowModel>> GetClosestShowAsync();
-        
+        Task<int> AddNewShow(ShowDTO dto);
+        Task<List<VarietyModel>> GetAllVarietiesAsync();
     }
 }

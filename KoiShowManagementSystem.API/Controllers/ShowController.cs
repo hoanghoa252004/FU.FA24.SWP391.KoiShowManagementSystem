@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.DTOs.Response;
+﻿using KoiShowManagementSystem.DTOs.Request;
+using KoiShowManagementSystem.DTOs.Response;
 using KoiShowManagementSystem.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -158,6 +159,28 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        
+
+        // implement create a show
+        [HttpPost("create-show")]
+        public async Task<IActionResult> CreateShow([FromForm] ShowDTO show)
+        {
+
+            var result = await _koiShowService.CreateAShow(show);
+            if (result != 0)
+            {
+                return Ok(new ApiResponse { Message = "Success" , Payload = result}); 
+            }
+
+            return BadRequest(new ApiResponse { Message = "Failed to create show." });
+        }
+
+        // implement get all varieties
+        [HttpGet("get-all-varieties")]
+        public async Task<IActionResult> GetAllVarieties()
+        {
+            var result = await _koiShowService.GetAllVarieties();
+            return Ok(new ApiResponse { Message = "Success", Payload = result });
+        }
+
     }
 }
