@@ -1,4 +1,5 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories;
 using KoiShowManagementSystem.Repositories.Helper;
@@ -76,6 +77,35 @@ namespace KoiShowManagementSystem.Services
             {
                 throw ex;
             }
+        }
+
+
+
+        public async Task<int> CreateAShow(ShowDTO dto)
+        {
+            // check if show dto null
+            if (dto == null)
+            {
+                throw new ArgumentNullException("ShowDTO is null");
+            }
+            //check if startdate > enddate
+            if (dto.RegisterStartDate > dto.RegisterEndDate)
+            {
+                throw new ArgumentException("Start date cannot be greater than end date");
+            }
+
+            // check if registration startdate > registration enddate
+            if (dto.ScoreStartDate > dto.ScoreEndDate)
+            {
+                throw new ArgumentException("Start date cannot be greater than end date");
+            }
+            return await _repository.Show.AddNewShow(dto);
+        }
+
+        public async Task<List<VarietyModel>> GetAllVarieties()
+        {
+            var result = await _repository.Show.GetAllVarietiesAsync();
+            return result;
         }
     }
 }

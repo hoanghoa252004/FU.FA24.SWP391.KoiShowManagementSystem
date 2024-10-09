@@ -1,5 +1,7 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.Entities;
+using KoiShowManagementSystem.Repositories.Helper;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,12 +16,14 @@ namespace KoiShowManagementSystem.Repositories
     public class ShowRepository : IShowRepository
     {
         private KoiShowManagementSystemContext _context;
-        public ShowRepository(KoiShowManagementSystemContext context)
+        private readonly S3UploadService _s3Service;
+        public ShowRepository(KoiShowManagementSystemContext context, S3UploadService s3Service)
         {
             this._context = context;
+            this._s3Service = s3Service;
         }
 
-        
+
 
         public Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId)
         {
@@ -245,6 +249,53 @@ public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int page
             }
             return shows;
         }
+
+        public async Task<int> AddNewShow(ShowDTO dto)
+        {
+            int result = 0;
+            Show show = new()
+            {
+                Title = dto.Title,
+                Description = dto.Description,
+                ScoreStartDate = dto.ScoreStartDate,
+                RegisterStartDate = dto.RegisterStartDate,
+                RegisterEndDate = dto.RegisterEndDate,
+                ScoreEndDate = dto.ScoreEndDate,
+                Banner = await _s3Service.UploadShowBannerImage(dto.Banner),
+                Status = "up comming",
+                Groups = dto.Groups.Select(g => new Group
+                {
+                    Name = g.Name,
+                    SizeMin = g.MinSize,
+                    SizeMax = g.MaxSize,
+                    Varieties = _context.Varieties.Where(v => g.Varieties.Contains(v.Id)).ToList(),
+                    Criteria = g.Criterias.Select(c => new Criterion
+                    {
+                        Name = c.Name,
+                        Percentage = c.Percentage,
+                        Description = c.Description,
+                        Status = true,
+                    }).ToList()
+                }).ToList()
+            };
+
+            _context.Shows.Add(show);         
+            _context.Groups.AddRange(show.Groups);            
+            _context.Criteria.AddRange(show.Groups.SelectMany(g => g.Criteria));
+            result = await _context.SaveChangesAsync();
+            return result;
+        }
+
+        public async Task<List<VarietyModel>> GetAllVarietiesAsync()
+        {
+            var reuslt =await  _context.Varieties.Select(v => new VarietyModel
+            {
+                VarietyId = v.Id,
+                VarietyName = v.Name
+            }).ToListAsync();
+            return reuslt;
+        }
+
 
 
 

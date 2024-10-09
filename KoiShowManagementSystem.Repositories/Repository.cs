@@ -73,7 +73,7 @@ namespace KoiShowManagementSystem.Repositories
             {
                 if (this._show == null)
                 {
-                    this._show = new ShowRepository(_context);
+                    this._show = new ShowRepository(_context, _uploadService);
                 }
                 return this._show;
             }
