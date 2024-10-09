@@ -25,29 +25,146 @@ namespace KoiShowManagementSystem.Repositories
 
 
 
-        public Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId)
+        public async Task<(int TotalItems, List<RegistrationModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId)
         {
-            throw new NotImplementedException();
+            var query = _context.Registrations
+                .Include(r => r.Koi) // Include Koi
+                .Include(r => r.Group)
+                .Include(r => r.Group.Varieties) // Ensure Varieties can be included if needed
+                .Include(r => r.Media) // Include Media for images/videos
+                .Where(r => r.Group.ShowId == showId && r.IsPaid == true); // Filter for IsPaid = true
+
+            var totalItems = await query.CountAsync();
+
+            var koiList = await query
+                .Select(r => new RegistrationModel
+                {
+                    KoiID = r.Koi.Id,
+                    Name = r.Koi.Name,
+                    Image1 = r.Media.FirstOrDefault() != null ? r.Media.FirstOrDefault().Image1 : null,
+                    Variety = r.Koi.Variety != null ? r.Koi.Variety.Name : "Unknown",
+                    Size = r.Koi.Size,
+                    TotalScore = r.TotalScore,
+                    IsBestVote = r.IsBestVote,
+                    Status = r.Status,
+                    Rank = r.Rank,
+                    GroupName = r.Group!.Name ?? "Unknown Group"
+                })
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (totalItems, koiList);
         }
 
-        public Task<KoiModel?> GetKoiDetailAsync(int koiId)
+
+        public async Task<RegistrationModel?> GetKoiDetailAsync(int KoiId)
         {
-            throw new NotImplementedException();
+            var result = await (from reg in _context.Registrations
+                                join koi in _context.Kois on reg.KoiId equals koi.Id into koiGroup
+                                from koi in koiGroup.DefaultIfEmpty()
+                                join user in _context.Users on koi.UserId equals user.Id into users
+                                from user in users.DefaultIfEmpty()
+                                join g in _context.Groups on reg.GroupId equals g.Id into groups
+                                from g in groups.DefaultIfEmpty()
+                                join s in _context.Shows on g.ShowId equals s.Id into shows
+                                from s in shows.DefaultIfEmpty()
+                                join v in _context.Varieties on koi.VarietyId equals v.Id into varieties
+                                from v in varieties.DefaultIfEmpty()
+                                where koi.Id == KoiId 
+                                //&& ((koi.Size >= g.SizeMin && koi.Size <= g.SizeMax) || g == null)
+                                select new RegistrationModel
+                                {
+                                    KoiID = koi.Id,
+                                    Name = koi.Name,
+                                    Image1 = _context.Media.Where(m => m.RegistrationId == reg.Id).Select(m => m.Image1).FirstOrDefault(),
+                                    Video = _context.Media.Where(m => m.RegistrationId == reg.Id).Select(m => m.Video).FirstOrDefault(),
+                                    Variety = v != null ? v.Name : "Unknown Variety",
+                                    Description = koi.Description,
+                                    Size = koi.Size,
+                                    TotalScore = reg.TotalScore,
+                                    IsBestVote = reg.IsBestVote,
+                                    Status = reg.Status,
+                                    Rank = reg.Rank
+                                }).FirstOrDefaultAsync();
+
+            return result;
         }
+
+
 
         public Task<RegistrationFormModel?> GetRegistrationFormAsync(int showId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ShowModel?> GetShowDetailsAsync(int showId)
+        public async Task<ShowModel?> GetShowDetailsAsync(int showId)
         {
-            throw new NotImplementedException();
+            var result = await (from sho in _context.Shows
+                                where sho.Id == showId
+                                select new ShowModel
+                                {
+                                    ShowId = sho.Id,
+                                    ShowTitle = sho.Title,
+                                    ShowBanner = sho.Banner ?? string.Empty,
+                                    ShowDesc = sho.Description ?? string.Empty,
+                                    StartDate = sho.ScoreStartDate,
+                                    RegistrationStartDate = sho.RegisterStartDate,
+                                    RegistrationCloseDate = sho.RegisterEndDate,
+                                    ShowStatus = sho.Status ?? string.Empty,
+                                    EndDate = sho.ScoreEndDate,
+
+                                    ShowGroups = (from gro in _context.Groups
+                                                  where gro.ShowId == sho.Id
+                                                  select new GroupModel
+                                                  {
+                                                      GroupId = gro.Id,
+                                                      GroupName = gro.Name ?? string.Empty,
+                                                      KoiDetails = (from reg in _context.Registrations
+                                                                    where reg.GroupId == gro.Id
+                                                                    select new RegistrationModel
+                                                                    {
+                                                                        KoiID = reg.KoiId ?? 0,
+                                                                        Name = reg.Koi != null ? reg.Koi.Name : "Unknown",
+                                                                        Rank = reg.Rank,
+                                                                        IsBestVote = reg.IsBestVote
+                                                                    }).ToList()
+                                                  }).ToList(),
+
+                                    ShowReferee = (from refDetail in _context.RefereeDetails
+                                                   join usr in _context.Users on refDetail.UserId equals usr.Id into referees
+                                                   from usr in referees.DefaultIfEmpty()
+                                                   where refDetail.ShowId == sho.Id
+                                                   select new RefereeModel
+                                                   {
+                                                       RefereeId = refDetail.Id,
+                                                       RefereeName = usr != null ? usr.Name : "No Referee"
+                                                   }).ToList()
+                                }).FirstOrDefaultAsync();
+
+            return result;
         }
 
-        public Task<(int TotalItems, List<ShowModel>)> SearchShowAsync(int pageIndex, int pageSize, string keyword)
+
+        public async Task<(int TotalItems, List<ShowModel>)> SearchShowAsync(int pageIndex, int pageSize, string keyword)
         {
-            throw new NotImplementedException();
+            var query = _context.Shows.Where(s => s.Title.Contains(keyword));
+
+            var totalItems = await query.CountAsync();
+
+            var shows = await query
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .Select(s => new ShowModel
+                {
+                    ShowId = s.Id,
+                    ShowTitle = s.Title,
+                    ShowBanner = s.Banner,
+                    ShowStatus = s.Status
+
+                }).ToListAsync();
+
+            return (totalItems, shows);
         }
 
 

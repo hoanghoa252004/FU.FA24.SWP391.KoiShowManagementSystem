@@ -15,5 +15,6 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public decimal? SizeMax { get; set; }
         public string? Unit { get; set; }
         public List<RegistrationModel>? KoiDetails { get; set; }
+        //public List<KoiModel>? KoiDetailsInShow { get; set; }
     }
 }
