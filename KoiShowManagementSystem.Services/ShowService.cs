@@ -18,7 +18,6 @@ namespace KoiShowManagementSystem.Services
     {
 
         private readonly Repository _repository;
-        private readonly S3UploadService _s3Service;
 
         public ShowService(Repository repository, JwtServices jwtServices)
         {
@@ -83,22 +82,7 @@ namespace KoiShowManagementSystem.Services
 
         public async Task<int> CreateAShow(ShowDTO dto)
         {
-            // check if show dto null
-            if (dto == null)
-            {
-                throw new ArgumentNullException("ShowDTO is null");
-            }
-            //check if startdate > enddate
-            if (dto.RegisterStartDate > dto.RegisterEndDate)
-            {
-                throw new ArgumentException("Start date cannot be greater than end date");
-            }
-
-            // check if registration startdate > registration enddate
-            if (dto.ScoreStartDate > dto.ScoreEndDate)
-            {
-                throw new ArgumentException("Start date cannot be greater than end date");
-            }
+            
             return await _repository.Show.AddNewShow(dto);
         }
 

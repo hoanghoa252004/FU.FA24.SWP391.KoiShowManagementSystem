@@ -25,6 +25,7 @@ namespace KoiShowManagementSystem.Repositories
                 KoiName = k.Name,
                 KoiVariety = k.Variety.Name,
                 KoiSize = k.Size,
+                KoiImg = k.Image,
 
             }).ToListAsync();
         }
@@ -36,6 +37,7 @@ namespace KoiShowManagementSystem.Repositories
                 KoiID = k.Id,
                 KoiName = k.Name,
                 KoiVariety = k.Variety.Name,
+                KoiImg = k.Image,
                 KoiSize = k.Size,
                 KoiDesc = k.Description,
                 KoiStatus = k.Status,

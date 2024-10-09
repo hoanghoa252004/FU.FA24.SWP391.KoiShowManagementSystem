@@ -1,6 +1,7 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
 using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.Entities;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,13 @@ namespace KoiShowManagementSystem.Repositories
         //Task<KoiModel?> GetKoiDetailAsync(int koiId);
         //Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId);
         Task<List<ShowModel>> GetClosestShowAsync();
-        Task<int> AddNewShow(ShowDTO dto);
+        
         Task<List<VarietyModel>> GetAllVarietiesAsync();
+        Task<List<ShowModel>> GetAllShow();
+        Task<int> AddNewShow(ShowDTO dto);
+        //Task<bool> EditAShow(ShowDTO dto);
+        Task<bool> ChangeShowStatus(string status, int showId);
+
+
     }
 }
