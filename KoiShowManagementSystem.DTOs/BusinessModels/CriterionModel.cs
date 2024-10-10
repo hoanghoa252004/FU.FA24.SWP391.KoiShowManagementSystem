@@ -10,7 +10,7 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
     {
         public int CriterionId { get; set; }
         public string? CriterionName { get; set; }
-        public decimal Percentage { get; set; }
+        public decimal? Percentage { get; set; }
         public string? Description { get; set; }
     }
 }

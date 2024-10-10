@@ -18,6 +18,7 @@ namespace KoiShowManagementSystem.Repositories
         private IKoiRepository? _koi;
         private S3UploadService _uploadService;
         private IRefereeRepository _refereeRepository;
+        private IGroupRepository _groupRepository;
         public Repository(KoiShowManagementSystemContext context, S3UploadService _uploadService)
         {
             _context = context;
@@ -88,6 +89,17 @@ namespace KoiShowManagementSystem.Repositories
                     this._refereeRepository = new RefereeRepository(_context);
                 }
                 return this._refereeRepository;
+            }
+        }
+        public IGroupRepository Groups
+        {
+            get
+            {
+                if (this._groupRepository == null)
+                {
+                    this._groupRepository = new GroupRepository(_context);
+                }
+                return this._groupRepository;
             }
         }
     }

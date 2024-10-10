@@ -16,7 +16,9 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public string? Unit { get; set; }
         public int StatusScored { get; set; }
         public int StatusAccepted { get; set; }
-        public List<RegistrationModel>? KoiDetails { get; set; }
+        public List<RegistrationModel>? Registrations { get; set; }
         //public List<KoiModel>? KoiDetailsInShow { get; set; }
+        public List<CriterionModel>? Criterion { get; set; }
+        public List<VarietyModel>? Varieties { get; set; }
     }
 }

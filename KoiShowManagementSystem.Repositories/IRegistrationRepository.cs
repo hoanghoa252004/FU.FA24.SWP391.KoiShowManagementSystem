@@ -11,7 +11,6 @@ namespace KoiShowManagementSystem.Repositories
     public interface IRegistrationRepository
     {
         Task<IEnumerable<RegistrationModel>> GetRegistrationByUserIdAsync(int id);
-        Task<RegistrationFormModel?> GetRegistrationFormAsync(int showId);
         Task CreateRegistrationAsync(RegistrationFormModel dto);
     }
 }

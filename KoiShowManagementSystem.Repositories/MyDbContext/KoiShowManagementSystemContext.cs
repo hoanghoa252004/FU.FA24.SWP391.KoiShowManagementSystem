@@ -184,7 +184,12 @@ public partial class KoiShowManagementSystemContext : DbContext
             entity.Property(e => e.Note).HasMaxLength(300);
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .HasDefaultValue();
+            entity.Property(e => e.IsPaid)
+                .HasDefaultValue(false);
+            entity.Property(e => e.IsBestVote)
+                .HasDefaultValue(false);
             entity.Property(e => e.TotalScore)
                 .HasColumnType("decimal(5, 2)")
                 .HasColumnName("Total_score");

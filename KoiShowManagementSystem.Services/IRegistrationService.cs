@@ -9,9 +9,7 @@ namespace KoiShowManagementSystem.Services
 {
     public interface IRegistrationService
     {
-        Task<IEnumerable<RegistrationModel>> GetMyKoiRegistration(string status);
-        Task<RegistrationFormModel?> GetRegistrationForm(int showId);
-
+        Task<IEnumerable<RegistrationModel>> GetMyRegistration(string status);
         Task CreateRegistration(RegistrationFormModel dto);
     }
 }
