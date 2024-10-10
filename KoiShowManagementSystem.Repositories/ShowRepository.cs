@@ -30,9 +30,9 @@ namespace KoiShowManagementSystem.Repositories
             var query = _context.Registrations
                 .Include(r => r.Koi) // Include Koi
                 .Include(r => r.Group)
-                .Include(r => r.Group.Varieties) // Ensure Varieties can be included if needed
+                .Include(r => r.Group!.Varieties) // Ensure Varieties can be included if needed
                 .Include(r => r.Media) // Include Media for images/videos
-                .Where(r => r.Group.ShowId == showId && r.IsPaid == true); // Filter for IsPaid = true
+                .Where(r => r.Group!.ShowId == showId && r.IsPaid == true); // Filter for IsPaid = true
 
             var totalItems = await query.CountAsync();
 
@@ -91,13 +91,6 @@ namespace KoiShowManagementSystem.Repositories
             return result;
         }
 
-
-
-        public Task<RegistrationFormModel?> GetRegistrationFormAsync(int showId)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<ShowModel?> GetShowDetailsAsync(int showId)
         {
             var result = await (from sho in _context.Shows
@@ -120,7 +113,7 @@ namespace KoiShowManagementSystem.Repositories
                                                   {
                                                       GroupId = gro.Id,
                                                       GroupName = gro.Name ?? string.Empty,
-                                                      KoiDetails = (from reg in _context.Registrations
+                                                      Registrations = (from reg in _context.Registrations
                                                                     where reg.GroupId == gro.Id
                                                                     select new RegistrationModel
                                                                     {
@@ -128,9 +121,17 @@ namespace KoiShowManagementSystem.Repositories
                                                                         Name = reg.Koi != null ? reg.Koi.Name : "Unknown",
                                                                         Rank = reg.Rank,
                                                                         IsBestVote = reg.IsBestVote
-                                                                    }).ToList()
+                                                                    }).ToList(),
+                                                      Criterion = (from cri in _context.Criteria
+                                                                   where cri.GroupId == gro.Id
+                                                                   select new CriterionModel()
+                                                                   {
+                                                                       CriterionId = cri.Id,
+                                                                       CriterionName = cri.Name,    
+                                                                       Description = cri.Description,
+                                                                       Percentage = cri.Percentage,
+                                                                   }).ToList(),
                                                   }).ToList(),
-
                                     ShowReferee = (from refDetail in _context.RefereeDetails
                                                    join usr in _context.Users on refDetail.UserId equals usr.Id into referees
                                                    from usr in referees.DefaultIfEmpty()
@@ -139,7 +140,7 @@ namespace KoiShowManagementSystem.Repositories
                                                    {
                                                        RefereeId = refDetail.Id,
                                                        RefereeName = usr != null ? usr.Name : "No Referee"
-                                                   }).ToList()
+                                                   }).ToList(),
                                 }).FirstOrDefaultAsync();
 
             return result;
@@ -337,7 +338,7 @@ public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int page
                    {
                        GroupId = g.Id,
                        GroupName = g.Name,
-                       KoiDetails = g.Registrations
+                       Registrations = g.Registrations
                            .Where(r => r.Rank == 1 || r.Rank == 2 || r.Rank == 3 || r.IsBestVote == true)
                            .OrderBy(r=> r.Rank)
                            .Select(r => new RegistrationModel

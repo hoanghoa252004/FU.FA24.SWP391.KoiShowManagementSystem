@@ -26,7 +26,7 @@ namespace KoiShowManagementSystem.API.Controllers
             IActionResult? response = null;
             try
             {
-                var result = await _registrationService.GetMyKoiRegistration(status);
+                var result = await _registrationService.GetMyRegistration(status);
                 if (result != null)
                     response = Ok(new ApiResponse()
                     {
@@ -50,7 +50,7 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        [HttpGet("get-registration-form")]
+        /*[HttpGet("get-registration-form")]
         public async Task<IActionResult> GetRegistrationForm(int showId)
         {
             try
@@ -71,7 +71,10 @@ namespace KoiShowManagementSystem.API.Controllers
 
             }
         }
-
+        */
+        
+        // 2. CREATE REGISTRATION:-----------------------------------------------
+        [Authorize]
         [HttpPost("create-registration")]
         public async Task<IActionResult> CreateRegistration([FromForm]RegistrationFormModel dto)
         {
@@ -80,7 +83,7 @@ namespace KoiShowManagementSystem.API.Controllers
                 await _registrationService.CreateRegistration(dto);
                 return Ok(new ApiResponse()
                 {
-                    Message = "Get Registration Form Successfully",
+                    Message = "Create Registration Successfully",
                 });
             }
             catch (Exception ex)

@@ -30,13 +30,14 @@ namespace KoiShowManagementSystem.Repositories
             }).ToListAsync();
         }
 
-        public async Task<KoiModel?> GetKoiDetail(int koiId)
+        public async Task<KoiModel?> GetKoi(int koiId)
         {
             return await _context.Kois.Where(k => k.Id == koiId).Select(k => new KoiModel
             {
                 KoiID = k.Id,
                 KoiName = k.Name,
                 KoiVariety = k.Variety.Name,
+                VarietyId = k.Variety.Id,
                 KoiImg = k.Image,
                 KoiSize = k.Size,
                 KoiDesc = k.Description,
@@ -44,7 +45,7 @@ namespace KoiShowManagementSystem.Repositories
                 registrations = k.Registrations.Select(r => new RegistrationModel
                 {
                     Id = r.Id,
-                    Show = r.Group.Show.Title,
+                    Show = r.Group!.Show!.Title,
                     Group = r.Group.Name,
                     CreateDate = r.CreateDate,
                     Rank = r.Rank,
@@ -55,8 +56,8 @@ namespace KoiShowManagementSystem.Repositories
                     Image2 = r.Media.Select(m => m.Image2).FirstOrDefault(),
                     Image3 = r.Media.Select(m => m.Image3).FirstOrDefault(),
                     Video = r.Media.Select(m => m.Video).FirstOrDefault()
-                }).ToList()
-
+                }).ToList(),
+                UserId = k.UserId,
             }).FirstOrDefaultAsync();
         }
 

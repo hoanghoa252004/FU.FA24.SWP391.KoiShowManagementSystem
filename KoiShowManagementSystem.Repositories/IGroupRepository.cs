@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public interface IKoiRepository
+    public interface IGroupRepository
     {
-        Task<List<KoiModel>> GetAllKoiByUserId(int userId);
-        Task<KoiModel?> GetKoi(int koiId);
+        Task<List<GroupModel>> GetByShowId(int showId);
     }
 }

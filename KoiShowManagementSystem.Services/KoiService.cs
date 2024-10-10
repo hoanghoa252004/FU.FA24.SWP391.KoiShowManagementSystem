@@ -29,7 +29,7 @@ namespace KoiShowManagementSystem.Services
 
         public Task<KoiModel?> GetKoiDetail(int koiId)
         {
-            var result = _repository.Koi.GetKoiDetail(koiId);
+            var result = _repository.Koi.GetKoi(koiId);
             return result;
         }
     }
