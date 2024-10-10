@@ -446,6 +446,30 @@ public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int page
             return result > 0;
         }
 
+        //để tạm ở đây
+        public async Task<bool> UpdateRegistrationAverageScore(int registrationId)
+        {
+
+            var registration =_context.Registrations
+                                         .Include(r => r.Scores)
+                                         .FirstOrDefault(r => r.Id == registrationId);
+
+            if (registration == null)
+            {
+                throw new ArgumentException($"Registration with Id {registrationId} not found.");
+                
+            }
+            //lấy đơn đó có bao nhiêu điểm
+            var scoreCount = registration.Scores.Count;
+            //Nếu scoreCount đó lớn hơn không thì tính trung bình cộng
+            decimal averageScore = scoreCount > 0 ? registration.Scores.Average(score => score.Score1 ?? 0) : 0;
+
+            registration.TotalScore = averageScore;
+            registration.Status = "Scored";
+
+            int result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
 
 
 
