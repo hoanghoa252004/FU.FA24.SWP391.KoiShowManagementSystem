@@ -10,7 +10,7 @@ namespace KoiShowManagementSystem.Services
     public interface IKoiService
     {
         // get all koi of a user by user id
-        Task<List<KoiModel>> GetKoiByUserId(int userId);
+        Task<List<KoiModel>> GetKoiByUserId();
         // get Koi details by koi id
         Task<KoiModel?> GetKoiDetail(int koiId);
     }
