@@ -48,9 +48,19 @@ namespace KoiShowManagementSystem.Repositories
             await _context.SaveChangesAsync();
         }
 
+        //public Task<List<RegistrationModel>> GetAllRegistrationAsync()
+        //{
+        //    /* 1 registration bao gồm:{
+        //        ... att of registration
+        //        ... 
+        //    }*/
+        //    List<Registration> registrations = from regist in _context.Registrations
+        //                                       ;
+        //}
+
         public async Task<IEnumerable<RegistrationModel>> GetRegistrationByUserIdAsync(int id)
         {
-            // Lấy đơn của User:
+            // Lấy Koi của User:
             IEnumerable<Koi> kois = (await _context.Set<Koi>().ToListAsync())
                         .Where(koiRegist => koiRegist.UserId == id);
             // Join lấy thông tin:
@@ -88,37 +98,71 @@ namespace KoiShowManagementSystem.Repositories
             return result;
         }
 
-        /* Hàm này có dùng không Tín, nếu dùng thì sửa lại rồi qua interface đăng kí thêm hàm này.
-        public async Task<(int TotalItems, IEnumerable<object> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId)
+        public async Task<List<RegistrationModel>> GetRegistrationByShowAsync(int pageIndex, int pageSize, int showId)
         {
-            // Query to get total koi count for pagination purposes
-            var totalItems = await _dbContext.Set<KoiRegistration>()
-                .Where(k => k.Group.ShowId == showId)
-                .CountAsync();
+            var query = _context.Registrations
+                .Include(r => r.Koi) // Include Koi
+                .Include(r => r.Group)
+                .Include(r => r.Group!.Varieties) // Ensure Varieties can be included if needed
+                .Include(r => r.Media) // Include Media for images/videos
+                .Where(r => r.Group!.ShowId == showId && r.IsPaid == true); // Filter for IsPaid = true
 
-            // Query to fetch koi details with pagination and additional fields
-            var koiList = await _dbContext.Set<KoiRegistration>()
-                .Include(k => k.Group)
-                .Include(k => k.Variety)
-                .Include(k => k.Illustration)
-                .Where(k => k.Group.ShowId == showId)
-                .Select(k => new
+
+            var koiList = await query
+                .Select(r => new RegistrationModel
                 {
-                    Id = k.Id,
-                    Name = k.Name,
-                    Size = k.Size,
-                    VarietyName = k.Variety!.Name,
-                    Image = k.Illustration!.ImageUrl,
-                    TotalScore = k.TotalScore,
-                    BestVoted = k.IsBestVote,
-                    Status = k.Status,
-                    Rank = k.Rank
+                    KoiID = r.Koi.Id,
+                    Name = r.Koi.Name,
+                    Image1 = r.Media.FirstOrDefault() != null ? r.Media.FirstOrDefault()!.Image1 : null,
+                    Variety = r.Koi.Variety != null ? r.Koi.Variety.Name : "Unknown",
+                    Size = r.Koi.Size,
+                    TotalScore = r.TotalScore,
+                    IsBestVote = r.IsBestVote,
+                    Status = r.Status,
+                    Rank = r.Rank,
+                    GroupName = r.Group!.Name ?? "Unknown Group",
+                    Id = r.Id,
                 })
-                .Skip((pageIndex - 1) * pageSize)  
-                .Take(pageSize)                    
-                .ToListAsync();        
-            return (totalItems, koiList);
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return koiList;
         }
-        */
+
+        public async Task<RegistrationModel?> GetRegistrationAsync(int registrationId)
+        {
+            var result = await (from reg in _context.Registrations
+                                join koi in _context.Kois on reg.KoiId equals koi.Id into koiGroup
+                                from koi in koiGroup.DefaultIfEmpty()
+                                join user in _context.Users on koi.UserId equals user.Id into users
+                                from user in users.DefaultIfEmpty()
+                                join g in _context.Groups on reg.GroupId equals g.Id into groups
+                                from g in groups.DefaultIfEmpty()
+                                join s in _context.Shows on g.ShowId equals s.Id into shows
+                                from s in shows.DefaultIfEmpty()
+                                join v in _context.Varieties on koi.VarietyId equals v.Id into varieties
+                                from v in varieties.DefaultIfEmpty()
+                                where reg.Id == registrationId
+                                select new RegistrationModel
+                                {
+                                    KoiID = koi.Id,
+                                    Name = koi.Name,
+                                    Image1 = _context.Media.Where(m => m.RegistrationId == reg.Id).Select(m => m.Image1).FirstOrDefault(),
+                                    Image2 = _context.Media.Where(m => m.RegistrationId == reg.Id).Select(m => m.Image2).FirstOrDefault(),
+                                    Image3 = _context.Media.Where(m => m.RegistrationId == reg.Id).Select(m => m.Image3).FirstOrDefault(),
+                                    Video = _context.Media.Where(m => m.RegistrationId == reg.Id).Select(m => m.Video).FirstOrDefault(),
+                                    Variety = v != null ? v.Name : "Unknown Variety",
+                                    Description = koi.Description,
+                                    Size = koi.Size,
+                                    TotalScore = reg.TotalScore,
+                                    IsBestVote = reg.IsBestVote,
+                                    Status = reg.Status,
+                                    Rank = reg.Rank,
+                                    Id = reg.Id,
+                                }).FirstOrDefaultAsync();
+
+            return result!;
+        }
     }
 }

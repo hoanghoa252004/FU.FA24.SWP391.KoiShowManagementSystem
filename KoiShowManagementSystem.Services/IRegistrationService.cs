@@ -1,4 +1,5 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,7 @@ namespace KoiShowManagementSystem.Services
     {
         Task<IEnumerable<RegistrationModel>> GetMyRegistration(string status);
         Task CreateRegistration(RegistrationFormModel dto);
+        Task<(int TotalItems, IEnumerable<RegistrationModel> Kois)> GetRegistrationByShow(int pageIndex, int pageSize, int showId);
+        Task<RegistrationModel?> GetRegistration(int registrationId);
     }
 }

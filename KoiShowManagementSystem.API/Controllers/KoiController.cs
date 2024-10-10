@@ -1,5 +1,6 @@
 ﻿using KoiShowManagementSystem.DTOs.Response;
 using KoiShowManagementSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KoiShowManagementSystem.API.Controllers
@@ -14,6 +15,7 @@ namespace KoiShowManagementSystem.API.Controllers
             _koiService = koiService;
         }
 
+        [Authorize(Roles ="Member")]
         [HttpGet("get-koi-by-user")]
         public async Task<IActionResult> GetKoiByUser()
         {
@@ -47,5 +49,6 @@ namespace KoiShowManagementSystem.API.Controllers
 
             return NotFound(new ApiResponse { Message = "Koi not found." });
         }
+
     }
 }

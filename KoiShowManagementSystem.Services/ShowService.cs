@@ -31,38 +31,13 @@ namespace KoiShowManagementSystem.Services
             return result;
         }
 
-
         public async Task<(int TotalItems, List<ShowModel> Shows)> SearchShow(int pageIndex, int pageSize, string keyword)
         {
             var (totalItems, shows) = await _repository.Show.SearchShowAsync(pageIndex, pageSize, keyword);
-
-            //var result = shows.Select(s => new ShowModel
-            //{
-            //    ShowId = s.ShowId,
-            //    ShowTitle = s.ShowTitle,
-            //    ShowBanner = s.ShowBanner,
-            //    StartDate = s.StartDate,
-            //    RegistrationStartDate = s.RegistrationStartDate,
-            //    RegistrationCloseDate = s.RegistrationCloseDate,
-            //    ShowStatus = s.ShowStatus
-            //}).ToList();
-
             return (totalItems, shows);
         }
 
-
-        public async Task<(int TotalItems, IEnumerable<RegistrationModel> Kois)> GetKoiByShowId(int pageIndex, int pageSize, int showId)
-        {
-            var result = await _repository.Show.GetKoiByShowIdAsync(pageIndex, pageSize, showId);
-
-            return result;
-        }
-
-        public async Task<RegistrationModel?> GetKoiDetail(int koiId)
-        {
-            var result = await _repository.Show.GetKoiDetailAsync(koiId);
-            return result;
-        }
+        
 
         public async Task<List<ShowModel>> GetClosestShow()
         {
