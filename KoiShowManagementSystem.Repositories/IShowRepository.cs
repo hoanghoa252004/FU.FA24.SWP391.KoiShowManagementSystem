@@ -14,10 +14,7 @@ namespace KoiShowManagementSystem.Repositories
     {
         Task<ShowModel?> GetShowDetailsAsync(int showId);
         Task<(int TotalItems, List<ShowModel>)> SearchShowAsync(int pageIndex, int pageSize, string keyword);
-        Task<RegistrationModel?> GetKoiDetailAsync(int koiId);
-        Task<(int TotalItems, List<RegistrationModel>)> GetKoiByShowIdAsync(int pageIndex, int pageSize, int showId);
         Task<List<ShowModel>> GetClosestShowAsync();
-        
         Task<List<VarietyModel>> GetAllVarietiesAsync();
         Task<List<ShowModel>> GetAllShow();
         Task<int> AddNewShow(ShowDTO dto);

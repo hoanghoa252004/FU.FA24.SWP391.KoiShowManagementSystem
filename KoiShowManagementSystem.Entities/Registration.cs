@@ -24,6 +24,7 @@ public partial class Registration
     public bool IsBestVote { get; set; }
 
     public int? KoiId { get; set; }
+    public string? Description { get; set; }
 
     public string? Note { get; set; }
 

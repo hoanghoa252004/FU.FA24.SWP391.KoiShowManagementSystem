@@ -111,7 +111,9 @@ public partial class KoiShowManagementSystemContext : DbContext
             entity.Property(e => e.Image)
                 .HasColumnType("text")
                 .HasColumnName("Image");
-            entity.Property(e => e.Description).HasMaxLength(150);
+            entity.Property(e => e.Description)
+                .HasColumnType("text")
+                .HasColumnName("Description");
             entity.Property(e => e.Name).HasMaxLength(50);
             entity.Property(e => e.Size).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.Status).HasDefaultValue(true);
@@ -177,6 +179,9 @@ public partial class KoiShowManagementSystemContext : DbContext
 
             entity.ToTable("Registration");
 
+            entity.Property(e => e.Description)
+                .HasColumnType("text")
+                .HasColumnName("Description");
             entity.Property(e => e.Size).HasColumnType("decimal(5, 2)").HasColumnName("Size");
             entity.Property(e => e.CreateDate).HasColumnName("Create_date");
             entity.Property(e => e.GroupId).HasColumnName("Group_id");

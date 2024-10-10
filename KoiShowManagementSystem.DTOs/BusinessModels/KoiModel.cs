@@ -24,7 +24,7 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         //public string? GroupName { get; set; }
         public List<RegistrationModel>? registrations { get; set; }
         public List<CriterionModel>? criterions { get; set; }
-        public int VarietyId { get; set; }
-        public int UserId { get; set; }
+        public int? VarietyId { get; set; }
+        public int? UserId { get; set; }
     }
 }

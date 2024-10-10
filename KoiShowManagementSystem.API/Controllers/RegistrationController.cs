@@ -18,9 +18,9 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         #region API
-        // 1. GET KOI REGISTRATION:-----------------------------------------------
+        // 1. GET MY REGISTRATION:-----------------------------------------------
         [Authorize]
-        [HttpGet("get-registration")]
+        [HttpGet("get-registrations")]
         public async Task<IActionResult> GetKoiRegistrationByUser(string status)
         {
             IActionResult? response = null;
@@ -49,30 +49,6 @@ namespace KoiShowManagementSystem.API.Controllers
                 return response;
             }
         }
-
-        /*[HttpGet("get-registration-form")]
-        public async Task<IActionResult> GetRegistrationForm(int showId)
-        {
-            try
-            {
-                var result = await _registrationService.GetRegistrationForm(showId);
-                return Ok(new ApiResponse()
-                {
-                    Message = "Get Registration Form Successfully",
-                    Payload = result
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse()
-                {
-                    Message = ex.Message,
-                });
-
-            }
-        }
-        */
-        
         // 2. CREATE REGISTRATION:-----------------------------------------------
         [Authorize]
         [HttpPost("create-registration")]
@@ -93,6 +69,55 @@ namespace KoiShowManagementSystem.API.Controllers
                     Message = ex.Message,
                 });
             }
+        }
+
+        // 3. GET REGISTRATION BY SHOW: 
+        [HttpGet("registrations-by-show")]
+        public async Task<IActionResult> GetRegistrationByShow(int pageIndex, int pageSize, int showID)
+        {
+            if (showID <= 0)
+            {
+                return BadRequest(new ApiResponse { Message = "Invalid show ID." });
+            }
+
+            if (pageIndex < 1 || pageSize < 1)
+            {
+                return BadRequest(new ApiResponse { Message = "Page index or Page size must be greater than or equal to 1." });
+            }
+
+            var result = await _registrationService.GetRegistrationByShow(pageIndex, pageSize, showID);
+
+            return Ok(new
+            {
+                Message = "Success",
+                Payload = new
+                {
+                    TotalItems = result.TotalItems,
+                    Kois = result.Kois
+                }
+            });
+        }
+
+        // 4. GET REGISTRATION BY ID:
+        [HttpGet("registration-by-id")]
+        public async Task<IActionResult> GetRegistration(int registrationId)
+        {
+            if (registrationId <= 0)
+            {
+                return BadRequest(new ApiResponse { Message = "Invalid Registration ID." });
+            }
+
+            var result = await _registrationService.GetRegistration(registrationId);
+            if (result != null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Message = "Success",
+                    Payload = result
+                });
+            }
+
+            return NotFound(new ApiResponse { Message = "Registration not found." });
         }
         #endregion
     }

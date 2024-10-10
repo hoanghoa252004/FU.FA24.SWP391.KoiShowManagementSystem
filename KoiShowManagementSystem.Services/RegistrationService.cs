@@ -24,9 +24,8 @@ namespace KoiShowManagementSystem.Services
             _repository = repository;
         }
 
-        
-
-        // 1. GET My REGISTRATION:
+        // 1. GET MY REGISTRATION:
+        // ACTOR: MEMBER.
         public async Task<IEnumerable<RegistrationModel>> GetMyRegistration(string status)
         {
             IEnumerable<RegistrationModel> result= null!;
@@ -54,14 +53,8 @@ namespace KoiShowManagementSystem.Services
             return result;
         }
 
-        /*public Task<RegistrationFormModel?> GetRegistrationForm(int showId)
-        {
-            var registrationForm = _repository.Registrations.GetRegistrationFormAsync(showId);
-            return registrationForm!;
-        }
-        */
-
         // 2. CREATE REGISTRATION:
+        // ACTOR: MEMBER.
         public async Task CreateRegistration(RegistrationFormModel dto)
         {
             // VALIDATE INPUT:
@@ -111,5 +104,24 @@ namespace KoiShowManagementSystem.Services
                 await _repository.Registrations.CreateRegistrationAsync(dto);
             }
         }
+
+        // 3. GET REGISTRATIONS:
+        // ACTOR: ALL
+        public async Task<(int TotalItems, IEnumerable<RegistrationModel> Kois)> GetRegistrationByShow(int pageIndex, int pageSize, int showId)
+        {
+            var result = from regist in await _repository.Registrations.GetRegistrationByShowAsync(pageIndex, pageSize, showId)
+                         where regist.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase)
+                         select regist;
+            var count = result.Count();
+            return (count, result);
+        }
+
+        // 4. GET REGISTRATION BY ID:
+        public async Task<RegistrationModel?> GetRegistration(int registrationId)
+        {
+            var result = await _repository.Registrations.GetRegistrationAsync(registrationId);
+            return result!;
+        }
+
     }
 }
