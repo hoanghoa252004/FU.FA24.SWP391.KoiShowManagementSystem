@@ -23,5 +23,6 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         //public bool? IsPaid { get; set; }
         //public string? GroupName { get; set; }
         public List<RegistrationModel>? registrations { get; set; }
+        public List<CriterionModel>? criterions { get; set; }
     }
 }

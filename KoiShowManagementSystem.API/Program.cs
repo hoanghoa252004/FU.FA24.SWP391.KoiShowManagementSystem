@@ -53,7 +53,7 @@ namespace KoiShowManagementSystem.API
             builder.Services.AddScoped<IUserService,UserService>();
             builder.Services.AddScoped<IRegistrationService, RegistrationService>();
             //builder.Services.AddScoped<IShowService, ShowService>();
-
+            builder.Services.AddScoped<IRefereeService, RefereeService>();
             // Thêm Schema & Params dùng validate Token:
             builder.Services.AddAuthentication(options =>
             {

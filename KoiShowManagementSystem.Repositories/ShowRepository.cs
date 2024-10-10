@@ -41,7 +41,7 @@ namespace KoiShowManagementSystem.Repositories
                 {
                     KoiID = r.Koi.Id,
                     Name = r.Koi.Name,
-                    Image1 = r.Media.FirstOrDefault() != null ? r.Media.FirstOrDefault().Image1 : null,
+                    Image1 = r.Media.FirstOrDefault() != null ? r.Media.FirstOrDefault()!.Image1 : null,
                     Variety = r.Koi.Variety != null ? r.Koi.Variety.Name : "Unknown",
                     Size = r.Koi.Size,
                     TotalScore = r.TotalScore,

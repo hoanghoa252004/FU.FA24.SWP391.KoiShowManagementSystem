@@ -9,7 +9,8 @@ namespace KoiShowManagementSystem.Repositories
 {
     public interface IRefereeRepository 
     {
-        Task<ShowModel> GetListShow();
-        Task ScoreKoi(int koiId);
+        Task<List<ShowModel>> GetListShowAsync();
+        Task<List<KoiModel>> GetKoiDetailsByGroupIdAsync(int groupId);
+        Task<bool> SaveScoreAsync(int koiId, int criterionId, int refereeDetailId, decimal scoreValue);
     }
 }
