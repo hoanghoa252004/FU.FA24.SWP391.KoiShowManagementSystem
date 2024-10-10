@@ -445,6 +445,9 @@ public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int page
             return result > 0;
         }
 
+
+
+
         public Task<List<ShowModel>> GetAllShow()
         {
             return _context.Shows.Select(s => new ShowModel
@@ -458,100 +461,92 @@ public async Task<(int TotalItems, List<KoiModel>)> GetKoiByShowIdAsync(int page
         }
 
 
+        //public async Task<bool> EditAShow(ShowDTO dto)
+        //{
+        //    var show = await _context.Shows.FindAsync(dto.Id);
+
+        //    if (show == null)
+        //    {
+        //        throw new Exception("Show not found");
+        //    }
+        //    if (show.Status == "on going")
+        //    {
+        //        throw new Exception("Show is on going");
+        //    }
+
+        //    if (dto.RegisterStartDate > dto.RegisterEndDate)
+        //    {
+        //        throw new ArgumentException("Start date cannot be greater than end date");
+        //    }
+
+        //    if (dto.ScoreStartDate > dto.ScoreEndDate)
+        //    {
+        //        throw new ArgumentException("Start date cannot be greater than end date");
+        //    }
+
+        //    if (show.Title != dto.Title)
+        //    {
+        //        show.Title = dto.Title;
+        //    }
+        //    show.Description = dto.Description;
+        //    show.ScoreStartDate = dto.ScoreStartDate;
+        //    show.RegisterStartDate = dto.RegisterStartDate;
+        //    show.RegisterEndDate = dto.RegisterEndDate;
+        //    show.ScoreEndDate = dto.ScoreEndDate;
 
 
+        //    var newGroups = dto.Groups.Select(g => new Group
+        //    {
+        //        Name = g.Name,
+        //        SizeMin = g.MinSize,
+        //        SizeMax = g.MaxSize,
+        //        Varieties = _context.Varieties.Where(v => g.Varieties.Contains(v.Id)).ToList(),
+        //        Criteria = g.Criterias.Select(c => new Criterion
+        //        {
+        //            Name = c.Name,
+        //            Percentage = c.Percentage,
+        //            Description = c.Description,
+        //            Status = true
+        //        }).ToList()
+        //    }).ToList();
 
+        //    _context.Groups.AddRange(newGroups);
 
+        //    // Remove old groups
+        //    var oldGroups = _context.Groups.Where(g => g.ShowId == show.Id && !newGroups.Any(ng => ng.Id == g.Id)).ToList();
+        //    _context.Groups.RemoveRange(oldGroups);
 
+        //    // Update existing groups
+        //    foreach (var group in show.Groups)
+        //    {
+        //        var updatedGroup = dto.Groups.FirstOrDefault(g => g.Id == group.Id);
+        //        if (updatedGroup != null)
+        //        {
+        //            group.Name = updatedGroup.Name;
+        //            group.SizeMin = updatedGroup.MinSize;
+        //            group.SizeMax = updatedGroup.MaxSize;
+        //            group.Varieties = _context.Varieties.Where(v => updatedGroup.Varieties.Contains(v.Id)).ToList();
 
+        //            // Add new criteria
+        //            var newCriterias = updatedGroup.Criterias.Where(c => !group.Criteria.Any(gc => gc.Id == c.Id)).Select(c => new Criterion
+        //            {
+        //                Name = c.Name,
+        //                Percentage = c.Percentage,
+        //                Description = c.Description,
+        //                Status = true
+        //            }).ToList();
+        //            group.Criteria.AddRange(newCriterias);
 
+        //            // Remove old criteria
+        //            var oldCriterias = group.Criteria.Where(c => !updatedGroup.Criterias.Any(uc => uc.Id == c.Id)).ToList();
+        //            group.Criteria.RemoveAll(c => oldCriterias.Contains(c));
+        //        }
+        //    }
 
+        //    await _context.SaveChangesAsync();
 
-        //async Task<bool> EditAShow(ShowDTO dto)
-        //       {
-        //           var show = await _context.Shows.FindAsync(dto.Id);
-
-        //           if (show == null)
-        //           {
-        //               throw new Exception("Show not found");
-        //           }
-        //            if (show.Status == "on going")
-        //           {
-        //               throw new Exception("Show is on going");
-        //           }
-
-
-        //           if (dto.RegisterStartDate > dto.RegisterEndDate)
-        //           {
-        //               throw new ArgumentException("Start date cannot be greater than end date");
-        //           }
-
-        //           if (dto.ScoreStartDate > dto.ScoreEndDate)
-        //           {
-        //               throw new ArgumentException("Start date cannot be greater than end date");
-        //           }
-
-
-        //           show.Title = dto.Title;
-        //           show.Description = dto.Description;
-        //           show.ScoreStartDate = dto.ScoreStartDate;
-        //           show.RegisterStartDate = dto.RegisterStartDate;
-        //           show.RegisterEndDate = dto.RegisterEndDate;
-        //           show.ScoreEndDate = dto.ScoreEndDate;
-
-        //           // Add new groups
-        //           var newGroups = dto.Groups.Select(g => new Group
-        //           {
-        //               Name = g.Name,
-        //               SizeMin = g.MinSize,
-        //               SizeMax = g.MaxSize,
-        //               Varieties = _context.Varieties.Where(v => g.Varieties.Contains(v.Id)).ToList(),
-        //               Criteria = g.Criterias.Select(c => new Criterion
-        //               {
-        //                   Name = c.Name,
-        //                   Percentage = c.Percentage,
-        //                   Description = c.Description,
-        //                   Status = true
-        //               }).ToList()
-        //           }).ToList();
-
-        //           _context.Groups.AddRange(newGroups);
-
-        //           // Remove old groups
-        //           var oldGroups = _context.Groups.Where(g => g.ShowId == show.Id && !newGroups.Any(ng => ng.Id == g.Id)).ToList();
-        //           _context.Groups.RemoveRange(oldGroups);
-
-        //           // Update existing groups
-        //           foreach (var group in show.Groups)
-        //           {
-        //               var updatedGroup = dto.Groups.FirstOrDefault(g => g.Id == group.Id);
-        //               if (updatedGroup != null)
-        //               {
-        //                   group.Name = updatedGroup.Name;
-        //                   group.SizeMin = updatedGroup.MinSize;
-        //                   group.SizeMax = updatedGroup.MaxSize;
-        //                   group.Varieties = _context.Varieties.Where(v => updatedGroup.Varieties.Contains(v.Id)).ToList();
-
-        //                   // Add new criteria
-        //                   var newCriterias = updatedGroup.Criterias.Where(c => !group.Criteria.Any(gc => gc.Id == c.Id)).Select(c => new Criterion
-        //                   {
-        //                       Name = c.Name,
-        //                       Percentage = c.Percentage,
-        //                       Description = c.Description,
-        //                       Status = true
-        //                   }).ToList();
-        //                   group.Criteria.AddRange(newCriterias);
-
-        //                   // Remove old criteria
-        //                   var oldCriterias = group.Criteria.Where(c => !updatedGroup.Criterias.Any(uc => uc.Id == c.Id)).ToList();
-        //                   group.Criteria.RemoveAll(c => oldCriterias.Contains(c));
-        //               }
-        //           }
-
-        //           await _context.SaveChangesAsync();
-
-        //           return true;
-        //       }
+        //    return true;
+        //}
 
 
 

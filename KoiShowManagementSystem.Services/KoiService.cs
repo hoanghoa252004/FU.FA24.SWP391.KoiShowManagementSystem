@@ -13,15 +13,17 @@ namespace KoiShowManagementSystem.Services
     public class KoiService : IKoiService
     {
         private readonly Repository _repository;
-
-        public KoiService(Repository repository, JwtServices jwtServices)
+        private readonly JwtServices _jwtServices;
+        public KoiService(JwtServices jwtServices, Repository repository)
         {
+            _jwtServices = jwtServices;
             _repository = repository;
         }
-        public Task<List<KoiModel>> GetKoiByUserId(int userId)
+        public Task<List<KoiModel>> GetKoiByUserId()
         {
             //implement this method
-            var result = _repository.Koi.GetAllKoiByUserId(userId);
+            int id = _jwtServices.GetIdAndRoleFromToken().userId;
+            var result = _repository.Koi.GetAllKoiByUserId(id);
             return result;
         }
 

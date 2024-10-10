@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KoiShowManagementSystem.API.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class KoiController : Controller
     {
         private readonly IKoiService _koiService;
@@ -13,14 +15,11 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         [HttpGet("get-koi-by-user")]
-        public async Task<IActionResult> GetKoiByUser(int userId)
+        public async Task<IActionResult> GetKoiByUser()
         {
-            if (userId <= 0)
-            {
-                return BadRequest(new ApiResponse { Message = "Invalid User ID." });
-            }
+          
 
-            var result = await _koiService.GetKoiByUserId(userId);
+            var result = await _koiService.GetKoiByUserId();
             return Ok(new ApiResponse
             {
                 Message = "Success",
