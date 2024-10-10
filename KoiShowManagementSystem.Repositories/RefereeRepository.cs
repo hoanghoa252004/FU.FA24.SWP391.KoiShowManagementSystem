@@ -1,4 +1,5 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
@@ -63,46 +64,63 @@ namespace KoiShowManagementSystem.Repositories
         }
 
         //bởi vì bảng Score có 3 khóa ngoại nên nhận cả 3 với điểm nữa
-        public async Task<bool> SaveScoreAsync(int criterionId, int koiId, int refereeDetailId, decimal scoreValue)
+        public async Task<bool> SaveScoresAsync(List<ScoreDTO> scores)
         {
             try
             {
-                // Fetch the registration for the given Koi
-                var registration = await _context.Registrations
-                    .Where(r => r.KoiId == koiId).FirstOrDefaultAsync();
+                //var status = await _context.Shows.Include(s => s.Groups)
+                //    .Include(s => s.).Where(s => s.Status == "On Going").ToListAsync();
+                ////if (status != null)
+                ////{
+                    foreach (var scoreDto in scores)
+                    {
+                        var registration = await _context.Registrations
+                            .FirstOrDefaultAsync(r => r.KoiId == scoreDto.KoiId);
+                        if (registration == null)
+                        {
+                            Console.WriteLine($"Registration not found for KoiId: {scoreDto.KoiId}");
+                            continue;
+                        }
 
-                if (registration == null)
-                {
-                    Console.WriteLine("Registration not found for KoiId: " + koiId);
-                    return false;
-                }
+                        var criterion = await _context.Criteria
+                            .FirstOrDefaultAsync(c => c.Id == scoreDto.CriterionId);
+                        if (criterion == null)
+                        {
+                            Console.WriteLine($"Criterion not found for CriterionId: {scoreDto.CriterionId}");
+                            continue;
+                        }
 
-                var criterion = await _context.Criteria
-                    .FirstOrDefaultAsync(c => c.Id == criterionId);
+                        var existingScore = await _context.Scores
+                            .FirstOrDefaultAsync(s => s.RegistrationId == registration.Id
+                                                   && s.CriteriaId == scoreDto.CriterionId
+                                                   && s.RefereeDetailId == scoreDto.RefereeDetailId);
 
-                if (criterion == null)
-                {
-                    Console.WriteLine("Criterion not found for CriterionId: " + criterionId);
-                    return false; 
-                }
+                        if (existingScore != null)
+                        {
+                            existingScore.Score1 = scoreDto.ScoreValue;
+                            _context.Scores.Update(existingScore);
+                        }
+                        else
+                        {
+                            var newScore = new Score
+                            {
+                                RegistrationId = registration.Id,
+                                RefereeDetailId = scoreDto.RefereeDetailId,
+                                Score1 = scoreDto.ScoreValue,
+                                CriteriaId = scoreDto.CriterionId,
+                            };
+                            await _context.Scores.AddAsync(newScore);
+                        }
+                    }
 
-                
-                Score score = new Score()
-                {
-                    RegistrationId = registration.Id,
-                    RefereeDetailId = refereeDetailId,
-                    Score1 = scoreValue , 
-                    CriteriaId = criterionId,
-                };
-
-               
-                await _context.Set<Score>().AddAsync(score);              
-                await _context.SaveChangesAsync();
-                return true; // Successfully saved
+                    await _context.SaveChangesAsync();
+                    return true;
+                //}
+                //return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("An error occurred: " + ex.Message);
+                Console.WriteLine($"An error occurred: {ex.Message}");
                 return false;
             }
         }
