@@ -1,4 +1,5 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.Repositories;
 using KoiShowManagementSystem.Services.Helper;
 using System;
@@ -30,9 +31,9 @@ namespace KoiShowManagementSystem.Services
             return result;
         }
 
-        public async Task<bool> SaveScoreFromReferee(int criterionId, int koiId, int refereeDetailId, decimal scoreValue)
+        public async Task<bool> SaveScoreFromReferee(List<ScoreDTO> dto)
         {
-            var result = await _repository.Referees.SaveScoreAsync( criterionId, koiId, refereeDetailId, scoreValue);
+            var result = await _repository.Referees.SaveScoresAsync(dto);
             return result;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,6 @@ namespace KoiShowManagementSystem.Services
     {
         Task<List<ShowModel>> GetListShow();
         Task<List<KoiModel>> GetKoiDetailsByGroupId(int groupId);
-        Task<bool> SaveScoreFromReferee(int criterionId, int koiId, int refereeDetailId, decimal scoreValue);
+        Task<bool> SaveScoreFromReferee(List<ScoreDTO> dto);
     }
 }
