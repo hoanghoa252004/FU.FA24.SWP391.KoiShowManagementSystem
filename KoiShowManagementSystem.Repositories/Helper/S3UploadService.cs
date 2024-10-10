@@ -145,5 +145,40 @@ namespace KoiShowManagementSystem.Repositories.Helper
 
         }
 
+
+
+
+        // implement method with parameter a url to a image in S3 bucket, 1 IFormFile image, overwrite the image in S3 bucket with the new image
+        public async Task<string> UpdateImageAsync(string key, IFormFile newImage)
+        {
+            if (newImage == null || newImage.Length == 0)
+            {
+                throw new ArgumentException("The provided image is invalid.");
+            }
+
+            var ImageName = Path.GetFileName(newImage.FileName);
+            var contentType = newImage.ContentType;
+
+            var allowedTypes = new[] { "image/jpeg", "image/png", "image/gif" };
+            if (!allowedTypes.Contains(contentType))
+            {
+                throw new NotSupportedException("Unsupported file type.");
+            };
+
+            var ImageStream = newImage.OpenReadStream();
+            return await UploadFileAsync(ImageStream, key, contentType);
+        }
+
+        public async Task DeleteImageAsync(string key)
+        {
+            var deleteRequest = new DeleteObjectRequest
+            {
+                BucketName = _bucketName,
+                Key = key
+            };
+
+            await _s3Client.DeleteObjectAsync(deleteRequest);
+        }
+
     }
 }

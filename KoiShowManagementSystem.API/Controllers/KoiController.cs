@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KoiShowManagementSystem.API.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class KoiController : Controller
     {
         private readonly IKoiService _koiService;
