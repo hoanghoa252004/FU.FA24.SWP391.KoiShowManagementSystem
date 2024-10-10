@@ -28,7 +28,7 @@ namespace KoiShowManagementSystem.API.Controllers
             });
         }
 
-        [HttpGet("registration-detail ")]
+        [HttpGet("koi-detail ")]
         public async Task<IActionResult> KoiDetail(int koiId)
         {
             if (koiId <= 0)

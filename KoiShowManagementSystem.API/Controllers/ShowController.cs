@@ -55,7 +55,7 @@ namespace KoiShowManagementSystem.API.Controllers
             return NotFound(new ApiResponse { Message = "Show not found." });
         }
 
-        [HttpGet("koi-detail")]
+        [HttpGet("registration-detail")]
         public async Task<IActionResult> KoiDetailInShow(int koiId)
         {
             if (koiId <= 0)
