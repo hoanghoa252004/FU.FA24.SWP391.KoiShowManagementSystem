@@ -12,6 +12,5 @@ namespace KoiShowManagementSystem.Repositories
     {
         Task<List<ShowModel>> GetListShowAsync();
         Task<List<KoiModel>> GetKoiDetailsByGroupIdAsync(int groupId);
-        Task<bool> SaveScoresAsync(List<ScoreDTO> scores);
     }
 }

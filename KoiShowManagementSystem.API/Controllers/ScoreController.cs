@@ -15,7 +15,7 @@ namespace KoiShowManagementSystem.API.Controllers
             _refereeService = refereeService;
         }
         [HttpPost("save-scores")]
-        public async Task<IActionResult> SaveScoresAsync([FromBody] List<ScoreDTO> scores)
+        public async Task<IActionResult> SaveScoresAsync([FromBody] RefereeScoreDTO scores)
         {
             if (!ModelState.IsValid)
             {

@@ -12,6 +12,6 @@ namespace KoiShowManagementSystem.Services
     {
         Task<List<ShowModel>> GetListShow();
         Task<List<KoiModel>> GetKoiDetailsByGroupId(int groupId);
-        Task<bool> SaveScoreFromReferee(List<ScoreDTO> dto);
+        Task<bool> SaveScoreFromReferee(RefereeScoreDTO dto);
     }
 }
