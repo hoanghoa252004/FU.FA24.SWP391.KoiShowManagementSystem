@@ -43,7 +43,7 @@ namespace KoiShowManagementSystem.Repositories
             {
                 if (this._koi == null)
                 {
-                    this._koi = new KoiRepository(_context);
+                    this._koi = new KoiRepository(_context, _uploadService);
                 }
                 return this._koi;
             }

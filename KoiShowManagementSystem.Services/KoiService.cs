@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoiShowManagementSystem.DTOs.Request;
 
 namespace KoiShowManagementSystem.Services
 {
@@ -30,6 +31,13 @@ namespace KoiShowManagementSystem.Services
         public Task<KoiModel?> GetKoiDetail(int koiId)
         {
             var result = _repository.Koi.GetKoi(koiId);
+            return result;
+        }
+
+        public Task<bool> CreateKoi(KoiDTO koi)
+        {
+            int userId = _jwtServices.GetIdAndRoleFromToken().userId;
+            var result = _repository.Koi.CreateKoi(koi, userId);
             return result;
         }
     }
