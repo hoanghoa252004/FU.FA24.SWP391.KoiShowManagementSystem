@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.DTOs.Request
 {
-    public class ScoreDTO
+    public class RefereeScoreDTO
     {
-        public int CriterionId { get; set; }
-        public int KoiId { get; set; }
         public int RefereeDetailId { get; set; }
-        public decimal ScoreValue { get; set; }
+        public List<ScoreDetailDTO> ScoreDetail { get; set; } = new List<ScoreDetailDTO>();
     }
 }

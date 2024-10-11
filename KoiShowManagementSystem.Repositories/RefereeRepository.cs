@@ -63,67 +63,8 @@ namespace KoiShowManagementSystem.Repositories
             return koiDetails;
         }
 
-        //bởi vì bảng Score có 3 khóa ngoại nên nhận cả 3 với điểm nữa
-        public async Task<bool> SaveScoresAsync(List<ScoreDTO> scores)
-        {
-            try
-            {
-                //var status = await _context.Shows.Include(s => s.Groups)
-                //    .Include(s => s.).Where(s => s.Status == "On Going").ToListAsync();
-                ////if (status != null)
-                ////{
-                    foreach (var scoreDto in scores)
-                    {
-                        var registration = await _context.Registrations
-                            .FirstOrDefaultAsync(r => r.KoiId == scoreDto.KoiId);
-                        if (registration == null)
-                        {
-                            Console.WriteLine($"Registration not found for KoiId: {scoreDto.KoiId}");
-                            continue;
-                        }
+       
 
-                        var criterion = await _context.Criteria
-                            .FirstOrDefaultAsync(c => c.Id == scoreDto.CriterionId);
-                        if (criterion == null)
-                        {
-                            Console.WriteLine($"Criterion not found for CriterionId: {scoreDto.CriterionId}");
-                            continue;
-                        }
-
-                        var existingScore = await _context.Scores
-                            .FirstOrDefaultAsync(s => s.RegistrationId == registration.Id
-                                                   && s.CriteriaId == scoreDto.CriterionId
-                                                   && s.RefereeDetailId == scoreDto.RefereeDetailId);
-
-                        if (existingScore != null)
-                        {
-                            existingScore.Score1 = scoreDto.ScoreValue;
-                            _context.Scores.Update(existingScore);
-                        }
-                        else
-                        {
-                            var newScore = new Score
-                            {
-                                RegistrationId = registration.Id,
-                                RefereeDetailId = scoreDto.RefereeDetailId,
-                                Score1 = scoreDto.ScoreValue,
-                                CriteriaId = scoreDto.CriterionId,
-                            };
-                            await _context.Scores.AddAsync(newScore);
-                        }
-                    }
-
-                    await _context.SaveChangesAsync();
-                    return true;
-                //}
-                //return false;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                return false;
-            }
-        }
 
 
 

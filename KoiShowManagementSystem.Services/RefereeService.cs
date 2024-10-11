@@ -31,9 +31,9 @@ namespace KoiShowManagementSystem.Services
             return result;
         }
 
-        public async Task<bool> SaveScoreFromReferee(List<ScoreDTO> dto)
+        public async Task<bool> SaveScoreFromReferee(RefereeScoreDTO dto)
         {
-            var result = await _repository.Referees.SaveScoresAsync(dto);
+            var result = await _repository.Scores.SaveScoresAsync(dto);
             return result;
         }
     }
