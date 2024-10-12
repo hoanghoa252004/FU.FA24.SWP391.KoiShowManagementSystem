@@ -1,4 +1,5 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace KoiShowManagementSystem.Repositories
     {
         Task<List<KoiModel>> GetAllKoiByUserId(int userId);
         Task<KoiModel?> GetKoi(int koiId);
+        Task<bool> CreateKoi(KoiDTO koi, int userId);
     }
 }

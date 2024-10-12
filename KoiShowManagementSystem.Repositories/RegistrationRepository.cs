@@ -24,9 +24,9 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task CreateRegistrationAsync(RegistrationFormModel dto)
         {
-            string image1 = await _s3UploadService.UploadKoiImage(dto.Image1!);
-            string image2 = await _s3UploadService.UploadKoiImage(dto.Image2!);
-            string image3 = await _s3UploadService.UploadKoiImage(dto.Image3!);
+            string image1 = await _s3UploadService.UploadRegistrationImage(dto.Image1!);
+            string image2 = await _s3UploadService.UploadRegistrationImage(dto.Image2!);
+            string image3 = await _s3UploadService.UploadRegistrationImage(dto.Image3!);
             Registration newRegistration = new Registration()
             {
                 CreateDate = DateOnly.FromDateTime(DateTime.Now),

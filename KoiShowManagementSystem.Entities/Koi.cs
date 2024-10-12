@@ -15,7 +15,7 @@ public partial class Koi
 
     public string? Image { get; set; }
 
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
 
     public int VarietyId { get; set; }
 
