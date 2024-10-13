@@ -12,7 +12,8 @@ namespace KoiShowManagementSystem.Services
     {
         Task<IEnumerable<RegistrationModel>> GetMyRegistration(string status);
         Task CreateRegistration(RegistrationFormModel dto);
-        Task<(int TotalItems, IEnumerable<RegistrationModel> Kois)> GetRegistrationByShow(int pageIndex, int pageSize, int showId);
+        Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetRegistrationByShow(int pageIndex, int pageSize, int showId);
         Task<RegistrationModel?> GetRegistration(int registrationId);
+        Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetPendingRegistration(int pageIndex, int pageSize, int showId);
     }
 }

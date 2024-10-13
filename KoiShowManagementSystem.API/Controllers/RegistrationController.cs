@@ -20,7 +20,7 @@ namespace KoiShowManagementSystem.API.Controllers
         #region API
         // 1. GET MY REGISTRATION:-----------------------------------------------
         [Authorize]
-        [HttpGet("get-registrations")]
+        [HttpGet("member-registrations")]
         public async Task<IActionResult> GetKoiRegistrationByUser(string status)
         {
             IActionResult? response = null;
@@ -49,6 +49,7 @@ namespace KoiShowManagementSystem.API.Controllers
                 return response;
             }
         }
+
         // 2. CREATE REGISTRATION:-----------------------------------------------
         [Authorize]
         [HttpPost("create-registration")]
@@ -93,7 +94,7 @@ namespace KoiShowManagementSystem.API.Controllers
                 Payload = new
                 {
                     TotalItems = result.TotalItems,
-                    Kois = result.Kois
+                    Registrations = result.Registrations
                 }
             });
         }
@@ -118,6 +119,33 @@ namespace KoiShowManagementSystem.API.Controllers
             }
 
             return NotFound(new ApiResponse { Message = "Registration not found." });
+        }
+
+        // 5. GET PENDING REGISTRATION:
+        [Authorize(Roles ="Staff")]
+        [HttpGet("pending-registration")]
+        public async Task<IActionResult> GetPendingRegistration(int pageIndex, int pageSize, int showID)
+        {
+            try
+            {
+                var result = await _registrationService.GetPendingRegistration(pageIndex, pageSize, showID);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Create Registration Successfully",
+                    Payload = new
+                    {
+                        TotalItems = result.TotalItems,
+                        Registrations = result.Registrations
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+            }
         }
         #endregion
     }
