@@ -57,10 +57,10 @@ namespace KoiShowManagementSystem.Repositories
                     TotalScore = r.TotalScore,
                     Status = r.Status,
                     IsBestVote = r.IsBestVote,
-                    Image1 = r.Media.Select(m => m.Image1).FirstOrDefault(),
-                    Image2 = r.Media.Select(m => m.Image2).FirstOrDefault(),
-                    Image3 = r.Media.Select(m => m.Image3).FirstOrDefault(),
-                    Video = r.Media.Select(m => m.Video).FirstOrDefault()
+                    Image1 = r.Media!.Image1,
+                    Image2 = r.Media.Image2,
+                    Image3 = r.Media.Image3,
+                    Video = r.Media.Video,
                 }).ToList(),
                 UserId = k.UserId,
             }).FirstOrDefaultAsync();

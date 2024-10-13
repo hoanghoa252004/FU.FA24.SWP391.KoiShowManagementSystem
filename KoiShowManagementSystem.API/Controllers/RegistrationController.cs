@@ -131,12 +131,34 @@ namespace KoiShowManagementSystem.API.Controllers
                 var result = await _registrationService.GetPendingRegistration(pageIndex, pageSize, showID);
                 return Ok(new ApiResponse()
                 {
-                    Message = "Create Registration Successfully",
+                    Message = "Get Pending Registration Successfully",
                     Payload = new
                     {
                         TotalItems = result.TotalItems,
                         Registrations = result.Registrations
                     }
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
+
+        // 6. UPDATE PENDING REGISTRATION:
+        //[Authorize(Roles = "Staff,Member")]
+        [HttpPut("update-registration")]
+        public async Task<IActionResult> UpdateRegistration([FromForm] RegistrationFormModel dto)
+        {
+            try
+            {
+                await _registrationService.UpdateRegistration(dto);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Update Registration Successfully",
                 });
             }
             catch (Exception ex)

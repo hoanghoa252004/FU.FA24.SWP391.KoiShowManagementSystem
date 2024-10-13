@@ -13,17 +13,15 @@ public partial class Koi
 
     public decimal Size { get; set; }
 
-    public string? Image { get; set; }
-
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
 
     public int VarietyId { get; set; }
 
     public bool Status { get; set; }
 
-    public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
+    public string? Image { get; set; }
 
-    public virtual User User { get; set; } = null!;
+    public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 
     public virtual Variety Variety { get; set; } = null!;
 }

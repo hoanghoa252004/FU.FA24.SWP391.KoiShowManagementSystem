@@ -67,11 +67,11 @@ namespace KoiShowManagementSystem.Services
                 throw new Exception("Lack of information to register Koi for show !");
             // V2: Kiểm tra con cá đó có đúng phải của Member đó ko:
             var userId = _jwtServices.GetIdAndRoleFromToken().userId;
-            var koi = await _repository.Koi.GetKoi(dto.KoiId);
+            var koi = await _repository.Koi.GetKoi((int)dto.KoiId!);
             if (koi != null && userId != koi.UserId)
                 throw new Exception("You're registering a Koi that does not belong to you !");
             // START: 
-            var groups = await _repository.Groups.GetByShowId(dto.ShowId);
+            var groups = await _repository.Groups.GetByShowId((int)dto.ShowId!);
             if (!groups.IsNullOrEmpty())
             {
                 foreach (var group in groups)
@@ -126,16 +126,25 @@ namespace KoiShowManagementSystem.Services
         // 5. GET PENDING REGISTRATION:
         public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetPendingRegistration(int pageIndex, int pageSize, int showId)
         {
-            var registrationList = await _repository.Registrations.GetRegistrationByShowAsync(showId);
-            if (registrationList.Count > 0)
+            var registrationList = await _repository.Registrations.GetAllRegistrationAsync();
+            if (registrationList.Count() > 0)
             {
-                var list = registrationList.Where(regist => regist.Status!.Equals("Pending", StringComparison.OrdinalIgnoreCase) && regist.IsPaid == true).ToList();
+                var list = registrationList.Where(regist => regist.Status!.Equals("Pending", StringComparison.OrdinalIgnoreCase) && regist.IsPaid == true);
                 var count = list.Count();
                 var result = list.Skip((pageIndex - 1) * pageSize).Take(pageSize);
                 return (count, result);
             }
             else
                 throw new Exception("Show's contained any registration yet.");
+        }
+
+        // 6. UPDATE REGISTRATION:
+        public async Task UpdateRegistration(RegistrationFormModel dto)
+        {
+            if (dto == null)
+                throw new Exception("Update registration has nothing");
+            else
+                await _repository.Registrations.UpdateRegistrationAsync(dto);
         }
     }
 }

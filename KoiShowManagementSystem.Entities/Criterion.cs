@@ -5,8 +5,6 @@ namespace KoiShowManagementSystem.Entities;
 
 public partial class Criterion
 {
-    public int Id { get; set; }
-
     public int? GroupId { get; set; }
 
     public string? Name { get; set; }
@@ -16,6 +14,8 @@ public partial class Criterion
     public decimal? Percentage { get; set; }
 
     public bool Status { get; set; }
+
+    public int Id { get; set; }
 
     public virtual Group? Group { get; set; }
 
