@@ -19,6 +19,7 @@ namespace KoiShowManagementSystem.Repositories
         private S3UploadService _uploadService;
         private IRefereeRepository _refereeRepository;
         private IGroupRepository _groupRepository;
+        private IScoreRepository _scoreRepository;
         public Repository(KoiShowManagementSystemContext context, S3UploadService _uploadService)
         {
             _context = context;
@@ -42,7 +43,7 @@ namespace KoiShowManagementSystem.Repositories
             {
                 if (this._koi == null)
                 {
-                    this._koi = new KoiRepository(_context);
+                    this._koi = new KoiRepository(_context, _uploadService);
                 }
                 return this._koi;
             }
@@ -100,6 +101,17 @@ namespace KoiShowManagementSystem.Repositories
                     this._groupRepository = new GroupRepository(_context);
                 }
                 return this._groupRepository;
+            }
+        }
+        public IScoreRepository Scores
+        {
+            get
+            {
+                if (this._scoreRepository == null)
+                {
+                    this._scoreRepository = new ScoreRepository(_context);
+                }
+                return this._scoreRepository;
             }
         }
     }

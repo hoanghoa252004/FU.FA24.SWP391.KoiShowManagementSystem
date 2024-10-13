@@ -1,4 +1,7 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
+using KoiShowManagementSystem.Entities;
+using KoiShowManagementSystem.Repositories.Helper;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,15 +14,17 @@ namespace KoiShowManagementSystem.Repositories
 {
     public class KoiRepository : IKoiRepository
     {
-        private readonly KoiShowManagementSystemContext _context;
-        public KoiRepository(KoiShowManagementSystemContext context)
+        private readonly S3UploadService _s3UploadService;
+        private KoiShowManagementSystemContext _context;
+        public KoiRepository(KoiShowManagementSystemContext context, S3UploadService _s3UploadService)
         {
             this._context = context;
+            this._s3UploadService = _s3UploadService;
         }
 
         public async Task<List<KoiModel>> GetAllKoiByUserId(int userId)
         {
-            return await  _context.Kois.Where(k => k.UserId == userId).Select(k => new KoiModel
+            return await  _context.Kois.Where(k => k.UserId == userId && k.Status == true).Select(k => new KoiModel
             {
                 KoiID = k.Id,
                 KoiName = k.Name,
@@ -60,6 +65,26 @@ namespace KoiShowManagementSystem.Repositories
                 UserId = k.UserId,
             }).FirstOrDefaultAsync();
         }
+
+        public async Task<bool> CreateKoi(KoiDTO koi, int userId)
+        {
+            if (koi == null) throw new ArgumentNullException(nameof(koi));
+            
+            var newKoi = new Koi
+            {
+                Name = koi.Name,
+                Description = koi.Description,
+                Image = koi.Image != null ? await _s3UploadService.UploadKoiImage(koi.Image) : null,
+                Size = koi.Size,
+                VarietyId = koi.VarietyId,
+                UserId = userId,
+                Status = true
+            };
+            _context.Kois.Add(newKoi);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
 
 
     }

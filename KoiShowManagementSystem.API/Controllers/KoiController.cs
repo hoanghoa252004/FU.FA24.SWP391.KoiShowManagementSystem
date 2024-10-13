@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.DTOs.Response;
+﻿using KoiShowManagementSystem.DTOs.Request;
+using KoiShowManagementSystem.DTOs.Response;
 using KoiShowManagementSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ namespace KoiShowManagementSystem.API.Controllers
             });
         }
 
+        [Authorize(Roles = "Member")]
         [HttpGet("koi-detail ")]
         public async Task<IActionResult> KoiDetail(int koiId)
         {
@@ -50,5 +52,28 @@ namespace KoiShowManagementSystem.API.Controllers
             return NotFound(new ApiResponse { Message = "Koi not found." });
         }
 
+        [Authorize(Roles = "Member")]
+        [HttpPost("create-koi")]
+        public async Task<IActionResult> CreateKoi([FromForm] KoiDTO koi)
+
+        {
+            var result = await _koiService.CreateKoi(koi);
+            try
+            {
+                Console.WriteLine(koi.VarietyId);
+                Console.WriteLine(koi.Image);
+                if (result)
+                {
+                    return Ok(new ApiResponse { Message = "Koi created successfully." });
+                }
+
+                return BadRequest(new ApiResponse { Message = "Failed to create Koi." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Message = ex.Message, });
+            }
+            
+        }
     }
 }

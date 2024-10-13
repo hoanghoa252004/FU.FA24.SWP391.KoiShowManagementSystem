@@ -77,7 +77,7 @@ namespace KoiShowManagementSystem.Repositories.Helper
 
 
 
-        public async Task<string> UploadKoiImage(IFormFile koiImage)
+        public async Task<string> UploadRegistrationImage(IFormFile koiImage)
         {
 
             if (koiImage == null || koiImage.Length == 0)
@@ -110,7 +110,38 @@ namespace KoiShowManagementSystem.Repositories.Helper
 
         }
 
+        public async Task<string> UploadKoiImage(IFormFile koiImage)
+        {
 
+            if (koiImage == null || koiImage.Length == 0)
+            {
+                throw new ArgumentException("The provided banner image is invalid.");
+            }
+
+            var ImageName = Path.GetFileName(koiImage.FileName);
+            var contentType = koiImage.ContentType;
+
+            var allowedTypes = new[] { "image/jpeg", "image/png", "image/gif" };
+            if (!allowedTypes.Contains(contentType))
+            {
+                throw new NotSupportedException("Unsupported file type.");
+            };
+
+
+            string uniqueFileName;
+            string keyName;
+
+            do
+            {
+                uniqueFileName = $"{Guid.NewGuid()}_{ImageName}";
+                keyName = $"koi/{uniqueFileName}";
+            } while (await DoesObjectExistAsync(keyName));
+
+
+            var ImageStream = koiImage.OpenReadStream();
+            return await UploadFileAsync(ImageStream, keyName, contentType);
+
+        }
 
         public async Task<string> UploadShowBannerImage(IFormFile bannerImage)
         {

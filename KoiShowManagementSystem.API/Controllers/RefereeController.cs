@@ -46,21 +46,7 @@ namespace KoiShowManagementSystem.API.Controllers
             return NotFound(new ApiResponse { Message = "Not found", });
         }
 
-        [HttpPost("save-scores")]
-        public async Task<IActionResult> SaveScoresAsync([FromBody] List<ScoreDTO> scores)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = await _refereeService.SaveScoreFromReferee(scores);
-            if (result)
-            {
-                return Ok(new { Message = "Scores saved successfully" });
-            }
-            return BadRequest(new { Message = "Failed to save scores" });
-        }
+        
 
     }
 }
