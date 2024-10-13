@@ -98,14 +98,14 @@ namespace KoiShowManagementSystem.Repositories
             return result;
         }
 
-        public async Task<List<RegistrationModel>> GetRegistrationByShowAsync(int pageIndex, int pageSize, int showId)
+        public async Task<List<RegistrationModel>> GetRegistrationByShowAsync(int showId)
         {
             var query = _context.Registrations
                 .Include(r => r.Koi) // Include Koi
                 .Include(r => r.Group)
                 .Include(r => r.Group!.Varieties) // Ensure Varieties can be included if needed
                 .Include(r => r.Media) // Include Media for images/videos
-                .Where(r => r.Group!.ShowId == showId && r.IsPaid == true); // Filter for IsPaid = true
+                .Where(r => r.Group!.ShowId == showId); // Filter for IsPaid = true
 
 
             var koiList = await query
@@ -122,10 +122,8 @@ namespace KoiShowManagementSystem.Repositories
                     Rank = r.Rank,
                     GroupName = r.Group!.Name ?? "Unknown Group",
                     Id = r.Id,
-                })
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+                    IsPaid = r.IsPaid,
+                }).ToListAsync();
 
             return koiList;
         }

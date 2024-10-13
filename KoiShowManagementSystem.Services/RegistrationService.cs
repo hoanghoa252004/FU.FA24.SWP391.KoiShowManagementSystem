@@ -105,14 +105,14 @@ namespace KoiShowManagementSystem.Services
             }
         }
 
-        // 3. GET REGISTRATIONS:
+        // 3. GET REGISTRATIONS BY SHOW:
         // ACTOR: ALL
-        public async Task<(int TotalItems, IEnumerable<RegistrationModel> Kois)> GetRegistrationByShow(int pageIndex, int pageSize, int showId)
+        public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetRegistrationByShow(int pageIndex, int pageSize, int showId)
         {
-            var result = from regist in await _repository.Registrations.GetRegistrationByShowAsync(pageIndex, pageSize, showId)
-                         where regist.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase)
-                         select regist;
-            var count = result.Count();
+            var registrationList = await _repository.Registrations.GetRegistrationByShowAsync(showId);
+            var list = registrationList.Where(regist => regist.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase)).ToList();
+            var count = list.Count();
+            var result = list.Skip((pageIndex - 1) * pageSize).Take(pageSize);
             return (count, result);
         }
 
@@ -123,5 +123,19 @@ namespace KoiShowManagementSystem.Services
             return result!;
         }
 
+        // 5. GET PENDING REGISTRATION:
+        public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetPendingRegistration(int pageIndex, int pageSize, int showId)
+        {
+            var registrationList = await _repository.Registrations.GetRegistrationByShowAsync(showId);
+            if (registrationList.Count > 0)
+            {
+                var list = registrationList.Where(regist => regist.Status!.Equals("Pending", StringComparison.OrdinalIgnoreCase) && regist.IsPaid == true).ToList();
+                var count = list.Count();
+                var result = list.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+                return (count, result);
+            }
+            else
+                throw new Exception("Show's contained any registration yet.");
+        }
     }
 }
