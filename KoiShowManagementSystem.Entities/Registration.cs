@@ -13,8 +13,6 @@ public partial class Registration
 
     public decimal? TotalScore { get; set; }
 
-    public decimal Size { get; set; }
-
     public bool? IsPaid { get; set; }
 
     public string? Status { get; set; }
@@ -24,15 +22,18 @@ public partial class Registration
     public bool IsBestVote { get; set; }
 
     public int? KoiId { get; set; }
-    public string? Description { get; set; }
 
     public string? Note { get; set; }
 
+    public decimal? Size { get; set; }
+
+    public string? Description { get; set; }
+
     public virtual Group? Group { get; set; }
 
-    public virtual Koi Koi { get; set; }
+    public virtual Koi? Koi { get; set; }
 
-    public virtual ICollection<Media> Media { get; set; } = new List<Media>();
+    public virtual Media? Media { get; set; }
 
     public virtual ICollection<Score> Scores { get; set; } = new List<Score>();
 

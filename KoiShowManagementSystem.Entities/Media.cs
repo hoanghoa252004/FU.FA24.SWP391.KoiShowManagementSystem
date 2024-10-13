@@ -9,9 +9,9 @@ public partial class Media
 
     public string Image1 { get; set; } = null!;
 
-    public string? Image2 { get; set; }
+    public string Image2 { get; set; } = null!;
 
-    public string? Image3 { get; set; }
+    public string Image3 { get; set; } = null!;
 
     public string Video { get; set; } = null!;
 
