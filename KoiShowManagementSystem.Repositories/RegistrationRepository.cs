@@ -33,6 +33,7 @@ namespace KoiShowManagementSystem.Repositories
                 Size = (int)dto.Size!,
                 KoiId = (int)dto.KoiId!,
                 GroupId = dto.GroupId,
+                Description = dto.Description,
             };
             await _context.Set<Registration>().AddAsync(newRegistration);
             await _context.SaveChangesAsync();
@@ -176,6 +177,14 @@ namespace KoiShowManagementSystem.Repositories
                 if (dto.Status != null)
                 {
                     updateRegistration.Status = dto.Status;
+                }
+                if (dto.Note != null)
+                {
+                    updateRegistration.Note = dto.Note;
+                }
+                if (dto.Description != null)
+                {
+                    updateRegistration.Description = dto.Description;
                 }
             }
             var updateMedia = await _context.Media.SingleOrDefaultAsync(m => m.RegistrationId == dto.Id);

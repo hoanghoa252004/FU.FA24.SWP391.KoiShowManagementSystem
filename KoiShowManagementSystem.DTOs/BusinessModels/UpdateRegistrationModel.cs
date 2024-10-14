@@ -20,5 +20,7 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public IFormFile? Image3 { get; set; }
         public string? Video { get; set; }
         public string? Status { get; set; }
+        public string? Note { get; set; }
+        public string? Description { get; set; }
     }
 }
