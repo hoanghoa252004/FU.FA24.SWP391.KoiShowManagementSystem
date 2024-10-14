@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
 {
     public class UpdateRegistrationModel
     {
+        [Required]
         public int Id { get; set; }
         public int? GroupId { get; set; }
         public int? KoiId { get; set; }
