@@ -9,7 +9,6 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
 {
     public class CreateRegistrationModel
     {
-        public int? ShowId { get; set; }
         public int? KoiId { get; set; }
         public decimal? Size {  get; set; }
         public IFormFile? Image1 { get; set; }

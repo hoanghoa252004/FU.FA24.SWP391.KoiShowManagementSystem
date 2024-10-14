@@ -1,4 +1,5 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.DTOs.Response;
 using KoiShowManagementSystem.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -53,7 +54,7 @@ namespace KoiShowManagementSystem.API.Controllers
         // 2. CREATE REGISTRATION:-----------------------------------------------
         [Authorize]
         [HttpPost("create-registration")]
-        public async Task<IActionResult> CreateRegistration([FromForm]CreateRegistrationModel dto)
+        public async Task<IActionResult> CreateRegistration([FromForm]CreateRegistrationRequest dto)
         {
             try
             {
