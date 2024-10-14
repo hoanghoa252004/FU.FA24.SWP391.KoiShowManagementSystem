@@ -1,4 +1,4 @@
-﻿using KoiShowManagementSystem.API.Helper;
+﻿
 using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.DTOs.Response;
 using KoiShowManagementSystem.Services;
@@ -12,11 +12,9 @@ namespace KoiShowManagementSystem.API.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IEmailService _emailService;
-        public AuthenticationController(IUserService userService, IEmailService emailService)
+        public AuthenticationController(IUserService userService)
         {
             _userService = userService;
-            _emailService = emailService;
         }
         #region API
         // 1: LOGIN:-----------------------------------------------------------------
@@ -52,20 +50,20 @@ namespace KoiShowManagementSystem.API.Controllers
             try
             {
                 await _userService.SignUp(dto);
-                await _emailService.SendEmail(new EmailModel()
-                {
-                    To = dto.Email,
-                    Subject = "[SIGN UP] KOI SHOW MANAGEMENT SYSTEM",
-                    Content = $"Dear {dto.Name}, \n\n" +
-                             $"You just have sign up the Website [KOI SHOW MANAGEMENT SYSTEM] with these information:\n\n" +
-                             $"\tEmail: {dto.Email}\n" +
-                             $"\tFull Name: {dto.Name}\n" +
-                             $"\tPhone: {dto.Phone}\n" +
-                             $"\tPassword: {dto.Password}\n" +
-                             $"\tDate Of Birth: {dto.DateOfBirth}\n\n" +
-                             $"Wish you have a wonderful experience with our services !"
+                //await _emailService.SendEmail(new EmailModel()
+                //{
+                //    To = dto.Email,
+                //    Subject = "[SIGN UP] KOI SHOW MANAGEMENT SYSTEM",
+                //    Content = $"Dear {dto.Name}, \n\n" +
+                //             $"You just have sign up the Website [KOI SHOW MANAGEMENT SYSTEM] with these information:\n\n" +
+                //             $"\tEmail: {dto.Email}\n" +
+                //             $"\tFull Name: {dto.Name}\n" +
+                //             $"\tPhone: {dto.Phone}\n" +
+                //             $"\tPassword: {dto.Password}\n" +
+                //             $"\tDate Of Birth: {dto.DateOfBirth}\n\n" +
+                //             $"Wish you have a wonderful experience with our services !"
 
-                });
+                //});
                 return Ok(new ApiResponse()
                 {
                     Message = "Sign up successfully",
