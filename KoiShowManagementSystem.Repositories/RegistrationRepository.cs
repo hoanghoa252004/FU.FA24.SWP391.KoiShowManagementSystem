@@ -154,7 +154,7 @@ namespace KoiShowManagementSystem.Repositories
                                     Rank = reg.Rank,
                                     Id = reg.Id,
                                     GroupId = g.Id,
-                                    Group = g.Name,
+                                   
                                 }).FirstOrDefaultAsync();
 
             return result!;
