@@ -64,13 +64,8 @@ namespace KoiShowManagementSystem.Services
         // 4. UPDATE PROFILE:------------------------------
         public async Task<ProfileModel> EditProfile(EditProfileModel dto)
         {
-            if (dto == null
-                || dto.Name.IsNullOrEmpty() == true
-                || dto.Phone.IsNullOrEmpty() == true
-                || dto.DateOfBirth.HasValue == false
-                || dto.Gender.HasValue == false
-                )
-                throw new Exception("Failed: Lack of Information");
+            if (dto == null)
+                throw new Exception("Failed: No thing to update.");
 
             int id = _jwtServices.GetIdAndRoleFromToken().userId;
             ProfileModel result = await _repository.Users.EditProfile(id, dto);
@@ -82,8 +77,8 @@ namespace KoiShowManagementSystem.Services
         public async Task<bool> ChangePassword(ChangePasswordModel dto)
         {
             bool result = false;
-            if (dto != null 
-                && !dto.NewPassword.IsNullOrEmpty() 
+            if (dto != null
+                && !dto.NewPassword.IsNullOrEmpty()
                 && !dto.CurentPassword.IsNullOrEmpty())
             {
                 int id = _jwtServices.GetIdAndRoleFromToken().userId;
@@ -94,6 +89,8 @@ namespace KoiShowManagementSystem.Services
                     result = true;
                 }
             }
+            else
+                throw new Exception("Failed: No thing to update.");
             return result;
         }
 

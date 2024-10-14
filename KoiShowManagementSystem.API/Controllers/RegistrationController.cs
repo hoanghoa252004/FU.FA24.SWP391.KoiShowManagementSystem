@@ -20,7 +20,7 @@ namespace KoiShowManagementSystem.API.Controllers
         #region API
         // 1. GET MY REGISTRATION:-----------------------------------------------
         [Authorize]
-        [HttpGet("member-registrations")]
+        [HttpGet("registrations-by-member")]
         public async Task<IActionResult> GetKoiRegistrationByUser(string status)
         {
             IActionResult? response = null;
@@ -53,7 +53,7 @@ namespace KoiShowManagementSystem.API.Controllers
         // 2. CREATE REGISTRATION:-----------------------------------------------
         [Authorize]
         [HttpPost("create-registration")]
-        public async Task<IActionResult> CreateRegistration([FromForm]RegistrationFormModel dto)
+        public async Task<IActionResult> CreateRegistration([FromForm]CreateRegistrationModel dto)
         {
             try
             {
@@ -122,13 +122,13 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         // 5. GET PENDING REGISTRATION:
-        [Authorize(Roles ="Staff")]
+        [Authorize(Roles ="Staff,Manager")]
         [HttpGet("pending-registration")]
-        public async Task<IActionResult> GetPendingRegistration(int pageIndex, int pageSize, int showID)
+        public async Task<IActionResult> GetPendingRegistration(int pageIndex, int pageSize)
         {
             try
             {
-                var result = await _registrationService.GetPendingRegistration(pageIndex, pageSize, showID);
+                var result = await _registrationService.GetPendingRegistration(pageIndex, pageSize);
                 return Ok(new ApiResponse()
                 {
                     Message = "Get Pending Registration Successfully",
@@ -149,9 +149,9 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         // 6. UPDATE PENDING REGISTRATION:
-        //[Authorize(Roles = "Staff,Member")]
+        [Authorize(Roles = "Staff,Member")]
         [HttpPut("update-registration")]
-        public async Task<IActionResult> UpdateRegistration([FromForm] RegistrationFormModel dto)
+        public async Task<IActionResult> UpdateRegistration([FromForm] UpdateRegistrationModel dto)
         {
             try
             {

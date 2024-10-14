@@ -22,7 +22,7 @@ namespace KoiShowManagementSystem.Repositories
             this._s3UploadService = _s3UploadService;
         }
 
-        public async Task CreateRegistrationAsync(RegistrationFormModel dto)
+        public async Task CreateRegistrationAsync(CreateRegistrationModel dto)
         {
             string image1 = await _s3UploadService.UploadRegistrationImage(dto.Image1!);
             string image2 = await _s3UploadService.UploadRegistrationImage(dto.Image2!);
@@ -153,7 +153,7 @@ namespace KoiShowManagementSystem.Repositories
             return result!;
         }
 
-        public async Task UpdateRegistrationAsync(RegistrationFormModel dto)
+        public async Task UpdateRegistrationAsync(UpdateRegistrationModel dto)
         {
             var updateRegistration = await _context.Registrations.SingleOrDefaultAsync(r => r.Id == dto.Id);
             if(updateRegistration != null)
@@ -169,6 +169,10 @@ namespace KoiShowManagementSystem.Repositories
                 if(dto.GroupId != null)
                 {
                     updateRegistration.GroupId = dto.GroupId;
+                }
+                if (dto.Status != null)
+                {
+                    updateRegistration.Status = dto.Status;
                 }
             }
             var updateMedia = await _context.Media.SingleOrDefaultAsync(m => m.RegistrationId == dto.Id);

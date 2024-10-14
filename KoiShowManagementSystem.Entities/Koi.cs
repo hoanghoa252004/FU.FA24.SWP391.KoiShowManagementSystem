@@ -24,4 +24,6 @@ public partial class Koi
     public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 
     public virtual Variety Variety { get; set; } = null!;
+
+    public virtual User User { get; set; } = null!;
 }
