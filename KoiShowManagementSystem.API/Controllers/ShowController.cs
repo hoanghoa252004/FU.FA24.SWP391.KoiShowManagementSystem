@@ -34,7 +34,7 @@ namespace KoiShowManagementSystem.API.Controllers
             });
         }
 
-        [HttpGet("show-detail")]
+        [HttpGet("show-by-id")]
         public async Task<IActionResult> ShowDetail(int showID)
         {
             if (showID <= 0)

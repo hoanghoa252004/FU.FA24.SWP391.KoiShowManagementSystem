@@ -1,4 +1,6 @@
-﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+﻿using Amazon.Runtime.Telemetry;
+using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories;
 using KoiShowManagementSystem.Repositories.Helper;
@@ -39,11 +41,6 @@ namespace KoiShowManagementSystem.Services
                         result = myKoiRegistrations.Where(koi => koi.Status == "Accepted" || koi.Status == "Rejected" || koi.Status == "Pending").ToList();
                         break;
                     }
-                case "draft":
-                    {
-                        result = myKoiRegistrations.Where(koi => koi.Status == "Draft").ToList();
-                        break;
-                    }
                 case "scored":
                     {
                         result = myKoiRegistrations.Where(koi => koi.Status == "Scored").ToList();
@@ -55,53 +52,90 @@ namespace KoiShowManagementSystem.Services
 
         // 2. CREATE REGISTRATION:
         // ACTOR: MEMBER.
-        public async Task CreateRegistration(RegistrationFormModel dto)
+        public async Task CreateRegistration(CreateRegistrationRequest dto)
         {
-            // VALIDATE INPUT:
-            // V1: Kiểm tra có đủ input hay ko:
-            if (dto == null
-                || dto.Image1 == null
-                || dto.Image2 == null
-                || dto.Image3 == null
-                || dto.Video.IsNullOrEmpty() == true)
-                throw new Exception("Lack of information to register Koi for show !");
-            // V2: Kiểm tra con cá đó có đúng phải của Member đó ko:
-            var userId = _jwtServices.GetIdAndRoleFromToken().userId;
-            var koi = await _repository.Koi.GetKoi((int)dto.KoiId!);
-            if (koi != null && userId != koi.UserId)
-                throw new Exception("You're registering a Koi that does not belong to you !");
-            // START: 
-            var groups = await _repository.Groups.GetByShowId((int)dto.ShowId!);
-            if (!groups.IsNullOrEmpty())
+            if(dto != null)
             {
-                foreach (var group in groups)
+                // V0: Kiểm tra có đủ input hay ko:
+                if (dto.KoiId == null
+                    || dto.ShowId == null
+                    || dto.Image1 == null
+                    || dto.Image2 == null
+                    || dto.Image3 == null
+                    || dto.Video.IsNullOrEmpty() == true
+                    || dto.Description.IsNullOrEmpty() == true)
+                    throw new Exception("Failed: Lack of information to register Koi for show !");
+                else
                 {
-                    var registrations = group.Registrations;
-                    // 1. Con đó đăng kí cuộc thi này rồi hay chưa.
-                    // Nếu group có đơn đăng kí rồi thì kiểm tra
-                    // xem con cá đó đã đăng kí chưa. Nếu rồi -> biến.
-                    // Nếu group chưa có đơn nào, bỏ qua.
-                    // CHƯA GIẢI QUYẾT:
-                    // Nếu lần trước đăng kí, vì hệ thống phân loại ko được và staff chưa duyệt
-                    // Nên groupId bằng null => sẽ ko bắt được đã tham gia show.
-                    if (!registrations.IsNullOrEmpty())
-                        foreach (var regist in registrations!)
-                        {
-                            if (regist.KoiID == dto.KoiId)
-                                throw new Exception("Your Koi already registered for this Show");
-                        }
-                    // 2. Thực hiện phân loại: 
-                    if (dto.Size >= group.SizeMin && dto.Size <= group.SizeMax)// Kiểm tra size:
+                    bool check = false;
+                    var createRegistration = new CreateRegistrationModel()
                     {
-                        var matchingVariety = group.Varieties!.FirstOrDefault(var => var.VarietyId == koi!.VarietyId);
-                        if (matchingVariety != null) // Kiểm tra variety:
-                        {
-                            dto.GroupId = group.GroupId;
-                            break;
-                        }
+                        Image1 = dto.Image1,
+                        Image2 = dto.Image2,
+                        Image3 = dto.Image3,
+                        Video = dto.Video,
+                        KoiId = dto.KoiId,
+                        Size = dto.Size,
+                        Description = dto.Description,
+                        GroupId = null!,
+                    };
+                    // V1: Kiểm tra Show còn Up Comming ko:
+                    var show = await _repository.Show.GetShowDetailsAsync((int)dto.ShowId);
+                    if (show != null)
+                    {
+                        if (!show.ShowStatus!.Equals("On Going", StringComparison.OrdinalIgnoreCase))
+                            throw new Exception("Failed: Show is not on going !");
                     }
+                    else
+                        throw new Exception("Failed: Show does not exist !");
+                    if (dto.Size <= 0 || dto.Size >= 100)
+                        throw new Exception("Failed: Invalid size for Koi Fish !");
+                    // V2: Kiểm tra con cá đó có đúng phải của Member đó ko:
+                    var userId = _jwtServices.GetIdAndRoleFromToken().userId;
+                    var koi = await _repository.Koi.GetKoi((int)dto.KoiId!);
+                    if (koi != null)
+                    {
+                        if (userId != koi.UserId)
+                            throw new Exception("Failed: You're registering a Koi that does not belong to you !");
+                        // START: 
+                        var groups = await _repository.Groups.GetByShowId((int)dto.ShowId!);
+                        if (!groups.IsNullOrEmpty())
+                        {
+                            foreach (var group in groups)
+                            {
+                                var registrations = group.Registrations;
+                                // 1. Con đó đăng kí cuộc thi này rồi hay chưa.
+                                // Nếu group có đơn đăng kí rồi thì kiểm tra
+                                // xem con cá đó đã đăng kí chưa. Nếu rồi -> biến.
+                                // Nếu group chưa có đơn nào, bỏ qua.
+                                // CHƯA GIẢI QUYẾT:
+                                // Nếu lần trước đăng kí, vì hệ thống phân loại ko được và staff chưa duyệt
+                                // Nên groupId bằng null => sẽ ko bắt được đã tham gia show.
+                                if (!registrations.IsNullOrEmpty())
+                                    foreach (var regist in registrations!)
+                                    {
+                                        if (regist.KoiID == dto.KoiId)
+                                            throw new Exception("Failed: Your Koi already registered for this Show");
+                                    }
+                                // 2. Thực hiện phân loại: 
+                                if (dto.Size >= group.SizeMin && dto.Size <= group.SizeMax)// Kiểm tra size:
+                                {
+                                    var matchingVariety = group.Varieties!.FirstOrDefault(var => var.VarietyId == koi!.VarietyId);
+                                    if (matchingVariety != null) // Kiểm tra variety:
+                                    {
+                                        createRegistration.GroupId = group.GroupId;
+                                        break;
+                                    }
+                                }
+                            }
+                            check = true;
+                        }
+                        if (check == true)
+                            await _repository.Registrations.CreateRegistrationAsync(createRegistration);
+                    }
+                    else
+                        throw new Exception("Failed: Koi does not exist !");
                 }
-                await _repository.Registrations.CreateRegistrationAsync(dto);
             }
         }
 
@@ -124,7 +158,7 @@ namespace KoiShowManagementSystem.Services
         }
 
         // 5. GET PENDING REGISTRATION:
-        public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetPendingRegistration(int pageIndex, int pageSize, int showId)
+        public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetPendingRegistration(int pageIndex, int pageSize)
         {
             var registrationList = await _repository.Registrations.GetAllRegistrationAsync();
             if (registrationList.Count() > 0)
@@ -139,12 +173,80 @@ namespace KoiShowManagementSystem.Services
         }
 
         // 6. UPDATE REGISTRATION:
-        public async Task UpdateRegistration(RegistrationFormModel dto)
+        public async Task UpdateRegistration(UpdateRegistrationModel dto)
         {
-            if (dto == null)
-                throw new Exception("Update registration has nothing");
+            if (dto == null || 
+                (dto.Status.IsNullOrEmpty() == true
+                && dto.Size == null
+                && dto.GroupId == null
+                && dto.Image3 == null
+                && dto.Image2 == null
+                && dto.Image1 == null
+                && dto.Video == null
+                && dto.KoiId == null
+                && dto.Note == null
+                && dto.Description == null)
+                )
+                throw new Exception("Failed: Nothing To Update");
             else
-                await _repository.Registrations.UpdateRegistrationAsync(dto);
+            {
+                string role = _jwtServices.GetIdAndRoleFromToken().role;
+                int memberId = _jwtServices.GetIdAndRoleFromToken().userId;
+                bool check = false;
+                if (role == null)
+                    throw new Exception("Failed: Invalid actor !");
+                else
+                {
+                    if(role.Equals("Member", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Kiểm tra xem đơn này phải của nó ko:
+                        var kois =  await _repository.Koi.GetAllKoiByUserId(memberId);
+                        var registrations = (await _repository.Registrations.GetRegistrationByUserIdAsync(memberId)).ToList();
+                        var isBelong = from k in kois
+                                       join r in registrations on k.KoiID equals r.KoiID
+                                       //where r.Id == dto.Id
+                                       select r;
+                        int count = isBelong.Count();
+                        if (count <= 0)
+                            throw new Exception("Failed: This is not a registration of your Koi !");
+                        // Kiểm tra quyền hạn được update:
+                        if (dto.Status != null || dto.GroupId != null || dto.Note != null)
+                           throw new Exception("Failed: Member does not have permission to update Status & Group of Registration !");
+                        else if (dto.KoiId != null) // Nếu có cập nhập con mới:
+                        {
+                            // Kiểm tra new Koi phải của Member ko:
+                            var koi = await _repository.Koi.GetKoi((int)dto.KoiId);
+                            if (koi != null)
+                            {
+                                if (koi.UserId != memberId)
+                                    throw new Exception("Failed: New koi does not belong to you !");
+                                else
+                                    check = true;
+                            }
+                        }
+                        else // Cập nhập con cũ
+                        {
+                            check = true;
+                        }
+                    }
+                    else if (role.Equals("Staff", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (dto.KoiId != null
+                            || dto.Size != null
+                            || dto.Image1 != null
+                            || dto.Image2 != null
+                            || dto.Image3 != null
+                            || dto.Video != null
+                            || dto.Description != null)
+                            throw new Exception("Staff does not have permission to update Koi, Size, Image & Video of Registration !");
+                        else
+                            check = true;
+                    }
+                }  
+                // Sau khi vượt qua tất cả ràng buộc: 
+                if(check == true)
+                    await _repository.Registrations.UpdateRegistrationAsync(dto);
+            }
         }
     }
 }

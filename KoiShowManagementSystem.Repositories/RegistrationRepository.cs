@@ -22,7 +22,7 @@ namespace KoiShowManagementSystem.Repositories
             this._s3UploadService = _s3UploadService;
         }
 
-        public async Task CreateRegistrationAsync(RegistrationFormModel dto)
+        public async Task CreateRegistrationAsync(CreateRegistrationModel dto)
         {
             string image1 = await _s3UploadService.UploadRegistrationImage(dto.Image1!);
             string image2 = await _s3UploadService.UploadRegistrationImage(dto.Image2!);
@@ -33,6 +33,7 @@ namespace KoiShowManagementSystem.Repositories
                 Size = (int)dto.Size!,
                 KoiId = (int)dto.KoiId!,
                 GroupId = dto.GroupId,
+                Description = dto.Description,
             };
             await _context.Set<Registration>().AddAsync(newRegistration);
             await _context.SaveChangesAsync();
@@ -51,40 +52,43 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<IEnumerable<RegistrationModel>> GetRegistrationByUserIdAsync(int id)
         {
             // Lấy Koi của User:
-            IEnumerable<Koi> kois = (await _context.Set<Koi>().ToListAsync())
-                        .Where(koiRegist => koiRegist.UserId == id);
+            IEnumerable<Koi> kois = (await _context.Set<Koi>().ToListAsync());
+                var koisssss = kois.Where(koi => koi.UserId == id).ToList();
             // Join lấy thông tin:
             IEnumerable<Registration> registrations = await _context.Set<Registration>().ToListAsync();
             IEnumerable<Show> shows = await _context.Set<Show>().ToListAsync();
             IEnumerable<Group> groups = await _context.Set<Group>().ToListAsync();
             IEnumerable<Media> media = await _context.Set<Media>().ToListAsync();
             IEnumerable<Variety> varieties = await _context.Set<Variety>().ToListAsync();
-            IEnumerable<RegistrationModel> result = from koi in kois
-                         join var in varieties on koi.VarietyId equals var.Id
-                         join regist in registrations on  koi.Id equals regist.KoiId
-                         join med in media on regist.Id equals med.RegistrationId
-                         join grp in groups on regist.GroupId equals grp.Id
-                         join show in shows on grp.ShowId equals show.Id
-                         select new RegistrationModel()
-                         {
-                            Id = koi.Id,
-                            Name = koi.Name,
-                            Description = koi.Description,
-                            Size = koi.Size,
-                            Variety = var.Name,
-                            ShowId = show.Id,
-                            Show = show.Title,
-                            Group = grp.Name,
-                            CreateDate = regist.CreateDate,
-                            Rank = regist.Rank,
-                            TotalScore = regist.TotalScore,
-                            Status = regist.Status,
-                            IsBestVote = regist.IsBestVote,
-                            Image1 = med.Image1,
-                            Image2 = med.Image1,
-                            Image3 = med.Image1,
-                            Video = med.Video,
-                         };
+            IEnumerable<RegistrationModel> result = from koi in koisssss
+                                                    join var in varieties on koi.VarietyId equals var.Id
+                                                    join regist in registrations on koi.Id equals regist.KoiId
+                                                    join med in media on regist.Id equals med.RegistrationId
+                                                    join grp in groups on regist.GroupId equals grp.Id into registGroup
+                                                    from grp in registGroup.DefaultIfEmpty() // LEFT JOIN Group
+                                                    join show in shows on grp?.ShowId equals show.Id into registShow
+                                                    from show in registShow.DefaultIfEmpty() // LEFT JOIN Show
+                                                    select new RegistrationModel()
+                                                    {
+                                                        Id = regist.Id,
+                                                        Name = koi.Name,
+                                                        KoiID = koi.Id,
+                                                        Description = koi.Description,
+                                                        Size = koi.Size,
+                                                        Variety = var.Name,
+                                                        ShowId = show?.Id,
+                                                        Show = show?.Title,
+                                                        Group = grp?.Name,
+                                                        CreateDate = regist.CreateDate,
+                                                        Rank = regist.Rank,
+                                                        TotalScore = regist.TotalScore,
+                                                        Status = regist.Status,
+                                                        IsBestVote = regist.IsBestVote,
+                                                        Image1 = med.Image1,
+                                                        Image2 = med.Image1,
+                                                        Image3 = med.Image1,
+                                                        Video = med.Video,
+                                                    };
             return result;
         }
 
@@ -153,7 +157,7 @@ namespace KoiShowManagementSystem.Repositories
             return result!;
         }
 
-        public async Task UpdateRegistrationAsync(RegistrationFormModel dto)
+        public async Task UpdateRegistrationAsync(UpdateRegistrationModel dto)
         {
             var updateRegistration = await _context.Registrations.SingleOrDefaultAsync(r => r.Id == dto.Id);
             if(updateRegistration != null)
@@ -170,6 +174,18 @@ namespace KoiShowManagementSystem.Repositories
                 {
                     updateRegistration.GroupId = dto.GroupId;
                 }
+                if (dto.Status != null)
+                {
+                    updateRegistration.Status = dto.Status;
+                }
+                if (dto.Note != null)
+                {
+                    updateRegistration.Note = dto.Note;
+                }
+                if (dto.Description != null)
+                {
+                    updateRegistration.Description = dto.Description;
+                }
             }
             var updateMedia = await _context.Media.SingleOrDefaultAsync(m => m.RegistrationId == dto.Id);
             if(updateMedia != null)
@@ -184,11 +200,11 @@ namespace KoiShowManagementSystem.Repositories
                 }
                 if (dto.Image2 != null)
                 {
-                    updateMedia.Image1 = await _s3UploadService.UpdateImageAsync(updateMedia.Image2, dto.Image2);
+                    updateMedia.Image2 = await _s3UploadService.UpdateImageAsync(updateMedia.Image2, dto.Image2);
                 }
                 if (dto.Image3 != null)
                 {
-                    updateMedia.Image1 = await _s3UploadService.UpdateImageAsync(updateMedia.Image3, dto.Image3);
+                    updateMedia.Image3 = await _s3UploadService.UpdateImageAsync(updateMedia.Image3, dto.Image3);
                 }
             }
             await _context.SaveChangesAsync();
