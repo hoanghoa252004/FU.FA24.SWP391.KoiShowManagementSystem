@@ -31,7 +31,7 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         [Authorize(Roles = "Member")]
-        [HttpGet("koi-detail ")]
+        [HttpGet("koi-detail")]
         public async Task<IActionResult> KoiDetail(int koiId)
         {
             if (koiId <= 0)
