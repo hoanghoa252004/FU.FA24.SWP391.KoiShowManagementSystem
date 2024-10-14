@@ -113,5 +113,14 @@ namespace KoiShowManagementSystem.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> DeleteKoi(int koiId)
+        {
+            var koiToDelete = await _context.Kois.FirstOrDefaultAsync(k => k.Id == koiId);
+            if (koiToDelete == null) return false;
+            koiToDelete.Status = false;
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

@@ -47,5 +47,11 @@ namespace KoiShowManagementSystem.Services
             return result;
         }
 
+        public Task<bool> DeleteKoi(int koiId)
+        {
+            var result = _repository.Koi.DeleteKoi(koiId);
+            return result;
+        }
+
     }
 }

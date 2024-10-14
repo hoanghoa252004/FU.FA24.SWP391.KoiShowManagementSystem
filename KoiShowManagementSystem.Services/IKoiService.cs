@@ -19,5 +19,6 @@ namespace KoiShowManagementSystem.Services
         Task<bool> CreateKoi(KoiDTO koi);
 
         Task<bool> UpdateKoi(KoiDTO koi);
+        Task<bool> DeleteKoi(int koiId);
     }
 }
