@@ -39,11 +39,6 @@ namespace KoiShowManagementSystem.Services
                         result = myKoiRegistrations.Where(koi => koi.Status == "Accepted" || koi.Status == "Rejected" || koi.Status == "Pending").ToList();
                         break;
                     }
-                case "draft":
-                    {
-                        result = myKoiRegistrations.Where(koi => koi.Status == "Draft").ToList();
-                        break;
-                    }
                 case "scored":
                     {
                         result = myKoiRegistrations.Where(koi => koi.Status == "Scored").ToList();
@@ -55,7 +50,7 @@ namespace KoiShowManagementSystem.Services
 
         // 2. CREATE REGISTRATION:
         // ACTOR: MEMBER.
-        public async Task CreateRegistration(RegistrationFormModel dto)
+        public async Task CreateRegistration(CreateRegistrationModel dto)
         {
             // VALIDATE INPUT:
             // V1: Kiểm tra có đủ input hay ko:
@@ -124,7 +119,7 @@ namespace KoiShowManagementSystem.Services
         }
 
         // 5. GET PENDING REGISTRATION:
-        public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetPendingRegistration(int pageIndex, int pageSize, int showId)
+        public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetPendingRegistration(int pageIndex, int pageSize)
         {
             var registrationList = await _repository.Registrations.GetAllRegistrationAsync();
             if (registrationList.Count() > 0)
@@ -139,12 +134,54 @@ namespace KoiShowManagementSystem.Services
         }
 
         // 6. UPDATE REGISTRATION:
-        public async Task UpdateRegistration(RegistrationFormModel dto)
+        public async Task UpdateRegistration(UpdateRegistrationModel dto)
         {
             if (dto == null)
                 throw new Exception("Update registration has nothing");
             else
-                await _repository.Registrations.UpdateRegistrationAsync(dto);
+            {
+                string role = _jwtServices.GetIdAndRoleFromToken().role;
+                int memberId = _jwtServices.GetIdAndRoleFromToken().userId;
+                bool check = false;
+                if (role == null)
+                    throw new Exception("Failed: Invalid actor !");
+                // Kiểm tra quyền hạn được update:
+                else
+                {
+                    if(role.Equals("Member", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (dto.Status != null || dto.GroupId != null)
+                            throw new Exception("Member does not have permission to update Status & Group of Registration !");
+                        else if (dto.KoiId != null) // Nếu có cập nhập con mới:
+                        {
+                            // Kiểm tra new Koi phải của Member ko:
+                            var koi = await _repository.Koi.GetKoi((int)dto.KoiId);
+                            if (koi != null)
+                            {
+                                if (koi.UserId == memberId)
+                                    throw new Exception("Failed: New koi does not belong to you !");
+                                else
+                                    check = true;
+                            }
+                        }
+                    }
+                    else if (role.Equals("Staff", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (dto.KoiId != null
+                            || dto.Size != null
+                            || dto.Image1 != null
+                            || dto.Image2 != null
+                            || dto.Image3 != null
+                            || dto.Video != null)
+                            throw new Exception("Staff does not have permission to update Koi, Size, Image & Video of Registration !");
+                        else
+                            check = true;
+                    }
+                }  
+                // Sau khi vượt qua tất cả ràng buộc: 
+                if(check == true)
+                    await _repository.Registrations.UpdateRegistrationAsync(dto);
+            }
         }
     }
 }

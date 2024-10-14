@@ -17,79 +17,13 @@ namespace KoiShowManagementSystem.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IEmailService _emailService;
-        public UserController(IUserService userService, IEmailService emailService)
+        
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _emailService = emailService;
         }
 
         #region API
-
-        // 1: LOGIN:-----------------------------------------------------------------
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginModel dto)
-        {
-            try
-            {
-                var result = await _userService.Login(dto);
-                return Ok(new ApiResponse()
-                    {
-                        Message = "Login Successfully",
-                        Payload = result,
-                    });
-            }
-            catch (Exception ex)
-            {
-                // TH1: User đã bị banned.
-                // TH2: Email / password sai.
-                // Default: Other exceptions.
-                return BadRequest(new ApiResponse()
-                {
-                    Message = ex.Message,
-                });
-            }
-        }
-
-        
-        // 2: SIGN UP:---------------------------------------------------------------
-        [HttpPost("signup")]
-        public async Task<IActionResult> SignUp(SignUpModel dto)
-        {
-            try
-            {
-                await _userService.SignUp(dto);
-                await _emailService.SendEmail(new EmailModel()
-                {
-                    To = dto.Email,
-                    Subject = "[SIGN UP] KOI SHOW MANAGEMENT SYSTEM",
-                    Content = $"Dear {dto.Name}, \n\n" +
-                             $"You just have sign up the Website [KOI SHOW MANAGEMENT SYSTEM] with these information:\n\n" +
-                             $"\tEmail: {dto.Email}\n" +
-                             $"\tFull Name: {dto.Name}\n" +
-                             $"\tPhone: {dto.Phone}\n" +
-                             $"\tPassword: {dto.Password}\n" +
-                             $"\tDate Of Birth: {dto.DateOfBirth}\n\n" +
-                             $"Wish you have a wonderful experience with our services !"
-
-                });
-                return Ok(new ApiResponse()
-                {
-                    Message = "Sign up successfully",
-                });
-            }
-            catch(Exception ex)
-            {
-                // TH1: Email tồn tại.
-                // Default: Other exceptions.
-                return BadRequest(new ApiResponse()
-                {
-                    Message = ex.Message,
-                });
-            }
-        }
-
-        
         // 3: PERSONAL INFORMATION:---------------------------------------------------
         [Authorize]
         [HttpGet("profile")]
@@ -117,7 +51,7 @@ namespace KoiShowManagementSystem.API.Controllers
         // 4: EDIT PERSONAL INFORMATION:-----------------------------------------------
         [Authorize]
         [HttpPut("edit-profile")]
-        public async Task<IActionResult> EditPersonalInfor(EditProfileModel dto)
+        public async Task<IActionResult> EditPersonalInfor([FromForm]EditProfileModel dto)
         {
             try
             {
@@ -141,7 +75,7 @@ namespace KoiShowManagementSystem.API.Controllers
         // 5: CHANGE PASSWORD:-----------------------------------------------------------
         [Authorize]
         [HttpPut("change-password")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordModel dto)
+        public async Task<IActionResult> ChangePassword([FromForm]ChangePasswordModel dto)
         {
             IActionResult? response = null;
             try

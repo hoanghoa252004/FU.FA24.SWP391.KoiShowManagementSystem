@@ -115,6 +115,11 @@ public partial class KoiShowManagementSystemContext : DbContext
             entity.Property(e => e.UserId).HasColumnName("User_Id");
             entity.Property(e => e.VarietyId).HasColumnName("Variety_Id");
 
+            entity.HasOne(d => d.User).WithMany(p => p.Kois)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Koi_User");
+
             entity.HasOne(d => d.Variety).WithMany(p => p.Kois)
                 .HasForeignKey(d => d.VarietyId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

@@ -109,11 +109,10 @@ namespace KoiShowManagementSystem.Repositories
             if (user != null)
             {
                 // Update: 
-                user.Name = dto.Name!;
-                user.Phone = dto.Phone!;
-                user.DateOfBirth = dto.DateOfBirth;
-                user.Gender = dto.Gender;
-                _context.Set<User>().Update(user);
+                if (dto.Name != null) user.Name = dto.Name;
+                if(dto.Phone != null) user.Phone = dto.Phone;
+                if (dto.DateOfBirth != null) user.DateOfBirth = dto.DateOfBirth;
+                if (dto.Gender != null) user.Gender = dto.Gender;
                 await _context.SaveChangesAsync();
                 // Return new Information:
                 var role = await _context.Set<Role>().SingleOrDefaultAsync(role => role.Id == user!.RoleId);

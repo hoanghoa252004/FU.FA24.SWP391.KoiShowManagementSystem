@@ -28,4 +28,6 @@ public partial class User
     public virtual Role Role { get; set; } = null!;
 
     public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
+
+    public virtual ICollection<Koi> Kois { get; set; } = new List<Koi>();
 }
