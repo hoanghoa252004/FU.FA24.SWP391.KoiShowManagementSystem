@@ -75,5 +75,19 @@ namespace KoiShowManagementSystem.API.Controllers
             }
             
         }
+
+        [Authorize(Roles = "Member")]
+        [HttpPut("update-koi")]
+        public async Task<IActionResult> UpdateKoi([FromForm] KoiDTO koi)
+        {
+            var result = await _koiService.UpdateKoi(koi);
+            if (result)
+            {
+                return Ok(new ApiResponse { Message = "Koi updated successfully." });
+            }
+
+            return BadRequest(new ApiResponse { Message = "Failed to update Koi." });
+        }
+
     }
 }
