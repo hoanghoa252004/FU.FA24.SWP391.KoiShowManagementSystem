@@ -62,7 +62,8 @@ namespace KoiShowManagementSystem.Services
                     || dto.Image1 == null
                     || dto.Image2 == null
                     || dto.Image3 == null
-                    || dto.Video.IsNullOrEmpty() == true)
+                    || dto.Video.IsNullOrEmpty() == true
+                    || dto.Description.IsNullOrEmpty() == true)
                     throw new Exception("Failed: Lack of information to register Koi for show !");
                 else
                 {
@@ -75,6 +76,7 @@ namespace KoiShowManagementSystem.Services
                         Video = dto.Video,
                         KoiId = dto.KoiId,
                         Size = dto.Size,
+                        Description = dto.Description,
                         GroupId = null!,
                     };
                     // V1: Kiểm tra Show còn Up Comming ko:
@@ -181,7 +183,9 @@ namespace KoiShowManagementSystem.Services
                 && dto.Image2 == null
                 && dto.Image1 == null
                 && dto.Video == null
-                && dto.KoiId == null)
+                && dto.KoiId == null
+                && dto.Note == null
+                && dto.Description == null)
                 )
                 throw new Exception("Failed: Nothing To Update");
             else
@@ -206,7 +210,7 @@ namespace KoiShowManagementSystem.Services
                         if (count <= 0)
                             throw new Exception("Failed: This is not a registration of your Koi !");
                         // Kiểm tra quyền hạn được update:
-                        if (dto.Status != null || dto.GroupId != null)
+                        if (dto.Status != null || dto.GroupId != null || dto.Note != null)
                            throw new Exception("Failed: Member does not have permission to update Status & Group of Registration !");
                         else if (dto.KoiId != null) // Nếu có cập nhập con mới:
                         {
@@ -232,7 +236,8 @@ namespace KoiShowManagementSystem.Services
                             || dto.Image1 != null
                             || dto.Image2 != null
                             || dto.Image3 != null
-                            || dto.Video != null)
+                            || dto.Video != null
+                            || dto.Description != null)
                             throw new Exception("Staff does not have permission to update Koi, Size, Image & Video of Registration !");
                         else
                             check = true;

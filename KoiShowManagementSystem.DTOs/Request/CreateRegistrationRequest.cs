@@ -24,5 +24,7 @@ namespace KoiShowManagementSystem.DTOs.Request
         public IFormFile? Image3 { get; set; }
         [Required]
         public string? Video { get; set; }
+        [Required]
+        public string? Description { get; set; }
     }
 }
