@@ -12,10 +12,11 @@ namespace KoiShowManagementSystem.API.Controllers
     public class ShowController : ControllerBase
     {
         private readonly IShowService _koiShowService;
-
-        public ShowController(IShowService koiShowService)
+        private readonly IRefereeService _refereeService;
+        public ShowController(IShowService koiShowService, IRefereeService refereeService)
         {
             _koiShowService = koiShowService;
+            _refereeService = refereeService;
         }
 
         [HttpGet("search")]
@@ -102,6 +103,36 @@ namespace KoiShowManagementSystem.API.Controllers
         {
             var result = await _koiShowService.GetAllVarieties();
             return Ok(new ApiResponse { Message = "Success", Payload = result });
+        }
+
+        [HttpGet("list-show")]
+        public async Task<IActionResult> GetListShowAsync()
+        {
+            var result = await _refereeService.GetListShow();
+            if (result != null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Message = "Success",
+                    Payload = result
+                });
+            }
+            return NotFound(new ApiResponse { Message = "No shows found", });
+        }
+
+        [HttpGet("list-Koi")]
+        public async Task<IActionResult> GetListKoiByGroupIdAsync(int groupId)
+        {
+            var result = await _refereeService.GetKoiDetailsByGroupId(groupId);
+            if (result != null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Message = "Success",
+                    Payload = result
+                });
+            }
+            return NotFound(new ApiResponse { Message = "Not found", });
         }
 
     }
