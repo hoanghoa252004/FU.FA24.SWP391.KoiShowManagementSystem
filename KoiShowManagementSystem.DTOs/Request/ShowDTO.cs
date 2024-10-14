@@ -11,22 +11,14 @@ namespace KoiShowManagementSystem.DTOs.Request
     public class ShowDTO
 
     {
-        [Required]
         public int Id { get; set; }
-        [Required]
-        public string Title { get; set; }
-        [Required]
-        public string Description { get; set; }
-        [Required]
+        public string? Title { get; set; }
+        public string? Description { get; set; }
         public DateOnly RegisterStartDate { get; set; }
-        [Required]
         public DateOnly RegisterEndDate { get; set; }
-        [Required]
         public DateOnly ScoreStartDate { get; set; }
-        [Required]
         public DateOnly ScoreEndDate { get; set; }
-        [Required]
-        public IFormFile Banner { get; set; }
+        public IFormFile? Banner { get; set; }
         public List<GroupDTO>? Groups { get; set; }
     }
 }

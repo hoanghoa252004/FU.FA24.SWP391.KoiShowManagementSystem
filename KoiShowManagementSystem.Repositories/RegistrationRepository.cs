@@ -147,6 +147,7 @@ namespace KoiShowManagementSystem.Repositories
                                     Variety = v != null ? v.Name : "Unknown Variety",
                                     Description = koi.Description,
                                     Size = koi.Size,
+                                    Group =g.Name,
                                     TotalScore = reg.TotalScore,
                                     IsBestVote = reg.IsBestVote,
                                     Status = reg.Status,

@@ -24,7 +24,7 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task<List<KoiModel>> GetAllKoiByUserId(int userId)
         {
-            return await  _context.Kois.Where(k => k.UserId == userId && k.Status == true).Select(k => new KoiModel
+            return await _context.Kois.Where(k => k.UserId == userId && k.Status == true).Select(k => new KoiModel
             {
                 KoiID = k.Id,
                 KoiName = k.Name,
@@ -69,10 +69,10 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<bool> CreateKoi(KoiDTO koi, int userId)
         {
             if (koi == null) throw new ArgumentNullException(nameof(koi));
-            
+
             var newKoi = new Koi
             {
-                Name = koi.Name,
+                Name = koi.Name!,
                 Description = koi.Description,
                 Image = koi.Image != null ? await _s3UploadService.UploadKoiImage(koi.Image) : null,
                 Size = koi.Size,
@@ -85,7 +85,42 @@ namespace KoiShowManagementSystem.Repositories
             return true;
         }
 
+        public async Task<bool> UpdateKoi(KoiDTO koi)
+        {
+            if (koi == null) throw new ArgumentNullException(nameof(koi));
+            var koiToUpdate = await _context.Kois.FirstOrDefaultAsync(k => k.Id == koi.Id);
+            if (koiToUpdate == null) return false;
+            if (koiToUpdate.Name != null)
+            {
+                koiToUpdate.Name = koi.Name!;
+            }
+            if (koiToUpdate.Description != null)
+            {
+                koiToUpdate.Description = koi.Description;
+            }
+            if (koiToUpdate.Size != koi.Size)
+            {
+                koiToUpdate.Size = koi.Size;
+            }
+            if (koiToUpdate.VarietyId != koi.VarietyId)
+            {
+                koiToUpdate.VarietyId = koi.VarietyId;
+            }
+            if (koiToUpdate.Image != null)
+            {
+                koiToUpdate.Image = await _s3UploadService.UpdateImageAsync(koiToUpdate.Image, koi.Image!);
+            }
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
-
+        public async Task<bool> DeleteKoi(int koiId)
+        {
+            var koiToDelete = await _context.Kois.FirstOrDefaultAsync(k => k.Id == koiId);
+            if (koiToDelete == null) return false;
+            koiToDelete.Status = false;
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

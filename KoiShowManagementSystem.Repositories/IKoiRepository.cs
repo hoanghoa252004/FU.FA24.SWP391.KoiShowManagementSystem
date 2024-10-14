@@ -13,5 +13,7 @@ namespace KoiShowManagementSystem.Repositories
         Task<List<KoiModel>> GetAllKoiByUserId(int userId);
         Task<KoiModel?> GetKoi(int koiId);
         Task<bool> CreateKoi(KoiDTO koi, int userId);
+        Task<bool> UpdateKoi(KoiDTO koi);
+        Task<bool> DeleteKoi(int koiId);
     }
 }
