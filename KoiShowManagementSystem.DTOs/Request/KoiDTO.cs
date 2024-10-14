@@ -10,15 +10,11 @@ namespace KoiShowManagementSystem.DTOs.Request
 {
     public class KoiDTO
     {
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Description { get; set; }
-        [Required]
-        public IFormFile Image { get; set; }
-        [Required]
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public IFormFile? Image { get; set; }
         public decimal Size { get; set; }
-        [Required]
         public int VarietyId { get; set; }
     }
 }

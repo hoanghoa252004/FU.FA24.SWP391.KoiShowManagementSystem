@@ -75,5 +75,36 @@ namespace KoiShowManagementSystem.API.Controllers
             }
             
         }
+
+        [Authorize(Roles = "Member")]
+        [HttpPut("update-koi")]
+        public async Task<IActionResult> UpdateKoi([FromForm] KoiDTO koi)
+        {
+            var result = await _koiService.UpdateKoi(koi);
+            if (result)
+            {
+                return Ok(new ApiResponse { Message = "Koi updated successfully." });
+            }
+
+            return BadRequest(new ApiResponse { Message = "Failed to update Koi." });
+        }
+
+        //[Authorize(Roles = "Member")]
+        [HttpDelete("delete-koi")]
+        public async Task<IActionResult> DeleteKoi(int koiId)
+        {
+            if (koiId <= 0)
+            {
+                return BadRequest(new ApiResponse { Message = "Invalid Koi ID." });
+            }
+
+            var result = await _koiService.DeleteKoi(koiId);
+            if (result)
+            {
+                return Ok(new ApiResponse { Message = "Koi deleted successfully." });
+            }
+
+            return BadRequest(new ApiResponse { Message = "Failed to delete Koi." });
+        }
     }
 }

@@ -136,7 +136,7 @@ namespace KoiShowManagementSystem.Repositories
                            .Select(r => new RegistrationModel
                            {
                                Id = r.Id,
-                               Name = r.Koi.Name,
+                               Name = r.Koi!.Name,
                                Rank = r.Rank,
                                IsBestVote = r.IsBestVote
                            }).ToList()
@@ -154,7 +154,7 @@ namespace KoiShowManagementSystem.Repositories
                     .Select(r => new RefereeModel
                     {
                         RefereeId = r.Id,
-                        RefereeName = r.User.Name
+                        RefereeName = r.User!.Name
                     }).ToList();
             }
             return shows;
@@ -179,21 +179,21 @@ namespace KoiShowManagementSystem.Repositories
             int result = 0;
             Show show = new()
             {
-                Title = dto.Title,
+                Title = dto.Title!,
                 Description = dto.Description,
                 ScoreStartDate = dto.ScoreStartDate,
                 RegisterStartDate = dto.RegisterStartDate,
                 RegisterEndDate = dto.RegisterEndDate,
                 ScoreEndDate = dto.ScoreEndDate,
-                Banner = await _s3Service.UploadShowBannerImage(dto.Banner),
+                Banner = await _s3Service.UploadShowBannerImage(dto.Banner!),
                 Status = "draft",
-                Groups = dto.Groups.Select(g => new Group
+                Groups = dto.Groups!.Select(g => new Group
                 {
                     Name = g.Name,
                     SizeMin = g.MinSize,
                     SizeMax = g.MaxSize,
-                    Varieties = _context.Varieties.Where(v => g.Varieties.Contains(v.Id)).ToList(),
-                    Criteria = g.Criterias.Select(c => new Criterion
+                    Varieties = _context.Varieties.Where(v => g.Varieties!.Contains(v.Id)).ToList(),
+                    Criteria = g.Criterias!.Select(c => new Criterion
                     {
                         Name = c.Name,
                         Percentage = c.Percentage,
