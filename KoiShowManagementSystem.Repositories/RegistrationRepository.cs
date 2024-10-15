@@ -163,7 +163,7 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<RegistrationModel> UpdateRegistrationAsync(UpdateRegistrationModel dto)
         {
             RegistrationModel result = null!;
-            var updateRegistration = await _context.Registrations.SingleOrDefaultAsync(r => r.Id == dto.Id);
+            var updateRegistration = await _context.Registrations.Include(user => user.Koi).ThenInclude(k => k!.Variety).SingleOrDefaultAsync(r => r.Id == dto.Id);
             if(updateRegistration != null)
             {
                 if(dto.Size != null)
@@ -212,12 +212,7 @@ namespace KoiShowManagementSystem.Repositories
                     }
                 }
                 await _context.SaveChangesAsync();
-                var aaaa = (await _context.Groups.SingleOrDefaultAsync(grp => grp.Id == updateRegistration.GroupId));
-                //var show = group!.Show;
-                //var title = show!.Title;
-                string showTitle = (from show in _context.Shows
-                                where show.Id.Equals(aaaa!.ShowId)
-                                select show.Title).First();
+                var showTitle = (await _context.Groups.Include(gr => gr.Show).SingleOrDefaultAsync(grp => grp.Id == updateRegistration.GroupId))?.Show?.Title ;
                 var media = await _context.Media.SingleOrDefaultAsync(me => me.RegistrationId == updateRegistration.Id);
                 if (showTitle != null && media != null)
                 {
