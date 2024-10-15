@@ -143,5 +143,17 @@ namespace KoiShowManagementSystem.Repositories
             user!.Password = newPassword;
             await _context.SaveChangesAsync();
         }
+
+        public async Task<UserModel> GetUserById(int userId)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(user => user.Id == userId);
+            if(user != null)
+                return new UserModel()
+                {
+                    Id = userId,
+                    Name = user!.Name,
+                };
+            return null!;
+        }
     }
 }

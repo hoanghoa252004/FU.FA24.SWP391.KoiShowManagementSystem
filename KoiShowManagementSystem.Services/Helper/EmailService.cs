@@ -1,13 +1,14 @@
-﻿using System;
+﻿using KoiShowManagementSystem.DTOs.Request;
+using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Mail;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using KoiShowManagementSystem.DTOs.Request;
-using Microsoft.Extensions.Options;
-namespace KoiShowManagementSystem.API.Helper
+
+namespace KoiShowManagementSystem.Services.Helper
 {
     public class EmailService : IEmailService
     {
@@ -29,10 +30,11 @@ namespace KoiShowManagementSystem.API.Helper
 
 
                 MailMessage mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(_emailConfig.DefaultSender!,_emailConfig.DisplayName);
+                mailMessage.From = new MailAddress(_emailConfig.DefaultSender!, _emailConfig.DisplayName);
                 mailMessage.To.Add(emailRequest.To!);
                 mailMessage.Subject = emailRequest.Subject;
                 mailMessage.Body = emailRequest.Content;
+                mailMessage.IsBodyHtml = true;
 
                 if (emailRequest.Attachment!.Length > 0)
                 {

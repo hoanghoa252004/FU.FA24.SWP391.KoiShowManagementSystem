@@ -20,14 +20,16 @@ namespace KoiShowManagementSystem.Services
     {
         private readonly Repository _repository;
         private readonly JwtServices _jwtServices;
-        public RegistrationService(JwtServices jwtServices, Repository repository)
+        private readonly IEmailService _emailService;
+
+        public RegistrationService(JwtServices jwtServices, Repository repository, IEmailService emailService)
         {
             _jwtServices = jwtServices;
             _repository = repository;
+            _emailService = emailService;
         }
 
         // 1. GET MY REGISTRATION:
-        // ACTOR: MEMBER.
         public async Task<IEnumerable<RegistrationModel>> GetMyRegistration(string status)
         {
             IEnumerable<RegistrationModel> result= null!;
@@ -51,7 +53,6 @@ namespace KoiShowManagementSystem.Services
         }
 
         // 2. CREATE REGISTRATION:
-        // ACTOR: MEMBER.
         public async Task CreateRegistration(CreateRegistrationRequest dto)
         {
             if(dto != null)
@@ -140,7 +141,6 @@ namespace KoiShowManagementSystem.Services
         }
 
         // 3. GET REGISTRATIONS BY SHOW:
-        // ACTOR: ALL
         public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetRegistrationByShow(int pageIndex, int pageSize, int showId)
         {
             var registrationList = await _repository.Registrations.GetRegistrationByShowAsync(showId);
@@ -211,7 +211,7 @@ namespace KoiShowManagementSystem.Services
                             throw new Exception("Failed: This is not a registration of your Koi !");
                         // Kiểm tra quyền hạn được update:
                         if (dto.Status != null || dto.GroupId != null || dto.Note != null)
-                           throw new Exception("Failed: Member does not have permission to update Status & Group of Registration !");
+                           throw new Exception("Failed: Member does not have permission to update Status,Note, Group of Registration !");
                         else if (dto.KoiId != null) // Nếu có cập nhập con mới:
                         {
                             // Kiểm tra new Koi phải của Member ko:
@@ -245,7 +245,161 @@ namespace KoiShowManagementSystem.Services
                 }  
                 // Sau khi vượt qua tất cả ràng buộc: 
                 if(check == true)
-                    await _repository.Registrations.UpdateRegistrationAsync(dto);
+                {
+                    RegistrationModel result = await _repository.Registrations.UpdateRegistrationAsync(dto);
+                    if(result != null && result.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var member = await _repository.Users.GetUserById(memberId);
+                        string subject = $"[{result.Show?.ToUpper()}] REGISTER KOI FOR SHOW SUCCESSFULLY !";
+                        string content = $@"
+                                        <!DOCTYPE html>
+                                        <html lang='en'>
+                                        <head>
+                                            <meta charset='UTF-8'>
+                                            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                                            <title>Registration Information</title>
+                                        </head>
+                                        <body style='font-family: Arial, sans-serif;'>
+                                            <p>Dear {member?.Name},</p>
+                                            <p>We're glad to announce that you have successfully registered your Koi fish for the show with these information:</p>
+                                            <table style='width: 700px; border-collapse: collapse; border: 1px solid black; text-align: left;'>
+                                                <tr style='background-color: #FFD700; color: black; text-align: center;'>
+                                                    <th colspan='4' style='padding: 10px; font-size: 20px;'>REGISTRATION INFORMATION</th>
+                                                </tr>
+                                                <tr>
+                                                    <td style='border: 1px solid black; padding: 5px;'><b>Registration ID:</b></td>
+                                                    <td style='border: 1px solid black; padding: 5px;'>{result.Id}</td>
+                                                    <td style='border: 1px solid black; padding: 5px;'><b>Create Date:</b></td>
+                                                    <td style='border: 1px solid black; padding: 5px;'>{result.CreateDate}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style='border: 1px solid black; padding: 5px;'><b>Show:</b></td>
+                                                    <td style='border: 1px solid black; padding: 5px;'>{result.Show}</td>
+                                                    <td style='border: 1px solid black; padding: 5px;'><b>Group:</b></td>
+                                                    <td style='border: 1px solid black; padding: 5px;'>{result.Group}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style='border: 1px solid black; padding: 5px;'><b>Koi ID:</b></td>
+                                                    <td style='border: 1px solid black; padding: 5px;'>{result.KoiID ?? 0}</td>
+                                                    <td style='border: 1px solid black; padding: 5px;'><b>Koi Name:</b></td>
+                                                    <td style='border: 1px solid black; padding: 5px;'>{result.Name ?? "lAY rA nULL"}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style='border: 1px solid black; padding: 5px;'><b>Variety:</b></td>
+                                                    <td style='border: 1px solid black; padding: 5px;'>{result.Variety ?? "lAY rA nuLL"}</td>
+                                                    <td style='border: 1px solid black; padding: 5px;'><b>Size:</b></td>
+                                                    <td style='border: 1px solid black; padding: 5px;'>{result.Size}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style='border: 1px solid black; padding: 5px;' colspan='1'><b>Description:</b></td>
+                                                    <td style='border: 1px solid black; padding: 5px;' colspan='3'>{result.Description}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style='border: 1px solid black; padding: 5px;' colspan='1'; rowspan='3': center;'><b>Image:</b></td>
+                                                    <td style='border: 1px solid black; padding: 5px;' colspan='3'>
+                                                        <img src='{result.Image1}' alt='Image1' style='width: 100%; height: auto; margin-right: 10px;' />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style='border: 1px solid black; padding: 5px;' colspan='3'>
+                                                        <img src='{result.Image2}' alt='Image2' style='width: 100%; height: auto; margin-right: 10px;' />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style='border: 1px solid black; padding: 5px;' colspan='3'>
+                                                        <img src='{result.Image3}' alt='Image3' style='width: 100%; height: auto;' />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style='border: 1px solid black; padding: 5px;' colspan='1'><b>Video:</b></td>
+                                                    <td style='border: 1px solid black; padding: 5px;' colspan='3'>{result.Video}</td>
+                                                </tr>
+                                            </table>
+                                            <p>Hope your Koi fish will have high results in this show!</p>
+                                        </body>
+                                        </html>";
+                        await _emailService.SendEmail(new EmailModel()
+                        {
+                            To = "hoathse184053@fpt.edu.vn",
+                            Subject = subject,
+                            Content = content,
+                        });
+                    }
+                }
+            }
+        }
+
+        // 7. PUBLISH SCORE TO MEMBER:
+        public async Task PublishResult(int showId)
+        {
+            //Lấy hết đơn của show đó đã scored.
+            var list = await _repository.Registrations.GetRegistrationByShowAsync(showId);
+            if (list.Any())
+            {
+                var results = from regis in list
+                              where regis.Status!.Equals("Scored",
+                                    StringComparison.OrdinalIgnoreCase)
+                              select regis;
+                if (results.Any())
+                {
+                    foreach (var result in results)
+                    {
+                        var koi = await _repository.Koi.GetKoi((int)result?.KoiID!);
+                        var member = await _repository.Users.GetUserById((int)koi?.UserId!);
+                        string content = @$"
+                            <html>
+                            <body>
+                                <p>Dear {member?.Name},</p>
+                                <p>We're glad to announce that your Koi just has result:</p>
+                                <table border='1' style='border-collapse: collapse; width: 700px;'>
+                                    <tr style='background-color: yellow;'>
+                                        <th colspan='4' style='text-align: center; font-size: 18px;'>RESULT</th>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Registration ID:</b></td>
+                                        <td>{result?.Id}</td>
+                                        <td><b>Group:</b></td>
+                                        <td>{result?.Group}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Koi ID:</b></td>
+                                        <td>{result?.KoiID}</td>
+                                        <td><b>Koi Name:</b></td>
+                                        <td>{result?.Name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Image:</b></td>
+                                        <td colspan='3' style='text-align: center;'>
+                                            <img src='{result?.Image1}' alt='Koi Image' style='max-width: 100%; height: auto;' />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Total Score:</b></td>
+                                        <td colspan='3' style='color: red;'>{result?.TotalScore}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Rank:</b></td>
+                                        <td colspan='3' style='color: green;'>{result?.Rank}</td>
+                                    </tr>
+                                </table>
+                                <p>Hope your Koi fish will have high results in this show!</p>
+                                <hr />
+                                <div style='text-align: center;'>
+                                    <img src='logo_url_here' alt='Logo' style='max-width: 50px; height: auto;' />
+                                    <span style='font-size: 14px; font-weight: bold;'>Koi Show Management System &nbsp; FPTU FA24 SWP391</span><br />
+                                    <span>Website: <a href='https://github.com/hoanghoa252004/FU.FA24.SWP391.KoiShowManagementSystem'/></span>
+                                </div>
+                            </body>
+                            </html>";
+                        string subject = @$"[{result?.Show}RESULT]";
+                        await _emailService.SendEmail(new EmailModel()
+                        {
+                            To = "hoathse184053@fpt.edu.vn",
+                            Subject = subject,
+                            Content = content,
+                        });
+                    }
+                }
             }
         }
     }

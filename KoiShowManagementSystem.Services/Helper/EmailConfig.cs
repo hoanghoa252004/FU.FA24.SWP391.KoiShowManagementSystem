@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoiShowManagementSystem.API.Helper
+namespace KoiShowManagementSystem.Services.Helper
 {
     public class EmailConfig
     {

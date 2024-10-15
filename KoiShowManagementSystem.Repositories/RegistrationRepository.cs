@@ -147,19 +147,23 @@ namespace KoiShowManagementSystem.Repositories
                                     Variety = v != null ? v.Name : "Unknown Variety",
                                     Description = koi.Description,
                                     Size = koi.Size,
+                                    Group =g.Name,
                                     TotalScore = reg.TotalScore,
                                     IsBestVote = reg.IsBestVote,
                                     Status = reg.Status,
                                     Rank = reg.Rank,
                                     Id = reg.Id,
+                                    GroupId = g.Id,
+                                   
                                 }).FirstOrDefaultAsync();
 
             return result!;
         }
 
-        public async Task UpdateRegistrationAsync(UpdateRegistrationModel dto)
+        public async Task<RegistrationModel> UpdateRegistrationAsync(UpdateRegistrationModel dto)
         {
-            var updateRegistration = await _context.Registrations.SingleOrDefaultAsync(r => r.Id == dto.Id);
+            RegistrationModel result = null!;
+            var updateRegistration = await _context.Registrations.Include(user => user.Koi).ThenInclude(k => k!.Variety).SingleOrDefaultAsync(r => r.Id == dto.Id);
             if(updateRegistration != null)
             {
                 if(dto.Size != null)
@@ -186,28 +190,52 @@ namespace KoiShowManagementSystem.Repositories
                 {
                     updateRegistration.Description = dto.Description;
                 }
+                // Update Media of Registration:
+                var updateMedia = await _context.Media.SingleOrDefaultAsync(m => m.RegistrationId == dto.Id);
+                if (updateMedia != null)
+                {
+                    if (dto.Video != null)
+                    {
+                        updateMedia.Video = dto.Video;
+                    }
+                    if (dto.Image1 != null)
+                    {
+                        updateMedia.Image1 = await _s3UploadService.UpdateImageAsync(updateMedia.Image1, dto.Image1);
+                    }
+                    if (dto.Image2 != null)
+                    {
+                        updateMedia.Image2 = await _s3UploadService.UpdateImageAsync(updateMedia.Image2, dto.Image2);
+                    }
+                    if (dto.Image3 != null)
+                    {
+                        updateMedia.Image3 = await _s3UploadService.UpdateImageAsync(updateMedia.Image3, dto.Image3);
+                    }
+                }
+                await _context.SaveChangesAsync();
+                var showTitle = (await _context.Groups.Include(gr => gr.Show).SingleOrDefaultAsync(grp => grp.Id == updateRegistration.GroupId))?.Show?.Title ;
+                var media = await _context.Media.SingleOrDefaultAsync(me => me.RegistrationId == updateRegistration.Id);
+                if (showTitle != null && media != null)
+                {
+                    result = new RegistrationModel()
+                    {
+                        Id = updateRegistration!.Id,
+                        CreateDate = updateRegistration.CreateDate,
+                        Description = updateRegistration.Description,
+                        Group = updateRegistration.Group?.Name,
+                        Name = updateRegistration.Koi?.Name,
+                        KoiID = updateRegistration.Koi?.Id,
+                        Show = showTitle,
+                        Image1 = media.Image1,
+                        Image2 = media.Image2,
+                        Image3 = media.Image3,
+                        Video = media.Video,
+                        Size = updateRegistration.Size,
+                        Variety = updateRegistration.Koi?.Variety?.Name,
+                        Status = updateRegistration.Status,
+                    };
+                }  
             }
-            var updateMedia = await _context.Media.SingleOrDefaultAsync(m => m.RegistrationId == dto.Id);
-            if(updateMedia != null)
-            {
-                if(dto.Video != null)
-                {
-                    updateMedia.Video = dto.Video;
-                }
-                if(dto.Image1 != null)
-                {
-                    updateMedia.Image1 = await _s3UploadService.UpdateImageAsync(updateMedia.Image1, dto.Image1);
-                }
-                if (dto.Image2 != null)
-                {
-                    updateMedia.Image2 = await _s3UploadService.UpdateImageAsync(updateMedia.Image2, dto.Image2);
-                }
-                if (dto.Image3 != null)
-                {
-                    updateMedia.Image3 = await _s3UploadService.UpdateImageAsync(updateMedia.Image3, dto.Image3);
-                }
-            }
-            await _context.SaveChangesAsync();
+            return result;
         }
 
         public async Task<IEnumerable<RegistrationModel>> GetAllRegistrationAsync()
