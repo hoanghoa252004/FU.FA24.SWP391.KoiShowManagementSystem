@@ -21,6 +21,6 @@ namespace KoiShowManagementSystem.Repositories
         //Task<bool> EditAShow(ShowDTO dto);
         Task<bool> ChangeShowStatus(string status, int showId);
 
-
+        Task<bool> UpdateAShow(ShowDTO dto);
     }
 }

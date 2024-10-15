@@ -273,7 +273,65 @@ namespace KoiShowManagementSystem.Repositories
             }).ToListAsync();
         }
 
+        public async Task<bool> UpdateAShow(ShowDTO dto)
+        {
+            var show = await _context.Shows.FindAsync(dto.Id);
 
+            if (show == null)
+            {
+                throw new Exception("Show not found");
+            }
+            if (show.Status == "on going")
+            {
+                throw new Exception("Show is on going");
+            }
+
+            if (dto.RegisterStartDate > dto.RegisterEndDate)
+            {
+                throw new ArgumentException("Start date cannot be greater than end date");
+            }
+
+            if (dto.ScoreStartDate > dto.ScoreEndDate)
+            {
+                throw new ArgumentException("Start date cannot be greater than end date");
+            }
+
+            if (dto.Title != null)
+            {
+                show.Title = dto.Title!;
+            }
+            if (dto.Description != null)
+            {
+                show.Description = dto.Description!;
+            }
+
+            if (dto.Banner != null)
+            {
+                show.Banner = await _s3Service.UpdateImageAsync(show.Banner!, dto.Banner!);
+            }
+            if (dto.ScoreStartDate != null)
+            {
+                show.ScoreStartDate = (DateOnly)dto.ScoreStartDate!;
+            }
+            if (dto.RegisterStartDate != null)
+            {
+                show.RegisterStartDate = (DateOnly)dto.RegisterStartDate!;
+            }
+            if (dto.RegisterEndDate != null)
+            {
+                show.RegisterEndDate = (DateOnly)dto.RegisterEndDate!;
+            }
+            if (dto.ScoreEndDate != null)
+            {
+                show.ScoreEndDate = (DateOnly)dto.ScoreEndDate!;
+            }
+            int result = await _context.SaveChangesAsync();
+            if (result == 0)
+            {
+                return false;
+            }
+            return true;
+        }
         //public async Task<bool> EditAShow(ShowDTO dto)
         //{
         //    var show = await _context.Shows.FindAsync(dto.Id);
