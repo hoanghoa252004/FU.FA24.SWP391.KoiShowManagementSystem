@@ -40,7 +40,7 @@ namespace KoiShowManagementSystem.Repositories
                                     EndDate = sho.ScoreEndDate,
 
                                     ShowGroups = (from gro in _context.Groups
-                                                  where gro.ShowId == sho.Id
+                                                  where gro.ShowId == sho.Id && gro.Status == true
                                                   select new GroupModel
                                                   {
                                                       GroupId = gro.Id,
@@ -125,7 +125,7 @@ namespace KoiShowManagementSystem.Repositories
             if (firstShow.ShowStatus == "Finished")
             {
                 var groups  = _context.Groups
-                   .Where(g => g.ShowId == firstShow.ShowId)
+                   .Where(g => g.ShowId == firstShow.ShowId && g.Status == true)
                    .Select(g => new GroupModel
                    {
                        GroupId = g.Id,
@@ -186,7 +186,7 @@ namespace KoiShowManagementSystem.Repositories
                 RegisterEndDate = dto.RegisterEndDate,
                 ScoreEndDate = dto.ScoreEndDate,
                 Banner = await _s3Service.UploadShowBannerImage(dto.Banner!),
-                Status = "draft",
+                Status = "up comming",
                 Groups = dto.Groups!.Select(g => new Group
                 {
                     Name = g.Name,
@@ -202,10 +202,8 @@ namespace KoiShowManagementSystem.Repositories
                     }).ToList()
                 }).ToList()
             };
-
-            _context.Shows.Add(show);         
-            _context.Groups.AddRange(show.Groups);            
-            _context.Criteria.AddRange(show.Groups.SelectMany(g => g.Criteria));
+            
+            _context.Shows.Add(show);                 
             result = await _context.SaveChangesAsync();
             return result;
         }
@@ -222,7 +220,7 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task<bool> ChangeShowStatus(string status, int showId)
         {
-            string[] validStatus = { "draft", "up comming", "on going", "finished" };
+            string[] validStatus = {"up comming", "on going", "finished", "scoring"};
 
             if (!validStatus.Contains(status))
             {
@@ -275,7 +273,65 @@ namespace KoiShowManagementSystem.Repositories
             }).ToListAsync();
         }
 
+        public async Task<bool> UpdateAShow(ShowDTO dto)
+        {
+            var show = await _context.Shows.FindAsync(dto.Id);
 
+            if (show == null)
+            {
+                throw new Exception("Show not found");
+            }
+            if (show.Status == "on going")
+            {
+                throw new Exception("Show is on going");
+            }
+
+            if (dto.RegisterStartDate > dto.RegisterEndDate)
+            {
+                throw new ArgumentException("Start date cannot be greater than end date");
+            }
+
+            if (dto.ScoreStartDate > dto.ScoreEndDate)
+            {
+                throw new ArgumentException("Start date cannot be greater than end date");
+            }
+
+            if (dto.Title != null)
+            {
+                show.Title = dto.Title!;
+            }
+            if (dto.Description != null)
+            {
+                show.Description = dto.Description!;
+            }
+
+            if (dto.Banner != null)
+            {
+                show.Banner = await _s3Service.UpdateImageAsync(show.Banner!, dto.Banner!);
+            }
+            if (dto.ScoreStartDate != null)
+            {
+                show.ScoreStartDate = (DateOnly)dto.ScoreStartDate!;
+            }
+            if (dto.RegisterStartDate != null)
+            {
+                show.RegisterStartDate = (DateOnly)dto.RegisterStartDate!;
+            }
+            if (dto.RegisterEndDate != null)
+            {
+                show.RegisterEndDate = (DateOnly)dto.RegisterEndDate!;
+            }
+            if (dto.ScoreEndDate != null)
+            {
+                show.ScoreEndDate = (DateOnly)dto.ScoreEndDate!;
+            }
+            int result = await _context.SaveChangesAsync();
+            if (result == 0)
+            {
+                return false;
+            }
+            return true;
+        }
         //public async Task<bool> EditAShow(ShowDTO dto)
         //{
         //    var show = await _context.Shows.FindAsync(dto.Id);

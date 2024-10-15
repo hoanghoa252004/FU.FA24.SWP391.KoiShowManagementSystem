@@ -1,12 +1,20 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
+using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories.Helper;
 using KoiShowManagementSystem.Repositories.MyDbContext;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Group = KoiShowManagementSystem.Entities.Group;
 
 namespace KoiShowManagementSystem.Repositories
 {
@@ -21,8 +29,8 @@ namespace KoiShowManagementSystem.Repositories
         public Task<List<GroupModel>> GetByShowId(int showId)
         {
             var result = (from grp in _context.Groups
-                         where grp.ShowId == showId
-                         select new GroupModel()
+                         where grp.ShowId == showId && grp.Status == true
+                          select new GroupModel()
                          {
                              GroupId = grp.Id,
                              SizeMax = grp.SizeMax,
@@ -40,6 +48,97 @@ namespace KoiShowManagementSystem.Repositories
                             }).ToList(),
                          }).ToListAsync();
             return result;
+        }
+
+        public async Task<bool> UpdateGroup(GroupDTO dto)
+        {
+             var group = await _context.Groups
+                                .Include(g => g.Criteria)
+                                .Include(g=> g.Varieties)
+                                .FirstOrDefaultAsync(g => g.Id == dto.Id);
+            if (group == null)
+            {
+                return false;
+            }
+            if(dto.Name != null)
+            {
+                group.Name = dto.Name;
+            }
+            if (dto.MinSize != 0)
+            {
+                group.SizeMin = dto.MinSize;
+            }
+            if (dto.MaxSize != 0)
+            {
+                group.SizeMax = dto.MaxSize;
+            }
+            if (!dto.Varieties.IsNullOrEmpty())
+            {
+                var varieties = await _context.Varieties.Where(v => dto.Varieties!.Contains(v.Id)).ToListAsync();
+                group.Varieties = varieties;
+            }
+            if (!dto.Criterias.IsNullOrEmpty())
+            {
+                group.Criteria = dto.Criterias!.Select(c => new Criterion
+                {
+                    Name = c.Name,
+                    Percentage = c.Percentage,
+                    Description = c.Description,
+                    Status = true,
+                }).ToList();
+            }
+            
+            int result = await _context.SaveChangesAsync();
+            if (result > 0) return true;
+            return false;
+        }
+        public async Task<bool> CreateAGroup(GroupDTO dto)
+        {
+            
+            var show = await _context.Shows
+                            .FirstOrDefaultAsync(s => s.Id == dto.ShowId);
+            if (show == null)
+            {
+                return false;
+            }
+            var group = new Group()
+            {
+                Name = dto.Name,
+                SizeMax = dto.MaxSize,
+                SizeMin = dto.MinSize,
+                ShowId = dto.ShowId,
+                Criteria =dto.Criterias!.Select(c => new Criterion
+                {
+                    Name = c.Name,
+                    Percentage = c.Percentage,
+                    Description = c.Description,
+                    Status = true,
+                }).ToList(),
+                Varieties = _context.Varieties.Where(v => dto.Varieties!.Contains(v.Id)).ToList(),
+            };
+            show.Groups.Add(group);
+
+            int result = await _context.SaveChangesAsync();
+            if (result > 0) return true;
+            return false;
+        }
+
+        public async Task<bool> DeleteGroup(int groupId)
+        {
+            if (groupId < 1)
+            {
+                return false;
+            }
+            var group = await _context.Groups
+                               .FirstOrDefaultAsync(g => g.Id == groupId);
+            if (group == null)
+            {
+                return false;
+            }
+            group.Status = false;
+            int result = await _context.SaveChangesAsync();
+            if (result > 0) return true;
+            return false;
         }
     }
 }

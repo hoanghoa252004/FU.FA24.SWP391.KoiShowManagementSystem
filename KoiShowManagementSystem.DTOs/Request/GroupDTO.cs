@@ -9,15 +9,12 @@ namespace KoiShowManagementSystem.DTOs.Request
 {
     public class GroupDTO
     {
-        [Required]
+        public int Id { get; set; }
         public string? Name { get; set; }
-        [Required]
         public decimal MinSize { get; set; }
-        [Required]
         public decimal MaxSize { get; set; }
-        [Required]
         public HashSet<int>? Varieties { get; set; }
-        [Required]
         public List<CriteriaDTO>? Criterias { get; set; }
+        public int ShowId { get; set; }
     }
 }
