@@ -38,4 +38,6 @@ public partial class Registration
     public virtual ICollection<Score> Scores { get; set; } = new List<Score>();
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();
+
+    public string? PaymentReferenceCode { get; set; }
 }

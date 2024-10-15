@@ -182,6 +182,9 @@ public partial class KoiShowManagementSystemContext : DbContext
             entity.Property(e => e.IsPaid).HasDefaultValue(false);
             entity.Property(e => e.KoiId).HasColumnName("Koi_id");
             entity.Property(e => e.Note).HasMaxLength(300);
+            entity.Property(e => e.PaymentReferenceCode)
+                .HasMaxLength(100)
+                .IsUnicode(false);
             entity.Property(e => e.Size).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
