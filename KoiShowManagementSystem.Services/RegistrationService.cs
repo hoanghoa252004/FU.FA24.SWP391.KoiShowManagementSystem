@@ -249,7 +249,8 @@ namespace KoiShowManagementSystem.Services
                     RegistrationModel result = await _repository.Registrations.UpdateRegistrationAsync(dto);
                     if(result != null && result.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase))
                     {
-                        string subject = $"[KOI SHOW {result.Show?.ToUpper()}] REGISTER KOI FOR SHOW SUCCESSFULLY !";
+                        var member = await _repository.Users.GetUserById(memberId);
+                        string subject = $"[{result.Show?.ToUpper()}] REGISTER KOI FOR SHOW SUCCESSFULLY !";
                         string content = $@"
                                         <!DOCTYPE html>
                                         <html lang='en'>
@@ -259,7 +260,7 @@ namespace KoiShowManagementSystem.Services
                                             <title>Registration Information</title>
                                         </head>
                                         <body style='font-family: Arial, sans-serif;'>
-                                            <p>Dear {result.Name},</p>
+                                            <p>Dear {member?.Name},</p>
                                             <p>We're glad to announce that you have successfully registered your Koi fish for the show with these information:</p>
                                             <table style='width: 700px; border-collapse: collapse; border: 1px solid black; text-align: left;'>
                                                 <tr style='background-color: #FFD700; color: black; text-align: center;'>
@@ -317,6 +318,80 @@ namespace KoiShowManagementSystem.Services
                                             <p>Hope your Koi fish will have high results in this show!</p>
                                         </body>
                                         </html>";
+                        await _emailService.SendEmail(new EmailModel()
+                        {
+                            To = "hoathse184053@fpt.edu.vn",
+                            Subject = subject,
+                            Content = content,
+                        });
+                    }
+                }
+            }
+        }
+
+        // 7. PUBLISH SCORE TO MEMBER:
+        public async Task PublishResult(int showId)
+        {
+            //Lấy hết đơn của show đó đã scored.
+            var list = await _repository.Registrations.GetRegistrationByShowAsync(showId);
+            if (list.Any())
+            {
+                var results = from regis in list
+                              where regis.Status!.Equals("Scored",
+                                    StringComparison.OrdinalIgnoreCase)
+                              select regis;
+                if (results.Any())
+                {
+                    foreach (var result in results)
+                    {
+                        var koi = await _repository.Koi.GetKoi((int)result?.KoiID!);
+                        var member = await _repository.Users.GetUserById((int)koi?.UserId!);
+                        string content = @$"
+                            <html>
+                            <body>
+                                <p>Dear {member?.Name},</p>
+                                <p>We're glad to announce that your Koi just has result:</p>
+                                <table border='1' style='border-collapse: collapse; width: 700px;'>
+                                    <tr style='background-color: yellow;'>
+                                        <th colspan='4' style='text-align: center; font-size: 18px;'>RESULT</th>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Registration ID:</b></td>
+                                        <td>{result?.Id}</td>
+                                        <td><b>Group:</b></td>
+                                        <td>{result?.Group}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Koi ID:</b></td>
+                                        <td>{result?.KoiID}</td>
+                                        <td><b>Koi Name:</b></td>
+                                        <td>{result?.Name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Image:</b></td>
+                                        <td colspan='3' style='text-align: center;'>
+                                            <img src='{result?.Image1}' alt='Koi Image' style='max-width: 100%; height: auto;' />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Total Score:</b></td>
+                                        <td colspan='3' style='color: red;'>{result?.TotalScore}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Rank:</b></td>
+                                        <td colspan='3' style='color: green;'>{result?.Rank}</td>
+                                    </tr>
+                                </table>
+                                <p>Hope your Koi fish will have high results in this show!</p>
+                                <hr />
+                                <div style='text-align: center;'>
+                                    <img src='logo_url_here' alt='Logo' style='max-width: 50px; height: auto;' />
+                                    <span style='font-size: 14px; font-weight: bold;'>Koi Show Management System &nbsp; FPTU FA24 SWP391</span><br />
+                                    <span>Website: <a href='https://github.com/hoanghoa252004/FU.FA24.SWP391.KoiShowManagementSystem'/></span>
+                                </div>
+                            </body>
+                            </html>";
+                        string subject = @$"[{result?.Show}RESULT]";
                         await _emailService.SendEmail(new EmailModel()
                         {
                             To = "hoathse184053@fpt.edu.vn",

@@ -170,6 +170,27 @@ namespace KoiShowManagementSystem.API.Controllers
                 });
             }
         }
+        // 6. UPDATE PENDING REGISTRATION:
+        [Authorize(Roles = "Manager")]
+        [HttpPut("pulish-result")]
+        public async Task<IActionResult> PublishResult(int showId)
+        {
+            try
+            {
+                await _registrationService.PublishResult(showId);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Publish Result Successfully",
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
         #endregion
     }
 }
