@@ -40,7 +40,7 @@ namespace KoiShowManagementSystem.Repositories
                                     EndDate = sho.ScoreEndDate,
 
                                     ShowGroups = (from gro in _context.Groups
-                                                  where gro.ShowId == sho.Id
+                                                  where gro.ShowId == sho.Id && gro.Status == true
                                                   select new GroupModel
                                                   {
                                                       GroupId = gro.Id,
@@ -125,7 +125,7 @@ namespace KoiShowManagementSystem.Repositories
             if (firstShow.ShowStatus == "Finished")
             {
                 var groups  = _context.Groups
-                   .Where(g => g.ShowId == firstShow.ShowId)
+                   .Where(g => g.ShowId == firstShow.ShowId && g.Status == true)
                    .Select(g => new GroupModel
                    {
                        GroupId = g.Id,
@@ -186,7 +186,7 @@ namespace KoiShowManagementSystem.Repositories
                 RegisterEndDate = dto.RegisterEndDate,
                 ScoreEndDate = dto.ScoreEndDate,
                 Banner = await _s3Service.UploadShowBannerImage(dto.Banner!),
-                Status = "draft",
+                Status = "up comming",
                 Groups = dto.Groups!.Select(g => new Group
                 {
                     Name = g.Name,
@@ -202,10 +202,8 @@ namespace KoiShowManagementSystem.Repositories
                     }).ToList()
                 }).ToList()
             };
-
-            _context.Shows.Add(show);         
-            _context.Groups.AddRange(show.Groups);            
-            _context.Criteria.AddRange(show.Groups.SelectMany(g => g.Criteria));
+            
+            _context.Shows.Add(show);                 
             result = await _context.SaveChangesAsync();
             return result;
         }
@@ -222,7 +220,7 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task<bool> ChangeShowStatus(string status, int showId)
         {
-            string[] validStatus = { "draft", "up comming", "on going", "finished" };
+            string[] validStatus = {"up comming", "on going", "finished", "scoring"};
 
             if (!validStatus.Contains(status))
             {

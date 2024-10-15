@@ -9,11 +9,8 @@ namespace KoiShowManagementSystem.DTOs.Request
 {
     public class CriteriaDTO
     {
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Description { get; set; }
-        [Required]
+        public string? Name { get; set; }
+        public string? Description { get; set; }
         public decimal? Percentage { get; set; }
     }
 }
