@@ -91,7 +91,7 @@ namespace KoiShowManagementSystem.API.Controllers
             var result = await _koiShowService.CreateAShow(show);
             if (result != 0)
             {
-                return Ok(new ApiResponse { Message = "Success" , Payload = result}); 
+                return Ok(new ApiResponse { Message = "Success", Payload = result });
             }
 
             return BadRequest(new ApiResponse { Message = "Failed to create show." });
@@ -135,5 +135,21 @@ namespace KoiShowManagementSystem.API.Controllers
             return NotFound(new ApiResponse { Message = "Not found", });
         }
 
+        //implement update show
+        [Authorize(Roles = "Manager")]
+        [HttpPost("update-show")]
+        public async Task<IActionResult> UpdateShow(ShowDTO dto)
+        {
+
+            var result = await _koiShowService.UpdateShow(dto);
+            if (result)
+            {
+                return Ok(new ApiResponse { Message = "Success" });
+            }
+
+            return BadRequest(new ApiResponse { Message = "Failed to update show." });
+
+
+        }
     }
 }

@@ -66,5 +66,10 @@ namespace KoiShowManagementSystem.Services
             var result = await _repository.Show.GetAllVarietiesAsync();
             return result;
         }
+
+        public async Task<bool> UpdateShow(ShowDTO dto)
+        {
+            return await _repository.Show.UpdateAShow(dto);
+        }
     }
 }
