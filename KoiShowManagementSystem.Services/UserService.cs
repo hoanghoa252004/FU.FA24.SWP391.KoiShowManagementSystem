@@ -29,10 +29,22 @@ namespace KoiShowManagementSystem.Services
                 || dto.Email.IsNullOrEmpty() == true 
                 || dto.Password.IsNullOrEmpty() == true) 
                 throw new Exception("Failed: Invalid Login Information");
-            UserModel result = await _repository.Users.GetAccount(dto);
-            // Cấp Token:
-            result.Token = _jwtServices.GenerateAccessToken(result);
-            return result;  
+            UserModel user = await _repository.Users.GetUserByEmail(dto.Email);
+            if (user != null && user.Password!.Equals(dto.Password) == true)
+            {
+                if (user.Status == true)
+                {
+                    user.Token = _jwtServices.GenerateAccessToken(user);
+                    user.Id = null;
+                    user.Password = null;
+                    user.Status = null;
+                }
+                else
+                    throw new Exception("Failed: Your account has been banned !");
+            }
+            else
+                throw new Exception("Failed: Incorrect Email or Password !");
+            return user;
         }
 
         
@@ -47,28 +59,46 @@ namespace KoiShowManagementSystem.Services
                 || dto.DateOfBirth.HasValue == false
                 || dto.Gender.HasValue == false
                 )
-                throw new Exception("Failed: Lack of Information");
-
-             await _repository.Users.AddUser(dto);
+                throw new Exception("Failed: Lack of Information to Sign Up !");
+            // V01: Check Email:
+            var users = await _repository.Users.GetAllUser();
+            var check = from user in users
+                        where user.Email == dto.Email
+                        select user;
+            if (!check.Any() == true)
+                await _repository.Users.AddUser(new CreateUserRequest()
+                {
+                    DateOfBirth = dto.DateOfBirth,
+                    Email = dto.Email,
+                    Phone = dto.Phone,
+                    Password = dto.Password,
+                    Name = dto.Name,
+                    Gender = dto.Gender,
+                });
+            else
+                throw new Exception("Failed: Email has already exited !");
         }
 
         
         // 3. GET PROFILE:---------------------------------
-        public async Task<ProfileModel> GetProfile()
+        public async Task<UserModel> GetUser()
         {
             int id = _jwtServices.GetIdAndRoleFromToken().userId;
-            return await _repository.Users.GetProfile(id);
+            return await _repository.Users.GetUserById(id);
         }
 
-        
         // 4. UPDATE PROFILE:------------------------------
         public async Task<ProfileModel> EditProfile(EditProfileModel dto)
         {
-            if (dto == null)
+            if (dto != null 
+                && dto.Name.IsNullOrEmpty()== true
+                && dto.Phone.IsNullOrEmpty() == true
+                && dto.DateOfBirth == null
+                && dto.Gender == null)
                 throw new Exception("Failed: No thing to update.");
 
             int id = _jwtServices.GetIdAndRoleFromToken().userId;
-            ProfileModel result = await _repository.Users.EditProfile(id, dto);
+            ProfileModel result = await _repository.Users.UpdateUser(id, dto);
             return result;
         }
 
@@ -82,20 +112,38 @@ namespace KoiShowManagementSystem.Services
                 && !dto.CurentPassword.IsNullOrEmpty())
             {
                 int id = _jwtServices.GetIdAndRoleFromToken().userId;
-                string currentPassword = await _repository.Users.GetPasswordById(id);
-                if (currentPassword != null && currentPassword.Equals(dto.CurentPassword))
+                var user = await _repository.Users.GetUserById(id);
+                if (user != null && user.Password!.Equals(dto.CurentPassword))
                 {
                     await _repository.Users.UpdatePasswordById(id, dto.NewPassword!);
                     result = true;
                 }
+                else
+                    throw new Exception("Failed: Your Current Password is incorrect !");
             }
             else
                 throw new Exception("Failed: No thing to update.");
             return result;
         }
 
-        
-
-
+        //6. CREATE USER:------------------------------
+        public async Task CreateUser(CreateUserRequest user)
+        {
+            if(user == null 
+                || user.Email.IsNullOrEmpty() == true 
+                || user.Name.IsNullOrEmpty() == true
+                || user.Password.IsNullOrEmpty() == true
+                || user.RoleId == null)
+                throw new Exception("Failed: Lack of basic information to create user !");
+            // V01: Check Email:
+            var users = await _repository.Users.GetAllUser();
+            var check = from u in users
+                        where u.Email == user.Email
+                        select user;
+            if (!check.Any() == true)
+                await _repository.Users.AddUser(user);
+            else
+                throw new Exception("Failed: Email has already exited !");
+        }
     }
 }

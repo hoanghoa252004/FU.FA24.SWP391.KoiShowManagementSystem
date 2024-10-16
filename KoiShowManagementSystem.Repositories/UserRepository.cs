@@ -31,79 +31,48 @@ namespace KoiShowManagementSystem.Repositories
         }
 
         // IMPLEMENTATION:---------------------------
-        public async Task AddUser(SignUpModel dto)
+        public async Task AddUser(CreateUserRequest dto)
         {
-            try
+            if(dto != null)
             {
                 User newUser = new User()
                 {
                     Name = dto.Name!,
-                    Phone = dto.Phone!,
+                    Phone = dto.Phone,
                     DateOfBirth = dto.DateOfBirth,
                     Email = dto.Email!,
                     Password = dto.Password!,
-                    RoleId = (int) ROLE_ID.MEMBER,
+                    RoleId = dto.RoleId ?? (int)ROLE_ID.MEMBER,
                     Gender = dto.Gender,
                     Status = ACTIVE_STATUS
                 };
                 await _context.Set<User>().AddAsync(newUser);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
+        }
+
+        public async Task<UserModel> GetUserByEmail(string email)
+        {
+            UserModel result = null!;
+            if(email != null)
             {
-                if (ex.InnerException is SqlException sqlEx)
-                {
-                    if (sqlEx!.Number == 2627
-                        || sqlEx.Number == 2601
-                        && sqlEx.Message.Contains("UQ__User__Email"))
+                var user = await _context.Users.Include(u => u.Role).SingleOrDefaultAsync(user => user.Email.Equals(email));
+                if(user != null && user.Email.Equals(email, StringComparison.OrdinalIgnoreCase) == true)
+                    result = new UserModel()
                     {
-                        throw new Exception("Email has already existed");
-                    }
-                }
+                        Id = user.Id,
+                        Name = user.Name,
+                        Email = user.Email,
+                        Phone = user.Phone,
+                        Role = user.Role.Title,
+                        Password = user.Password,
+                        Status = user.Status,
+                    };
             }
-        }
-
-        public async Task<UserModel> GetAccount(LoginModel dto)
-        {
-            var user =  await _context.Set<User>().SingleOrDefaultAsync(user => user.Email == dto.Email);
-            if (user == null || !string.Equals(user.Password, dto.Password, StringComparison.Ordinal))
-                throw new Exception("Email or password is incorrect");
-            else if(user != null && user.Status == false)
-                throw new Exception("Your account is banned");
-            var role = await _context.Set<Role>().SingleOrDefaultAsync(role => role.Id == user!.RoleId);
-            return new UserModel()
-            {
-                Id = user!.Id,
-                Name = user!.Name,
-                Email = user.Email,
-                Phone = user!.Phone,
-                Role = role!.Title,
-            };
-        }
-
-        public async Task<ProfileModel> GetProfile(int id)
-        {
-            ProfileModel result = null!;
-            var user =  await _context.Set<User>().SingleOrDefaultAsync(user => user.Id == id);
-            if (user != null)
-            {
-                var role = await _context.Set<Role>().SingleOrDefaultAsync(role => role.Id == user!.RoleId);
-                result = new ProfileModel()
-                {
-                    Name = user.Name,
-                    Email = user.Email,
-                    Phone = user.Phone,
-                    DateOfBirth = user.DateOfBirth,
-                    Gender = user.Gender,
-                    Role = role!.Title,
-                };
-            }
-            else
-                throw new Exception("User does not exist");
             return result;
         }
 
-        public async Task<ProfileModel> EditProfile(int userId, EditProfileModel dto)
+        public async Task<ProfileModel> UpdateUser(int userId, EditProfileModel dto)
         {
             var user = await _context.Set<User>().SingleOrDefaultAsync(user => user.Id == userId);
             if (user != null)
@@ -130,18 +99,15 @@ namespace KoiShowManagementSystem.Repositories
                 throw new Exception("User does not exist");
         }
 
-        public async Task<string> GetPasswordById(int id)
-        {
-            var user =  await _context.Set<User>().SingleOrDefaultAsync(user => user.Id == id);
-            return user!.Password;
-        }
-
         public async Task UpdatePasswordById(int id, string newPassword)
         {
             var user = await _context.Set<User>().SingleOrDefaultAsync(user => user.Id == id);
             // Update:
-            user!.Password = newPassword;
-            await _context.SaveChangesAsync();
+            if(user != null)
+            {
+                user.Password = newPassword;
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<UserModel> GetUserById(int userId)
@@ -155,8 +121,25 @@ namespace KoiShowManagementSystem.Repositories
                     Email = user.Email,
                     Phone = user.Phone,
                     Role = user.Role.Title,
+                    DateOfBirth = user.DateOfBirth,
+                    Gender = user.Gender
                 };
             return null!;
+        }
+
+        public async Task<List<UserModel>> GetAllUser()
+        {
+            var result = await _context.Users.Include(u => u.Role).Select(u => new UserModel()
+            {
+                Id=u.Id,
+                Name = u.Name,
+                Email = u.Email,
+                Phone = u.Phone,
+                Role = u.Role.Title,
+                DateOfBirth = u.DateOfBirth,
+                Password = u.Password
+            }).ToListAsync();
+            return result;
         }
     }
 }
