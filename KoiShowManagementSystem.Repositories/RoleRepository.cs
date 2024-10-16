@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.Entities;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,9 +18,14 @@ namespace KoiShowManagementSystem.Repositories
             this._context = context;
         }
 
-        public async Task<List<Role>> GetAllRole()
+        public async Task<List<RoleDTO>> GetAllRoles()
         {
-            return await _context.Roles.ToListAsync();
+            return await _context.Roles.Select(r => new RoleDTO()
+            {
+                Id = r.Id,
+                Title = r.Title,
+                Status = r.Status,
+            }).ToListAsync();
         }
     }
 }
