@@ -89,7 +89,7 @@ namespace KoiShowManagementSystem.API.Controllers
             return BadRequest(new ApiResponse { Message = "Failed to update Koi." });
         }
 
-        //[Authorize(Roles = "Member")]
+        [Authorize(Roles = "Member")]
         [HttpDelete("delete-koi")]
         public async Task<IActionResult> DeleteKoi(int koiId)
         {

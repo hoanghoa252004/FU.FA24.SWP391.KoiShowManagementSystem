@@ -75,8 +75,8 @@ namespace KoiShowManagementSystem.Repositories
                 Name = koi.Name!,
                 Description = koi.Description,
                 Image = koi.Image != null ? await _s3UploadService.UploadKoiImage(koi.Image) : null,
-                Size = koi.Size,
-                VarietyId = koi.VarietyId,
+                Size =  koi.Size,
+                VarietyId =koi.VarietyId,
                 UserId = userId,
                 Status = true
             };
@@ -90,25 +90,25 @@ namespace KoiShowManagementSystem.Repositories
             if (koi == null) throw new ArgumentNullException(nameof(koi));
             var koiToUpdate = await _context.Kois.FirstOrDefaultAsync(k => k.Id == koi.Id);
             if (koiToUpdate == null) return false;
-            if (koiToUpdate.Name != null)
+            if (koi.Name != null)
             {
                 koiToUpdate.Name = koi.Name!;
             }
-            if (koiToUpdate.Description != null)
+            if (koi.Description != null)
             {
                 koiToUpdate.Description = koi.Description;
             }
-            if (koiToUpdate.Size != koi.Size)
+            if (koi.Size != 0)
             {
                 koiToUpdate.Size = koi.Size;
             }
-            if (koiToUpdate.VarietyId != koi.VarietyId)
+            if (koi.VarietyId != 0)
             {
-                koiToUpdate.VarietyId = koi.VarietyId;
+                koiToUpdate.VarietyId =koi.VarietyId;
             }
-            if (koiToUpdate.Image != null)
+            if (koi.Image != null)
             {
-                koiToUpdate.Image = await _s3UploadService.UpdateImageAsync(koiToUpdate.Image, koi.Image!);
+                koiToUpdate.Image = await _s3UploadService.UpdateImageAsync(koiToUpdate.Image!, koi.Image!);
             }
             await _context.SaveChangesAsync();
             return true;
