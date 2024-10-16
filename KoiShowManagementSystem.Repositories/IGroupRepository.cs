@@ -10,9 +10,11 @@ namespace KoiShowManagementSystem.Repositories
 {
     public interface IGroupRepository
     {
-        Task<List<GroupModel>> GetByShowId(int showId);
-        Task<bool> CreateAGroup(GroupDTO group);
-        Task<bool> UpdateGroup(GroupDTO group);
-        Task<bool> DeleteGroup(int groupId);
+        Task<List<GroupModel>> GetByShowIdAsync(int showId);
+        Task<bool> CreateAGroupAsync(GroupDTO group);
+        Task<bool> UpdateGroupAsync(GroupDTO group);
+        Task<bool> DeleteGroupAsync(int groupId);
+
+        Task<List<GroupModel>> GetAllGroupByShowAsync(int showId);
     }
 }

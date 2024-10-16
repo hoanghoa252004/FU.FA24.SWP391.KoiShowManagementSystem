@@ -99,7 +99,7 @@ namespace KoiShowManagementSystem.Services
                         if (userId != koi.UserId)
                             throw new Exception("Failed: You're registering a Koi that does not belong to you !");
                         // START: 
-                        var groups = await _repository.Groups.GetByShowId((int)dto.ShowId!);
+                        var groups = await _repository.Groups.GetByShowIdAsync((int)dto.ShowId!);
                         if (!groups.IsNullOrEmpty())
                         {
                             foreach (var group in groups)
