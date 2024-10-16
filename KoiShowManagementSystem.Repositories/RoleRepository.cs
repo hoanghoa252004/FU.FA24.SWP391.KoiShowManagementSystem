@@ -16,16 +16,10 @@ namespace KoiShowManagementSystem.Repositories
         {
             this._context = context;
         }
-        public async Task<int> GetRoleId(string title)
-        {
-            var role = await _context.Set<Role>().FirstOrDefaultAsync(role => role.Title.Contains(title));
-            return role!.Id;
-        }
 
-        public async Task<string> GetRoleTitle(int id)
+        public async Task<List<Role>> GetAllRole()
         {
-            var role = await _context.Set<Role>().FirstOrDefaultAsync(role => role.Id == id);
-            return role!.Title;
+            return await _context.Roles.ToListAsync();
         }
     }
 }

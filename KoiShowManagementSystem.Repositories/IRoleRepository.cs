@@ -9,7 +9,6 @@ namespace KoiShowManagementSystem.Repositories
 {
     public interface IRoleRepository
     {
-        Task<string> GetRoleTitle(int id);
-        Task<int> GetRoleId(string title);
+        Task<List<Role>> GetAllRole();
     }
 }

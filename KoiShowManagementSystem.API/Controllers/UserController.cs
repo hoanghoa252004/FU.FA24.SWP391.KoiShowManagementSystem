@@ -30,7 +30,7 @@ namespace KoiShowManagementSystem.API.Controllers
         {
             try
             {
-                ProfileModel result = await _userService.GetProfile();
+                UserModel result = await _userService.GetUser();
                 return Ok(new ApiResponse
                 {
                     Message = "Get Profile Successfully",
@@ -102,35 +102,27 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        //// 6: CONFIRM EMAIL:-----------------------------------------------------------
-        //[HttpGet("confirm-email")]
-        //public async Task<IActionResult> ConfirmMail(ConfirmMailModel dto)
-        //{
-        //    IActionResult? response = null;
-        //    try
-        //    {
-        //        var user = await _emailService.ConfirmEmail(dto);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response = BadRequest(new ApiResponse()
-        //        {
-        //            Message = ex.Message,
-        //        });
-        //        return response;
-        //    }
-        //}
+        // 6: CONFIRM EMAIL:-----------------------------------------------------------
+        [Authorize(Roles ="Manager")]
+        [HttpPost("create-user")]
+        public async Task<IActionResult> CreateUser([FromForm]CreateUserRequest user)
+        {
+            try
+            {
+                await _userService.CreateUser(user);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Create User Successfully !"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
         #endregion
-
-        //// TEST:-----------------------------------------------------------
-        //[HttpPut("test")]
-        //public async Task<IActionResult> Test([FromForm]TestModel dto)
-        //{
-        //    string a = await _s3UploadService.UploadShowBannerImage(dto.file!);
-        //    return Ok(new ApiResponse()
-        //    {
-        //        Message = a
-        //    });
-        //}
     }
 }
