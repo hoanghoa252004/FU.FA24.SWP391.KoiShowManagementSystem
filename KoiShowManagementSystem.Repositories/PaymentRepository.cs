@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
@@ -17,16 +18,21 @@ namespace KoiShowManagementSystem.Repositories
             this._context = context;
         }
 
+        public static string GetContent(string data)
+        {
+            return Regex.Replace(data, "Ma giao dich .*", "");
+        }
+
         public async Task<bool> ProcessPaymentWebhookAsync(PaymentWebhookDto paymentData)
         {
-            string content = paymentData.Content; 
+            string content = GetContent(paymentData.Content);
             bool isAllUpdated = false; //gán cờ để cho nó loop xong rồi mới lưu
 
-            if (content.StartsWith("KoiShowReg:"))
+            if (content.StartsWith("KoiShowReg"))
             {
                 //ví dụ content là "KoiShowReg:11,12" có id của đơn là 11 12
-                string registrationIdsString = content.Replace("KoiShowReg:", "");
-                var registrationIds = registrationIdsString.Split(',');
+                string registrationIdsString = content.Replace("KoiShowReg", "");
+                var registrationIds = registrationIdsString.Split(' ');
 
                 foreach (var registrationId in registrationIds)
                 {
