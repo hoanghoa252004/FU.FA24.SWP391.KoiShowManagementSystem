@@ -102,7 +102,7 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        // 6: CONFIRM EMAIL:-----------------------------------------------------------
+        // 6: CREATE USER:-----------------------------------------------------------
         [Authorize(Roles ="Manager")]
         [HttpPost("create-user")]
         public async Task<IActionResult> CreateUser([FromForm]CreateUserRequest user)
@@ -112,7 +112,29 @@ namespace KoiShowManagementSystem.API.Controllers
                 await _userService.CreateUser(user);
                 return Ok(new ApiResponse()
                 {
-                    Message = "Create User Successfully !"
+                    Message = "Create User Successfully ."
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
+
+        // 6: CREATE USER:-----------------------------------------------------------
+        [Authorize(Roles = "Manager,Staff")]
+        [HttpDelete("delete-user")]
+        public async Task<IActionResult> DeleteUser(int userId)
+        {
+            try
+            {
+                await _userService.DeleteUser(userId);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Delete User Successfully ."
                 });
             }
             catch (Exception ex)

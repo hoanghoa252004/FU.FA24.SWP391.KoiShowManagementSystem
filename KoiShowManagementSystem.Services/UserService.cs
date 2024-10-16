@@ -98,7 +98,7 @@ namespace KoiShowManagementSystem.Services
                 throw new Exception("Failed: No thing to update.");
 
             int id = _jwtServices.GetIdAndRoleFromToken().userId;
-            ProfileModel result = await _repository.Users.UpdateUser(id, dto);
+            ProfileModel result = await _repository.Users.UpdateUser(id, dto!);
             return result;
         }
 
@@ -126,7 +126,7 @@ namespace KoiShowManagementSystem.Services
             return result;
         }
 
-        //6. CREATE USER:------------------------------
+        // 6. CREATE USER:------------------------------
         public async Task CreateUser(CreateUserRequest user)
         {
             if(user == null 
@@ -144,6 +144,34 @@ namespace KoiShowManagementSystem.Services
                 await _repository.Users.AddUser(user);
             else
                 throw new Exception("Failed: Email has already exited !");
+        }
+
+        // 7. DELETE USER:----------------------------------
+        public async Task DeleteUser(int userId)
+        {
+            var actor = _jwtServices.GetIdAndRoleFromToken();
+            var user = await _repository.Users.GetUserById(userId);
+            if (user != null)
+            {
+                // V01: Tự xóa mình:
+                if (actor.userId == user.Id)
+                    throw new Exception("Failed: Sorry, you're not able to perform this behavior !");
+                if (actor.role.Equals("Staff", StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    if(user.Role!.Equals("Manager") == true
+                    || user.Role!.Equals("Referee") == true
+                    || user.Role!.Equals("Staff") == true)
+                        throw new Exception("Failed: Staff does not have permission to delete Manager, Referee or other Staff !");
+                    else
+                        await _repository.Users.DeleteUser(userId);
+                } 
+                else if (actor.role.Equals("Manager", StringComparison.OrdinalIgnoreCase) == true)
+                    await _repository.Users.DeleteUser(userId);
+                else
+                    throw new Exception("Failed: You do not have permission to delete any user !");
+            }
+            else
+                throw new Exception("Failed: User does not exit !");
         }
     }
 }
