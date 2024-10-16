@@ -141,5 +141,15 @@ namespace KoiShowManagementSystem.Repositories
             }).ToListAsync();
             return result;
         }
+
+        public async Task DeleteUser(int userId)
+        {
+            var user = _context.Users.SingleOrDefault(u => u.Id == userId);
+            if(user != null)
+            {
+                user.Status = false;
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
