@@ -20,24 +20,24 @@ namespace KoiShowManagementSystem.Services
         }
 
         // implement all method
-        public async Task<bool> AddGroupToShow(GroupDTO group)
+        public  Task<bool> AddGroupToShow(GroupDTO group)
         {
-            return await _repository.Groups.CreateAGroupAsync(group);
+            return  _repository.Groups.CreateAGroupAsync(group);
         }
 
-        public async Task<bool> UpdateGroup(GroupDTO group)
+        public  Task<bool> UpdateGroup(GroupDTO group)
         {
-            return await _repository.Groups.UpdateGroupAsync(group);
+            return  _repository.Groups.UpdateGroupAsync(group);
         }
 
-        public async Task<bool> DeleteGroup(int groupId)
+        public  Task<bool> DeleteGroup(int groupId)
         {
-            return await _repository.Groups.DeleteGroupAsync(groupId);
+            return  _repository.Groups.DeleteGroupAsync(groupId);
         }
 
-        public async Task<List<GroupModel>> GetAllGroupByShow(int showId)
+        public  Task<List<GroupModel>> GetAllGroupByShow(int showId)
         {
-            return await _repository.Groups.GetAllGroupByShowAsync(showId);
+            return  _repository.Groups.GetAllGroupByShowAsync(showId);
         }
 
     }
