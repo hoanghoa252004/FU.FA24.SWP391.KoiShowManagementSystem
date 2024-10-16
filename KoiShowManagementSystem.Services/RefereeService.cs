@@ -36,5 +36,10 @@ namespace KoiShowManagementSystem.Services
             var result = await _repository.Scores.SaveScoresAsync(dto);
             return result;
         }
+        public async Task<List<ShowModel>> GetShowsWithKoiByUserIdAsync(int userId)
+        {
+            var result = await _repository.Referees.GetShowsWithKoiByUserIdAsync(userId);
+            return result;
+        }
     }
 }
