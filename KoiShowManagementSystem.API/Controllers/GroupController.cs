@@ -48,5 +48,16 @@ namespace KoiShowManagementSystem.API.Controllers
             }
             return BadRequest(new ApiResponse { Message = "Failed" });
         }
+
+        [HttpGet("get-all-groups-by-show")]
+        public async Task<IActionResult> GetAllGroupByShow(int showId)
+        {
+            var result = await _groupService.GetAllGroupByShow(showId);
+            if (result == null)
+            {
+                return NotFound(new ApiResponse { Message = "No groups in show", Payload = result });
+            }
+            return Ok(new ApiResponse { Message = "Success", Payload = result });
+        }
     }
 }

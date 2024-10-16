@@ -22,7 +22,7 @@ namespace KoiShowManagementSystem.Repositories
             this._s3UploadService = _s3UploadService;
         }
 
-        public async Task<List<KoiModel>> GetAllKoiByUserId(int userId)
+        public async Task<List<KoiModel>> GetAllKoiByUserIdAsync(int userId)
         {
             return await _context.Kois.Where(k => k.UserId == userId && k.Status == true).Select(k => new KoiModel
             {
@@ -35,7 +35,7 @@ namespace KoiShowManagementSystem.Repositories
             }).ToListAsync();
         }
 
-        public async Task<KoiModel?> GetKoi(int koiId)
+        public async Task<KoiModel?> GetKoiAsync(int koiId)
         {
             return await _context.Kois.Where(k => k.Id == koiId).Select(k => new KoiModel
             {
@@ -66,7 +66,7 @@ namespace KoiShowManagementSystem.Repositories
             }).FirstOrDefaultAsync();
         }
 
-        public async Task<bool> CreateKoi(KoiDTO koi, int userId)
+        public async Task<bool> CreateKoiAsync(KoiDTO koi, int userId)
         {
             if (koi == null) throw new ArgumentNullException(nameof(koi));
 
@@ -85,7 +85,7 @@ namespace KoiShowManagementSystem.Repositories
             return true;
         }
 
-        public async Task<bool> UpdateKoi(KoiDTO koi)
+        public async Task<bool> UpdateKoiAsync(KoiDTO koi)
         {
             if (koi == null) throw new ArgumentNullException(nameof(koi));
             var koiToUpdate = await _context.Kois.FirstOrDefaultAsync(k => k.Id == koi.Id);
@@ -114,7 +114,7 @@ namespace KoiShowManagementSystem.Repositories
             return true;
         }
 
-        public async Task<bool> DeleteKoi(int koiId)
+        public async Task<bool> DeleteKoiAsync(int koiId)
         {
             var koiToDelete = await _context.Kois.FirstOrDefaultAsync(k => k.Id == koiId);
             if (koiToDelete == null) return false;

@@ -21,6 +21,7 @@ namespace KoiShowManagementSystem.Repositories
         private IGroupRepository _groupRepository;
         private IScoreRepository _scoreRepository;
         private IPaymentRepository _paymentRepository;
+        private IVarietyRepository _varietyRepository;
         public Repository(KoiShowManagementSystemContext context, S3UploadService _uploadService)
         {
             _context = context;
@@ -128,5 +129,16 @@ namespace KoiShowManagementSystem.Repositories
             }
         }
 
+        public IVarietyRepository Varieties
+        {
+            get
+            {
+                if (this._varietyRepository == null)
+                {
+                    this._varietyRepository = new VarietyRepository(_context);
+                }
+                return this._varietyRepository;
+            }
+        }
     }
 }

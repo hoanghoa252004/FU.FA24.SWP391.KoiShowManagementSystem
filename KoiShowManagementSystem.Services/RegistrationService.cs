@@ -93,13 +93,13 @@ namespace KoiShowManagementSystem.Services
                         throw new Exception("Failed: Invalid size for Koi Fish !");
                     // V2: Kiểm tra con cá đó có đúng phải của Member đó ko:
                     var userId = _jwtServices.GetIdAndRoleFromToken().userId;
-                    var koi = await _repository.Koi.GetKoi((int)dto.KoiId!);
+                    var koi = await _repository.Koi.GetKoiAsync((int)dto.KoiId!);
                     if (koi != null)
                     {
                         if (userId != koi.UserId)
                             throw new Exception("Failed: You're registering a Koi that does not belong to you !");
                         // START: 
-                        var groups = await _repository.Groups.GetByShowId((int)dto.ShowId!);
+                        var groups = await _repository.Groups.GetByShowIdAsync((int)dto.ShowId!);
                         if (!groups.IsNullOrEmpty())
                         {
                             foreach (var group in groups)
@@ -200,7 +200,7 @@ namespace KoiShowManagementSystem.Services
                     if(role.Equals("Member", StringComparison.OrdinalIgnoreCase))
                     {
                         // Kiểm tra xem đơn này phải của nó ko:
-                        var kois =  await _repository.Koi.GetAllKoiByUserId(memberId);
+                        var kois =  await _repository.Koi.GetAllKoiByUserIdAsync(memberId);
                         var registrations = (await _repository.Registrations.GetRegistrationByUserIdAsync(memberId)).ToList();
                         var isBelong = from k in kois
                                        join r in registrations on k.KoiID equals r.KoiID
@@ -215,7 +215,7 @@ namespace KoiShowManagementSystem.Services
                         else if (dto.KoiId != null) // Nếu có cập nhập con mới:
                         {
                             // Kiểm tra new Koi phải của Member ko:
-                            var koi = await _repository.Koi.GetKoi((int)dto.KoiId);
+                            var koi = await _repository.Koi.GetKoiAsync((int)dto.KoiId);
                             if (koi != null)
                             {
                                 if (koi.UserId != memberId)
@@ -358,7 +358,7 @@ namespace KoiShowManagementSystem.Services
                 {
                     foreach (var result in results)
                     {
-                        var koi = await _repository.Koi.GetKoi((int)result?.KoiID!);
+                        var koi = await _repository.Koi.GetKoiAsync((int)result?.KoiID!);
                         var member = await _repository.Users.GetUserById((int)koi?.UserId!);
                         string content = @$"
                             <html>

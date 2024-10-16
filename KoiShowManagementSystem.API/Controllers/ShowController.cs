@@ -98,12 +98,7 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         // implement get all varieties
-        [HttpGet("get-all-varieties")]
-        public async Task<IActionResult> GetAllVarieties()
-        {
-            var result = await _koiShowService.GetAllVarieties();
-            return Ok(new ApiResponse { Message = "Success", Payload = result });
-        }
+        
 
         //[HttpGet("list-show-by-referee")]
         //public async Task<IActionResult> GetListShowAsync()
