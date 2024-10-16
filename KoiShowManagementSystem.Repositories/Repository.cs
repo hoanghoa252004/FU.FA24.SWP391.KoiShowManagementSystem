@@ -20,6 +20,7 @@ namespace KoiShowManagementSystem.Repositories
         private IRefereeRepository _refereeRepository;
         private IGroupRepository _groupRepository;
         private IScoreRepository _scoreRepository;
+        private IPaymentRepository _paymentRepository;
         public Repository(KoiShowManagementSystemContext context, S3UploadService _uploadService)
         {
             _context = context;
@@ -114,5 +115,18 @@ namespace KoiShowManagementSystem.Repositories
                 return this._scoreRepository;
             }
         }
+
+        public IPaymentRepository Payment
+        {
+            get
+            {
+                if (this._paymentRepository == null)
+                {
+                    this._paymentRepository = new PaymentRepository(_context);
+                }
+                return this._paymentRepository;
+            }
+        }
+
     }
 }

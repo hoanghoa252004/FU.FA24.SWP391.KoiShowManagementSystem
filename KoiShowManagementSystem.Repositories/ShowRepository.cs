@@ -103,7 +103,7 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<List<ShowModel>> GetClosestShowAsync()
         {
             var shows = await _context.Shows
-                .Where(s => s.Status != "Draft")
+                .Where(s => s.Status != "up comming")
                 .Include(s => s.Groups)
                 .OrderByDescending(s => s.RegisterStartDate).Take(5)
                 .Select(s => new ShowModel
