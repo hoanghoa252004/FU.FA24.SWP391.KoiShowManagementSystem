@@ -208,15 +208,7 @@ namespace KoiShowManagementSystem.Repositories
             return result;
         }
 
-        public async Task<List<VarietyModel>> GetAllVarietiesAsync()
-        {
-            var reuslt =await  _context.Varieties.Select(v => new VarietyModel
-            {
-                VarietyId = v.Id,
-                VarietyName = v.Name
-            }).ToListAsync();
-            return reuslt;
-        }
+
 
         public async Task<bool> ChangeShowStatus(string status, int showId)
         {
