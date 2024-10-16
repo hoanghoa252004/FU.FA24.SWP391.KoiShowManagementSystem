@@ -76,7 +76,7 @@ namespace KoiShowManagementSystem.API.Controllers
             
         }
 
-        [Authorize(Roles = "Member")]
+        //[Authorize(Roles = "Member")]
         [HttpPut("update-koi")]
         public async Task<IActionResult> UpdateKoi([FromForm] KoiDTO koi)
         {
