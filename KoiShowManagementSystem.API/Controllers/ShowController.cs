@@ -105,10 +105,25 @@ namespace KoiShowManagementSystem.API.Controllers
             return Ok(new ApiResponse { Message = "Success", Payload = result });
         }
 
-        [HttpGet("list-show")]
-        public async Task<IActionResult> GetListShowAsync()
+        //[HttpGet("list-show-by-referee")]
+        //public async Task<IActionResult> GetListShowAsync()
+        //{
+        //    var result = await _refereeService.GetListShow();
+        //    if (result != null)
+        //    {
+        //        return Ok(new ApiResponse
+        //        {
+        //            Message = "Success",
+        //            Payload = result
+        //        });
+        //    }
+        //    return NotFound(new ApiResponse { Message = "No shows found", });
+        //}
+
+        [HttpGet("list-show-by-user")]
+        public async Task<IActionResult> GetListShowbyUserAsync(int userId)
         {
-            var result = await _refereeService.GetListShow();
+            var result = await _refereeService.GetShowsWithKoiByUserIdAsync(userId);
             if (result != null)
             {
                 return Ok(new ApiResponse

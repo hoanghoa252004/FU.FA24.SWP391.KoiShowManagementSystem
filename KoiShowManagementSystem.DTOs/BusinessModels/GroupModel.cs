@@ -14,10 +14,11 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public decimal? SizeMin { get; set; }
         public decimal? SizeMax { get; set; }
         public string? Unit { get; set; }
-        public int StatusScored { get; set; }
-        public int StatusAccepted { get; set; }
+        public int Scored { get; set; }
+        public int AmountNotScored { get; set; }
         public List<RegistrationModel>? Registrations { get; set; }
         //public List<KoiModel>? KoiDetailsInShow { get; set; }
+        public List<KoiModel>? Kois { get; set; }
         public List<CriterionModel>? Criterion { get; set; }
         public List<VarietyModel>? Varieties { get; set; }
     }
