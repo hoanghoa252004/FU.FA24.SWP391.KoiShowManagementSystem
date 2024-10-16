@@ -26,7 +26,7 @@ namespace KoiShowManagementSystem.Repositories
             this._context = context;
         }
 
-        public Task<List<GroupModel>> GetByShowId(int showId)
+        public Task<List<GroupModel>> GetByShowIdAsync(int showId)
         {
             var result = (from grp in _context.Groups
                          where grp.ShowId == showId && grp.Status == true
@@ -50,7 +50,7 @@ namespace KoiShowManagementSystem.Repositories
             return result;
         }
 
-        public async Task<bool> UpdateGroup(GroupDTO dto)
+        public async Task<bool> UpdateGroupAsync(GroupDTO dto)
         {
              var group = await _context.Groups
                                 .Include(g => g.Criteria)
@@ -92,7 +92,7 @@ namespace KoiShowManagementSystem.Repositories
             if (result > 0) return true;
             return false;
         }
-        public async Task<bool> CreateAGroup(GroupDTO dto)
+        public async Task<bool> CreateAGroupAsync(GroupDTO dto)
         {
             
             var show = await _context.Shows
@@ -123,7 +123,7 @@ namespace KoiShowManagementSystem.Repositories
             return false;
         }
 
-        public async Task<bool> DeleteGroup(int groupId)
+        public async Task<bool> DeleteGroupAsync(int groupId)
         {
             if (groupId < 1)
             {
@@ -139,6 +139,31 @@ namespace KoiShowManagementSystem.Repositories
             int result = await _context.SaveChangesAsync();
             if (result > 0) return true;
             return false;
+        }
+
+        public async Task<List<GroupModel>> GetAllGroupByShowAsync(int showId)
+        {
+            var result = await _context.Groups
+                            .Where(g => g.ShowId == showId && g.Status == true)
+                            .Select(g => new GroupModel()
+                            {
+                                GroupId = g.Id,
+                                SizeMax = g.SizeMax,
+                                SizeMin = g.SizeMin,
+                                Varieties = g.Varieties.Select(v => new VarietyModel()
+                                {
+                                    VarietyId = v.Id,
+                                    VarietyName = v.Name,
+                                }).ToList(),
+                                Criterion = g.Criteria.Select(c => new CriterionModel()
+                                {
+                                    CriterionId = c.Id,
+                                    CriterionName = c.Name,
+                                    Percentage = c.Percentage,
+                                    Description = c.Description,
+                                }).ToList(),
+                            }).ToListAsync();
+            return result;
         }
     }
 }

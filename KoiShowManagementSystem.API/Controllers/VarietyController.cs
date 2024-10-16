@@ -21,6 +21,9 @@ namespace KoiShowManagementSystem.API.Controllers
             try
             {
                 var result = await _varietyService.GetAllVarietiesByShow(showId);
+                if (result == null) return NotFound(new ApiResponse { 
+                                            Message = "No varieties in show", 
+                                            Payload = result });
                 return Ok(new ApiResponse
                 {
                     Message = "Success",
@@ -40,7 +43,16 @@ namespace KoiShowManagementSystem.API.Controllers
         public async Task<IActionResult> GetAllVarieties()
         {
             var result = await _varietyService.GetAllVarieties();
-            return Ok(new ApiResponse { Message = "Success", Payload = result });
+            if (result == null) return NotFound(new ApiResponse
+            {
+                Message = "No varieties",
+                Payload = result
+            });
+            return Ok(new ApiResponse
+            {
+                Message = "Success",
+                Payload = result
+            });
         }
 
         //[HttpGet("get-variety-by-id")]

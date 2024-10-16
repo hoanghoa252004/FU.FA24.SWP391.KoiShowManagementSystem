@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.DTOs.Request;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.Repositories;
 using KoiShowManagementSystem.Services.Helper;
 using System;
@@ -21,17 +22,22 @@ namespace KoiShowManagementSystem.Services
         // implement all method
         public async Task<bool> AddGroupToShow(GroupDTO group)
         {
-            return await _repository.Groups.CreateAGroup(group);
+            return await _repository.Groups.CreateAGroupAsync(group);
         }
 
         public async Task<bool> UpdateGroup(GroupDTO group)
         {
-            return await _repository.Groups.UpdateGroup(group);
+            return await _repository.Groups.UpdateGroupAsync(group);
         }
 
         public async Task<bool> DeleteGroup(int groupId)
         {
-            return await _repository.Groups.DeleteGroup(groupId);
+            return await _repository.Groups.DeleteGroupAsync(groupId);
+        }
+
+        public async Task<List<GroupModel>> GetAllGroupByShow(int showId)
+        {
+            return await _repository.Groups.GetAllGroupByShowAsync(showId);
         }
 
     }

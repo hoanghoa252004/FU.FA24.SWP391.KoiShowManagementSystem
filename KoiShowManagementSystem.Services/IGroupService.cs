@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.DTOs.Request;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace KoiShowManagementSystem.Services
         public Task<bool> AddGroupToShow(GroupDTO group);
         public Task<bool> UpdateGroup(GroupDTO group);
         public Task<bool> DeleteGroup(int groupId);
+        public Task<List<GroupModel>> GetAllGroupByShow(int showId);
     }
 }
