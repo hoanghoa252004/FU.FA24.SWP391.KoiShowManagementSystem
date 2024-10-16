@@ -21,7 +21,7 @@ namespace KoiShowManagementSystem.Services
         private readonly Repository _repository;
         private readonly JwtServices _jwtServices;
         private readonly IEmailService _emailService;
-
+        private const string WEBSITE_LOGO = "https://koi-shows-image.s3.ap-southeast-1.amazonaws.com/logo/logo.jpg";
         public RegistrationService(JwtServices jwtServices, Repository repository, IEmailService emailService)
         {
             _jwtServices = jwtServices;
@@ -316,6 +316,16 @@ namespace KoiShowManagementSystem.Services
                                                 </tr>
                                             </table>
                                             <p>Hope your Koi fish will have high results in this show!</p>
+                                            <hr style='width: 200px; margin-left: 0;'/>
+                                            <div style='text-align: left; '>
+                                                <img src='{WEBSITE_LOGO}' alt='Logo' style='max-width: 50px; height: auto;' />
+                                                <span style='font-size: 14px; font-weight: bold;'>Koi Show Management System FPTU FA24 SWP391</span><br />
+                                                <span>Website: 
+                                                    <a href='{"https://github.com/hoanghoa252004/FU.FA24.SWP391.KoiShowManagementSystem"}'>
+                                                        {"https://github.com/hoanghoa252004/FU.FA24.SWP391.KoiShowManagementSystem"}
+                                                    </a>
+                                                </span>
+                                            </div>
                                         </body>
                                         </html>";
                         await _emailService.SendEmail(new EmailModel()
@@ -332,6 +342,10 @@ namespace KoiShowManagementSystem.Services
         // 7. PUBLISH SCORE TO MEMBER:
         public async Task PublishResult(int showId)
         {
+            // Check Show whether it exists:
+            var show = await _repository.Show.GetShowDetailsAsync(showId);
+            if (show == null)
+                throw new Exception("Failed: Show does not exit.");
             //Lấy hết đơn của show đó đã scored.
             var list = await _repository.Registrations.GetRegistrationByShowAsync(showId);
             if (list.Any())
@@ -351,50 +365,66 @@ namespace KoiShowManagementSystem.Services
                             <body>
                                 <p>Dear {member?.Name},</p>
                                 <p>We're glad to announce that your Koi just has result:</p>
-                                <table border='1' style='border-collapse: collapse; width: 700px;'>
+                                <table border='1' style='border-collapse: collapse; width: 500px;'>
                                     <tr style='background-color: yellow;'>
                                         <th colspan='4' style='text-align: center; font-size: 18px;'>RESULT</th>
                                     </tr>
                                     <tr>
-                                        <td><b>Registration ID:</b></td>
-                                        <td>{result?.Id}</td>
-                                        <td><b>Group:</b></td>
-                                        <td>{result?.Group}</td>
+                                        <td style='width: 25%; padding: 5px;'><b>Registration ID:</b></td>
+                                        <td style='width: 25%; padding: 5px; text-align: center;'>{result?.Id}</td>
+                                        <td style='width: 25%; padding: 5px;'><b>Group:</b></td>
+                                        <td style='width: 25%; padding: 5px; text-align: center;'>{result?.Group}</td>
                                     </tr>
                                     <tr>
-                                        <td><b>Koi ID:</b></td>
-                                        <td>{result?.KoiID}</td>
-                                        <td><b>Koi Name:</b></td>
-                                        <td>{result?.Name}</td>
+                                        <td style='width: 25%; padding: 5px;'><b>Koi ID:</b></td>
+                                        <td style='width: 25%; padding: 5px; text-align: center;'>{result?.KoiID}</td>
+                                        <td style='width: 25%; padding: 5px;'><b>Koi Name:</b></td>
+                                        <td style='width: 25%; padding: 5px; text-align: center;'>{result?.Name}</td>
                                     </tr>
                                     <tr>
                                         <td><b>Image:</b></td>
                                         <td colspan='3' style='text-align: center;'>
-                                            <img src='{result?.Image1}' alt='Koi Image' style='max-width: 100%; height: auto;' />
+                                            <img src='{result?.Image1}' alt='Koi Image' style='max-width: 90%; height: auto;' />
                                         </td>
                                     </tr>
                                     <tr>
                                         <td><b>Total Score:</b></td>
-                                        <td colspan='3' style='color: red;'>{result?.TotalScore}</td>
+                                        <td colspan='3' style='color: red; text-align: center;'>{result?.TotalScore}</td>
                                     </tr>
                                     <tr>
                                         <td><b>Rank:</b></td>
-                                        <td colspan='3' style='color: green;'>{result?.Rank}</td>
+                                        <td colspan='3' style='color: green; text-align: center;'>{result?.Rank}</td>
                                     </tr>
                                 </table>
                                 <p>Hope your Koi fish will have high results in this show!</p>
-                                <hr />
-                                <div style='text-align: center;'>
-                                    <img src='logo_url_here' alt='Logo' style='max-width: 50px; height: auto;' />
-                                    <span style='font-size: 14px; font-weight: bold;'>Koi Show Management System &nbsp; FPTU FA24 SWP391</span><br />
-                                    <span>Website: <a href='https://github.com/hoanghoa252004/FU.FA24.SWP391.KoiShowManagementSystem'/></span>
-                                </div>
+                                <hr style='width: 200px; margin-left: 0;'/>
+                                <table style='width: 400px%; border-collapse: collapse;'>
+                                    <tr>
+                                        <td  style=' width: 10%; text-align: center;'>
+                                            <img src='{WEBSITE_LOGO}' alt='Logo' style='max-width: 50px; height: auto;' />
+                                        </td>
+                                        <td style='width: 75%; padding-left: 10px;'>
+                                            <table style='border-collapse: collapse;'>
+                                                <tr>
+                                                    <td style='font-size: 14px; font-weight: bold;'>Koi Show Management System FPTU FA24 SWP391</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Website: 
+                                                        <a href='https://github.com/hoanghoa252004/FU.FA24.SWP391.KoiShowManagementSystem'>
+                                                            https://github.com/hoanghoa252004/FU.FA24.SWP391.KoiShowManagementSystem
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
                             </body>
                             </html>";
-                        string subject = @$"[{result?.Show}RESULT]";
+                        string subject = @$"[{show.ShowTitle?.ToUpper()} ANNOUCEMENT RESULT]";
                         await _emailService.SendEmail(new EmailModel()
                         {
-                            To = "hoathse184053@fpt.edu.vn",
+                            To = member!.Email,
                             Subject = subject,
                             Content = content,
                         });
