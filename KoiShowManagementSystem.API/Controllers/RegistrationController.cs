@@ -172,7 +172,7 @@ namespace KoiShowManagementSystem.API.Controllers
         }
         // 6. UPDATE PENDING REGISTRATION:
         [Authorize(Roles = "Manager")]
-        [HttpPut("pulish-result")]
+        [HttpGet("pulish-result")]
         public async Task<IActionResult> PublishResult(int showId)
         {
             try

@@ -146,12 +146,15 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task<UserModel> GetUserById(int userId)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(user => user.Id == userId);
+            var user = await _context.Users.Include(u => u.Role).SingleOrDefaultAsync(user => user.Id == userId);
             if(user != null)
                 return new UserModel()
                 {
                     Id = userId,
-                    Name = user!.Name,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Phone = user.Phone,
+                    Role = user.Role.Title,
                 };
             return null!;
         }
