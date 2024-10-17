@@ -16,6 +16,7 @@ namespace KoiShowManagementSystem.Repositories
     {
         private readonly S3UploadService _s3UploadService;
         private KoiShowManagementSystemContext _context;
+        private const string REGISTRATION_STATUS_DEFAULT = "Draft";
         public RegistrationRepository(KoiShowManagementSystemContext context, S3UploadService _s3UploadService)
         {
             this._context = context;
@@ -34,6 +35,8 @@ namespace KoiShowManagementSystem.Repositories
                 KoiId = (int)dto.KoiId!,
                 GroupId = dto.GroupId,
                 Description = dto.Description,
+                Status = REGISTRATION_STATUS_DEFAULT,
+                IsPaid = false,
             };
             await _context.Set<Registration>().AddAsync(newRegistration);
             await _context.SaveChangesAsync();

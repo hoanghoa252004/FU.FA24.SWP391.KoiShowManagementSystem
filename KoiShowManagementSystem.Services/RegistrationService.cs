@@ -118,7 +118,7 @@ namespace KoiShowManagementSystem.Services
                                         if (regist.KoiID == dto.KoiId)
                                             throw new Exception("Failed: Your Koi already registered for this Show");
                                     }
-                                // 2. Thực hiện phân loại: 
+                                /* 2. Thực hiện phân loại: 
                                 if (dto.Size >= group.SizeMin && dto.Size <= group.SizeMax)// Kiểm tra size:
                                 {
                                     var matchingVariety = group.Varieties!.FirstOrDefault(var => var.VarietyId == koi!.VarietyId);
@@ -127,7 +127,7 @@ namespace KoiShowManagementSystem.Services
                                         createRegistration.GroupId = group.GroupId;
                                         break;
                                     }
-                                }
+                                }*/
                             }
                             check = true;
                         }
@@ -138,6 +138,34 @@ namespace KoiShowManagementSystem.Services
                         throw new Exception("Failed: Koi does not exist !");
                 }
             }
+        }
+
+        // SUPPORT METHOD 01:
+        private async Task<int?> ClassifyRegistration(RegistrationModel dto)
+        {
+            int? groupId = null!;
+            // Lấy con Koi:
+            var koi = await _repository.Koi.GetKoiAsync((int)dto.KoiID!);
+            if (koi != null)
+            {
+                var groups = await _repository.Groups.GetByShowIdAsync((int)dto.ShowId!);
+                if (!groups.IsNullOrEmpty())
+                {
+                    foreach (var group in groups)
+                    {
+                        if (dto.Size >= group.SizeMin && dto.Size <= group.SizeMax)// Kiểm tra size:
+                        {
+                            var matchingVariety = group.Varieties!.FirstOrDefault(var => var.VarietyId == koi!.VarietyId);
+                            if (matchingVariety != null) // Kiểm tra variety:
+                            {
+                                groupId = group.GroupId;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return groupId;
         }
 
         // 3. GET REGISTRATIONS BY SHOW:
