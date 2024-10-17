@@ -68,11 +68,15 @@ namespace KoiShowManagementSystem.Repositories
         {
             var showsWithKoi = await _context.Shows
                 .Where(sh => sh.Status == "On Going" &&
-                             sh.RefereeDetails.Any(rd => rd.UserId == userId)) // Filter by userId instead of refereeId
-                .Include(sh => sh.Groups)
-                    .ThenInclude(g => g.Registrations)
-                .Include(sh => sh.Groups)
+                             sh.RefereeDetails.Any(rd => rd.UserId == userId)) 
+                .Include(sh => sh.Groups) // cái show thì liên quan group
+                    .ThenInclude(g => g.Registrations) //thì qua group sẽ trỏ tới registration
+                    .ThenInclude(r => r.Koi) //rồi có thể trỏ tới Koi thông qua registraion
+                .Include(sh => sh.Groups) //tương tự
                     .ThenInclude(g => g.Criteria)
+                .Include(sh => sh.Groups)
+                    .ThenInclude(g => g.Registrations) 
+                    .ThenInclude(r => r.Media)
                 .Select(sh => new ShowModel
                 {
                     ShowId = sh.Id,
@@ -88,6 +92,10 @@ namespace KoiShowManagementSystem.Repositories
                         {
                             KoiID = r.Koi.Id,
                             KoiName = r.Koi.Name,
+                            Image1 = r.Media.Image1,
+                            Image2 = r.Media.Image2,
+                            Image3 = r.Media.Image3,
+                            IsBestVote = r.IsBestVote,
                             criterions = g.Criteria.Select(c => new CriterionModel
                             {
                                 CriterionId = c.Id,
@@ -100,6 +108,7 @@ namespace KoiShowManagementSystem.Repositories
 
             return showsWithKoi;
         }
+
 
 
 
