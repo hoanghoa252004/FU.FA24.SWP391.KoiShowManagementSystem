@@ -1,5 +1,6 @@
 ﻿using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,8 @@ namespace KoiShowManagementSystem.API.Controllers
         {
             _refereeService = refereeService;
         }
+
+        [Authorize(Roles = "Referee")]
         [HttpPost("save-scores")]
         public async Task<IActionResult> SaveScoresAsync([FromBody] RefereeScoreDTO scores)
         {
