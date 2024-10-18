@@ -95,7 +95,7 @@ namespace KoiShowManagementSystem.Repositories
                             Image1 = r.Media.Image1,
                             Image2 = r.Media.Image2,
                             Image3 = r.Media.Image3,
-                            IsBestVote = r.IsBestVote,
+                            Video = r.Media.Video,
                             criterions = g.Criteria.Select(c => new CriterionModel
                             {
                                 CriterionId = c.Id,
