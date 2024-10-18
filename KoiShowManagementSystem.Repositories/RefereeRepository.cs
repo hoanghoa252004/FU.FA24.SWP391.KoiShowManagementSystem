@@ -70,7 +70,7 @@ namespace KoiShowManagementSystem.Repositories
                 .Where(sh => sh.Status == "On Going" &&
                              sh.RefereeDetails.Any(rd => rd.UserId == userId)) 
                 .Include(sh => sh.Groups) // cái show thì liên quan group
-                    .ThenInclude(g => g.Registrations) //thì qua group sẽ trỏ tới registration
+                .Include(g => g.Registrations) //thì qua group sẽ trỏ tới registration
                     .ThenInclude(r => r.Koi) //rồi có thể trỏ tới Koi thông qua registraion
                 .Include(sh => sh.Groups) //tương tự
                     .ThenInclude(g => g.Criteria)
@@ -91,12 +91,13 @@ namespace KoiShowManagementSystem.Repositories
                         Kois = g.Registrations.Select(r => new KoiModel
                         {
                             KoiID = r.Koi.Id,
+                            RegistrationId = g.Id,
                             KoiName = r.Koi.Name,
                             Image1 = r.Media.Image1,
                             Image2 = r.Media.Image2,
                             Image3 = r.Media.Image3,
-                            IsBestVote = r.IsBestVote,
-                            criterions = g.Criteria.Select(c => new CriterionModel
+                            Video = r.Media.Video,
+                            criterions = g.Criteria.Select(c => new CriterionModel 
                             {
                                 CriterionId = c.Id,
                                 CriterionName = c.Name
