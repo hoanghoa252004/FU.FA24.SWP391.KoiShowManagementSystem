@@ -102,14 +102,14 @@ namespace KoiShowManagementSystem.API.Controllers
 
         // 4. GET REGISTRATION BY ID:
         [HttpGet("registration-by-id")]
-        public async Task<IActionResult> GetRegistration(int registrationId)
+        public async Task<IActionResult> GetRegistrationById(int registrationId)
         {
             if (registrationId <= 0)
             {
                 return BadRequest(new ApiResponse { Message = "Invalid Registration ID." });
             }
 
-            var result = await _registrationService.GetRegistration(registrationId);
+            var result = await _registrationService.GetRegistrationById(registrationId);
             if (result != null)
             {
                 return Ok(new ApiResponse
@@ -170,6 +170,8 @@ namespace KoiShowManagementSystem.API.Controllers
                 });
             }
         }
+
+
         // 6. UPDATE PENDING REGISTRATION:
         [Authorize(Roles = "Manager")]
         [HttpGet("pulish-result")]
@@ -181,6 +183,28 @@ namespace KoiShowManagementSystem.API.Controllers
                 return Ok(new ApiResponse()
                 {
                     Message = "Publish Result Successfully",
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
+
+        // 7. VOTE REGISTRATION:
+        [Authorize(Roles = "Member")]
+        [HttpPost("vote")]
+        public async Task<IActionResult> VoteRegistration(int registrationId, bool vote)
+        {
+            try
+            {
+                await _registrationService.VoteRegistration(registrationId, vote);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Update Vote Successfully",
                 });
             }
             catch (Exception ex)

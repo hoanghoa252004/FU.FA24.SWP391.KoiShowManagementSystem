@@ -14,9 +14,10 @@ namespace KoiShowManagementSystem.Services
         Task<IEnumerable<RegistrationModel>> GetMyRegistration(string status);
         Task CreateRegistration(CreateRegistrationRequest dto);
         Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetRegistrationByShow(int pageIndex, int pageSize, int showId);
-        Task<RegistrationModel?> GetRegistration(int registrationId);
+        Task<RegistrationModel?> GetRegistrationById(int registrationId);
         Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetPendingRegistration(int pageIndex, int pageSize);
         Task UpdateRegistration(UpdateRegistrationModel dto);
         Task PublishResult(int showId);
+        Task VoteRegistration(int registrationId, bool vote);
     }
 }

@@ -156,7 +156,7 @@ namespace KoiShowManagementSystem.Services
         }
 
         // 4. GET REGISTRATION BY ID:
-        public async Task<RegistrationModel?> GetRegistration(int registrationId)
+        public async Task<RegistrationModel?> GetRegistrationById(int registrationId)
         {
             var result = await _repository.Registrations.GetRegistrationAsync(registrationId);
             return result!;
@@ -436,6 +436,35 @@ namespace KoiShowManagementSystem.Services
                     }
                 }
             }
+        }
+        public async Task VoteRegistration(int registrationId, bool vote)
+        {
+            var userId = _jwtServices.GetIdAndRoleFromToken().userId;
+            var member = await _repository.Users.GetUserById(userId);
+            var registration = await _repository.Registrations.GetRegistrationAsync(registrationId);
+            if (member != null && registration != null)
+            {
+                var list =  (await _repository.Registrations.GetRegistrationByUserIdAsync((int)member.Id!))
+                    .Where(r => r.Id == registrationId);
+                if (list.Any() == true)
+                    throw new Exception("Failed: You can not vote for your own Koi !");
+                var check = await _repository.Registrations.CheckVote(userId, registrationId);
+                if (vote == true) // Muốn Vote:
+                {
+                    // Check xem đã vote chưa:
+                    if (check == true) // Đã vote rồi:
+                        throw new Exception("Failed: You've already voted for this Koi !");
+                }
+                else // Muốn bỏ Vote:
+                {
+                    if (check == false) // Chưa vote:
+                        throw new Exception("Failed: You've not voted for this Koi yet!");
+                }
+                // Update:
+                await _repository.Registrations.UpdateVotes(registrationId, (int)member.Id!, vote);
+            }
+            else
+                throw new Exception("Failed: User/ Registration does not exist !");
         }
     }
 }
