@@ -48,6 +48,11 @@ namespace KoiShowManagementSystem.Services
                         result = myKoiRegistrations.Where(koi => koi.Status == "Scored").ToList();
                         break;
                     }
+                case "draft":
+                    {
+                        result = myKoiRegistrations.Where(koi => koi.Status == "Draft").ToList();
+                        break;
+                    }
             }
             return result;
         }
