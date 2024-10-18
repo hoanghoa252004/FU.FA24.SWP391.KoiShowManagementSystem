@@ -21,5 +21,8 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public List<KoiModel>? Kois { get; set; }
         public List<CriterionModel>? Criterion { get; set; }
         public List<VarietyModel>? Varieties { get; set; }
+
+        public int? Quantity_registration { get; set; }
+        public int? Quantity_scored_registration { get; set; }
     }
 }
