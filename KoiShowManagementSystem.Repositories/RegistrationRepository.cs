@@ -283,5 +283,41 @@ namespace KoiShowManagementSystem.Repositories
                 }).ToListAsync();
             return koiList;
         }
+
+        public async Task<bool> CheckVote(int userId, int registrationId)
+        {
+            bool result = true;
+            var registration = await _context.Registrations
+                .Include(r => r.Users)
+                .SingleOrDefaultAsync(r => r.Id == registrationId);
+            if(registration != null)
+            {
+                var vote = registration.Users.Where(user => user.Id == userId);
+                if (vote.Any() == false)
+                    result = false;
+            }
+            return result;
+        }
+
+        public async Task UpdateVotes(int registrationId, int memberId, bool vote)
+        {
+            var registration = await _context.Registrations
+                .Include(r => r.Users)
+                .SingleOrDefaultAsync(r => r.Id == registrationId);
+            var member = await _context.Users.SingleOrDefaultAsync(r => r.Id == memberId);
+            if (registration != null && member != null)
+            {
+                if(vote == true)
+                {
+                    registration.Users.Add(member);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    registration.Users.Remove(member);
+                    await _context.SaveChangesAsync();
+                }
+            }
+        }
     }
 }
