@@ -10,5 +10,6 @@ namespace KoiShowManagementSystem.Repositories
     public interface IScoreRepository
     {
         Task<bool> SaveScoresAsync(RefereeScoreDTO refereeScore);
+        Task CalculateTotalScoreAsync(int showId);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.DTOs.Response;
 using KoiShowManagementSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace KoiShowManagementSystem.API.Controllers
             _groupService = groupService;
         }
 
+        [Authorize(Roles = "Member")]
         [HttpPost("add-group")]
         public async Task<IActionResult> AddGroup([FromForm] GroupDTO group)
         {
@@ -27,6 +29,7 @@ namespace KoiShowManagementSystem.API.Controllers
             return BadRequest(new ApiResponse { Message = "Failed" });
         }
 
+        [Authorize(Roles = "Member")]
         [HttpPut("update-group")]
         public async Task<IActionResult> UpdateGroup([FromForm] GroupDTO group)
         {
@@ -38,6 +41,7 @@ namespace KoiShowManagementSystem.API.Controllers
             return BadRequest(new ApiResponse { Message = "Failed" });
         }
 
+        [Authorize(Roles = "Member")]
         [HttpDelete("delete-group")]
         public async Task<IActionResult> DeleteGroup(int groupId)
         {
@@ -53,6 +57,18 @@ namespace KoiShowManagementSystem.API.Controllers
         public async Task<IActionResult> GetAllGroupByShow(int showId)
         {
             var result = await _groupService.GetAllGroupByShow(showId);
+            if (result == null)
+            {
+                return NotFound(new ApiResponse { Message = "No groups in show", Payload = result });
+            }
+            return Ok(new ApiResponse { Message = "Success", Payload = result });
+        }
+
+        [Authorize(Roles = "Manager")]
+        [HttpGet("review-group-score")]
+        public async Task<IActionResult> ReviewGroupScore(int showId)
+        {
+            var result = await _groupService.ReviewGroupScore(showId);
             if (result == null)
             {
                 return NotFound(new ApiResponse { Message = "No groups in show", Payload = result });
