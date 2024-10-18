@@ -38,7 +38,7 @@ namespace KoiShowManagementSystem.Repositories
                 User newUser = new User()
                 {
                     Name = dto.Name!,
-                    Phone = dto.Phone,
+                    Phone = dto.Phone!,
                     DateOfBirth = dto.DateOfBirth,
                     Email = dto.Email!,
                     Password = dto.Password!,
