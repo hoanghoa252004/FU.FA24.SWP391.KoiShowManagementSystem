@@ -37,6 +37,7 @@ namespace KoiShowManagementSystem.Repositories
                 Description = dto.Description,
                 Status = REGISTRATION_STATUS_DEFAULT,
                 IsPaid = false,
+                ShowId = dto.ShowId,
             };
             await _context.Set<Registration>().AddAsync(newRegistration);
             await _context.SaveChangesAsync();
@@ -98,11 +99,12 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<List<RegistrationModel>> GetRegistrationByShowAsync(int showId)
         {
             var query = _context.Registrations
+                .Include(r => r.Show)
+                .Where(r => r.ShowId == showId)
                 .Include(r => r.Koi) // Include Koi
                 .Include(r => r.Group)
                 .Include(r => r.Group!.Varieties) // Ensure Varieties can be included if needed
-                .Include(r => r.Media) // Include Media for images/videos
-                .Where(r => r.Group!.ShowId == showId); // Filter for IsPaid = true
+                .Include(r => r.Media); // Include Media for images/videos
 
 
             var koiList = await query
@@ -120,6 +122,7 @@ namespace KoiShowManagementSystem.Repositories
                     Group = r.Group!.Name,
                     Id = r.Id,
                     IsPaid = r.IsPaid,
+                    ShowId = showId,
                 }).ToListAsync();
 
             return koiList;
