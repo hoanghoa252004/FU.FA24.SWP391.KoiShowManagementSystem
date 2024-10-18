@@ -22,6 +22,11 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         //public bool? IsBestVote { get; set; }
         //public bool? IsPaid { get; set; }
         //public string? GroupName { get; set; }
+        public bool? IsBestVote { get; set; }
+        public string? Image1 { get; set; }
+        public string? Image2 { get; set; }
+        public string? Image3 { get; set; }
+        public string? Video { get; set; }
         public List<RegistrationModel>? registrations { get; set; }
         public List<CriterionModel>? criterions { get; set; }
         public int? VarietyId { get; set; }

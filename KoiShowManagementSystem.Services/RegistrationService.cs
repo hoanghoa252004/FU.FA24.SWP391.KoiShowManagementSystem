@@ -68,7 +68,6 @@ namespace KoiShowManagementSystem.Services
                     throw new Exception("Failed: Lack of information to register Koi for show !");
                 else
                 {
-                    bool check = false;
                     var createRegistration = new CreateRegistrationModel()
                     {
                         Image1 = dto.Image1,
@@ -79,6 +78,7 @@ namespace KoiShowManagementSystem.Services
                         Size = dto.Size,
                         Description = dto.Description,
                         GroupId = null!,
+                        ShowId = dto.ShowId,
                     };
                     // V1: Kiểm tra Show còn Up Comming ko:
                     var show = await _repository.Show.GetShowDetailsAsync((int)dto.ShowId);
@@ -98,46 +98,46 @@ namespace KoiShowManagementSystem.Services
                     {
                         if (userId != koi.UserId)
                             throw new Exception("Failed: You're registering a Koi that does not belong to you !");
-                        // START: 
-                        var groups = await _repository.Groups.GetByShowIdAsync((int)dto.ShowId!);
-                        if (!groups.IsNullOrEmpty())
-                        {
-                            foreach (var group in groups)
-                            {
-                                var registrations = group.Registrations;
-                                // 1. Con đó đăng kí cuộc thi này rồi hay chưa.
-                                // Nếu group có đơn đăng kí rồi thì kiểm tra
-                                // xem con cá đó đã đăng kí chưa. Nếu rồi -> biến.
-                                // Nếu group chưa có đơn nào, bỏ qua.
-                                // CHƯA GIẢI QUYẾT:
-                                // Nếu lần trước đăng kí, vì hệ thống phân loại ko được và staff chưa duyệt
-                                // Nên groupId bằng null => sẽ ko bắt được đã tham gia show.
-                                if (!registrations.IsNullOrEmpty())
-                                    foreach (var regist in registrations!)
-                                    {
-                                        if (regist.KoiID == dto.KoiId)
-                                            throw new Exception("Failed: Your Koi already registered for this Show");
-                                    }
-                                // 2. Thực hiện phân loại: 
-                                if (dto.Size >= group.SizeMin && dto.Size <= group.SizeMax)// Kiểm tra size:
-                                {
-                                    var matchingVariety = group.Varieties!.FirstOrDefault(var => var.VarietyId == koi!.VarietyId);
-                                    if (matchingVariety != null) // Kiểm tra variety:
-                                    {
-                                        createRegistration.GroupId = group.GroupId;
-                                        break;
-                                    }
-                                }
-                            }
-                            check = true;
-                        }
-                        if (check == true)
+                        // V3: Con đó đã thi show đó chưa:
+                        var registInShow = await _repository.Registrations.GetRegistrationByShowAsync((int)dto.ShowId);
+                        var checkKoiInShow = registInShow.Where(r => r.KoiID == dto.KoiId).ToList();
+                        if(checkKoiInShow.Any() == true)
+                            throw new Exception("Failed: Your Koi already registered for this Show");
+                        else
                             await _repository.Registrations.CreateRegistrationAsync(createRegistration);
                     }
                     else
                         throw new Exception("Failed: Koi does not exist !");
                 }
             }
+        }
+
+        // SUPPORT METHOD 01:
+        private async Task<int?> ClassifyRegistration(RegistrationModel dto)
+        {
+            int? groupId = null!;
+            // Lấy con Koi:
+            var koi = await _repository.Koi.GetKoiAsync((int)dto.KoiID!);
+            if (koi != null)
+            {
+                var groups = await _repository.Groups.GetByShowIdAsync((int)dto.ShowId!);
+                if (!groups.IsNullOrEmpty())
+                {
+                    foreach (var group in groups)
+                    {
+                        if (dto.Size >= group.SizeMin && dto.Size <= group.SizeMax)// Kiểm tra size:
+                        {
+                            var matchingVariety = group.Varieties!.FirstOrDefault(var => var.VarietyId == koi!.VarietyId);
+                            if (matchingVariety != null) // Kiểm tra variety:
+                            {
+                                groupId = group.GroupId;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return groupId;
         }
 
         // 3. GET REGISTRATIONS BY SHOW:

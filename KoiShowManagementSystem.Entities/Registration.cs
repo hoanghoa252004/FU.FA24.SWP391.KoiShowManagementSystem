@@ -29,6 +29,10 @@ public partial class Registration
 
     public string? Description { get; set; }
 
+    public string? PaymentReferenceCode { get; set; }
+
+    public int? ShowId { get; set; }
+
     public virtual Group? Group { get; set; }
 
     public virtual Koi? Koi { get; set; }
@@ -37,7 +41,7 @@ public partial class Registration
 
     public virtual ICollection<Score> Scores { get; set; } = new List<Score>();
 
-    public virtual ICollection<User> Users { get; set; } = new List<User>();
+    public virtual Show? Show { get; set; }
 
-    public string? PaymentReferenceCode { get; set; }
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

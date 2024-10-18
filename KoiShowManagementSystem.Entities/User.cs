@@ -7,7 +7,7 @@ public partial class User
 {
     public int Id { get; set; }
 
-    public string? Phone { get; set; }
+    public string Phone { get; set; } = null!;
 
     public string Email { get; set; } = null!;
 
@@ -27,7 +27,5 @@ public partial class User
 
     public virtual Role Role { get; set; } = null!;
 
-    public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
-
-    public virtual ICollection<Koi> Kois { get; set; } = new List<Koi>();
+    public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();    
 }

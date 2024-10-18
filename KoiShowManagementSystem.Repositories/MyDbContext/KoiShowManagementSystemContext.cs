@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using KoiShowManagementSystem.Entities;
+
 namespace KoiShowManagementSystem.Repositories.MyDbContext;
 
 public partial class KoiShowManagementSystemContext : DbContext
@@ -49,7 +50,7 @@ public partial class KoiShowManagementSystemContext : DbContext
     {
         modelBuilder.Entity<Criterion>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Criteria__3214EC076C89E790");
+            entity.HasKey(e => e.Id).HasName("PK__Criteria__3214EC07CFD25A9C");
 
             entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.GroupId).HasColumnName("Group_id");
@@ -87,14 +88,14 @@ public partial class KoiShowManagementSystemContext : DbContext
                     r => r.HasOne<Variety>().WithMany()
                         .HasForeignKey("VarietyId")
                         .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__GroupDeta__Varie__038683F8"),
+                        .HasConstraintName("FK__GroupDeta__Varie__5BE2A6F2"),
                     l => l.HasOne<Group>().WithMany()
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FK__GroupDeta__Group__5AEE82B9"),
                     j =>
                     {
-                        j.HasKey("GroupId", "VarietyId").HasName("PK__GroupDet__7547B638A9B33778");
+                        j.HasKey("GroupId", "VarietyId").HasName("PK__GroupDet__7547B63807E19011");
                         j.ToTable("GroupDetail");
                         j.IndexerProperty<int>("GroupId").HasColumnName("Group_id");
                         j.IndexerProperty<int>("VarietyId").HasColumnName("Variety_id");
@@ -114,11 +115,6 @@ public partial class KoiShowManagementSystemContext : DbContext
             entity.Property(e => e.Status).HasDefaultValue(true);
             entity.Property(e => e.UserId).HasColumnName("User_Id");
             entity.Property(e => e.VarietyId).HasColumnName("Variety_Id");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Kois)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Koi_User");
 
             entity.HasOne(d => d.Variety).WithMany(p => p.Kois)
                 .HasForeignKey(d => d.VarietyId)
@@ -152,7 +148,7 @@ public partial class KoiShowManagementSystemContext : DbContext
 
         modelBuilder.Entity<RefereeDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__RefereeD__3214EC07521349F9");
+            entity.HasKey(e => e.Id).HasName("PK__RefereeD__3214EC07AA0A43C3");
 
             entity.ToTable("RefereeDetail");
 
@@ -185,6 +181,7 @@ public partial class KoiShowManagementSystemContext : DbContext
             entity.Property(e => e.PaymentReferenceCode)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+            entity.Property(e => e.ShowId).HasColumnName("Show_Id");
             entity.Property(e => e.Size).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
@@ -202,6 +199,10 @@ public partial class KoiShowManagementSystemContext : DbContext
                 .HasForeignKey(d => d.KoiId)
                 .HasConstraintName("FK_Registration_Koi");
 
+            entity.HasOne(d => d.Show).WithMany(p => p.Registrations)
+                .HasForeignKey(d => d.ShowId)
+                .HasConstraintName("FK_Regis_Show");
+
             entity.HasMany(d => d.Users).WithMany(p => p.Registrations)
                 .UsingEntity<Dictionary<string, object>>(
                     "Vote",
@@ -215,7 +216,7 @@ public partial class KoiShowManagementSystemContext : DbContext
                         .HasConstraintName("FK__Vote__Koi_id__4E88ABD4"),
                     j =>
                     {
-                        j.HasKey("RegistrationId", "UserId").HasName("PK__Vote__928E3B0695F4F845");
+                        j.HasKey("RegistrationId", "UserId").HasName("PK__Vote__12BAD2286D9EB0A5");
                         j.ToTable("Vote");
                         j.IndexerProperty<int>("RegistrationId").HasColumnName("Registration_Id");
                         j.IndexerProperty<int>("UserId").HasColumnName("User_id");
@@ -224,7 +225,7 @@ public partial class KoiShowManagementSystemContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Role__3214EC07012FB05A");
+            entity.HasKey(e => e.Id).HasName("PK__Role__3214EC0766C67268");
 
             entity.ToTable("Role");
 
@@ -234,7 +235,7 @@ public partial class KoiShowManagementSystemContext : DbContext
 
         modelBuilder.Entity<Score>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Score__3214EC0747FD422B");
+            entity.HasKey(e => e.Id).HasName("PK__Score__3214EC070813D8C0");
 
             entity.ToTable("Score");
 
@@ -253,7 +254,7 @@ public partial class KoiShowManagementSystemContext : DbContext
 
             entity.HasOne(d => d.RefereeDetail).WithMany(p => p.Scores)
                 .HasForeignKey(d => d.RefereeDetailId)
-                .HasConstraintName("FK__Score__Referee_d__047AA831");
+                .HasConstraintName("FK__Score__Referee_d__693CA210");
 
             entity.HasOne(d => d.Registration).WithMany(p => p.Scores)
                 .HasForeignKey(d => d.RegistrationId)
@@ -301,7 +302,7 @@ public partial class KoiShowManagementSystemContext : DbContext
 
         modelBuilder.Entity<Variety>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Variety__3214EC078B4960BD");
+            entity.HasKey(e => e.Id).HasName("PK__Variety__3214EC07DC081C4A");
 
             entity.ToTable("Variety");
 

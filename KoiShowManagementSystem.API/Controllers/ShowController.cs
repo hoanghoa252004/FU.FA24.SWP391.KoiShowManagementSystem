@@ -98,7 +98,7 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         // implement get all varieties
-        
+
 
         //[HttpGet("list-show-by-referee")]
         //public async Task<IActionResult> GetListShowAsync()
@@ -115,10 +115,11 @@ namespace KoiShowManagementSystem.API.Controllers
         //    return NotFound(new ApiResponse { Message = "No shows found", });
         //}
 
+        [Authorize(Roles = "Referee")]
         [HttpGet("list-show-by-user")]
-        public async Task<IActionResult> GetListShowbyUserAsync(int userId)
+        public async Task<IActionResult> GetListShowbyUserAsync()
         {
-            var result = await _refereeService.GetShowsWithKoiByUserIdAsync(userId);
+            var result = await _refereeService.GetShowsWithKoiByUserIdAsync();
             if (result != null)
             {
                 return Ok(new ApiResponse
