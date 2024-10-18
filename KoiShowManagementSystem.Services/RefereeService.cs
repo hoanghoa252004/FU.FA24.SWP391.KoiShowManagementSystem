@@ -13,10 +13,12 @@ namespace KoiShowManagementSystem.Services
     public class RefereeService : IRefereeService
     {
         private readonly Repository _repository;
+        private readonly JwtServices _jwtServices;
 
         public RefereeService(Repository repository, JwtServices jwtServices)
         {
             _repository = repository;
+            _jwtServices = jwtServices;
         }
         public async Task<List<ShowModel>> GetListShow()
         {
@@ -36,8 +38,9 @@ namespace KoiShowManagementSystem.Services
             var result = await _repository.Scores.SaveScoresAsync(dto);
             return result;
         }
-        public async Task<List<ShowModel>> GetShowsWithKoiByUserIdAsync(int userId)
+        public async Task<List<ShowModel>> GetShowsWithKoiByUserIdAsync()
         {
+            var userId = _jwtServices.GetIdAndRoleFromToken().userId;
             var result = await _repository.Referees.GetShowsWithKoiByUserIdAsync(userId);
             return result;
         }

@@ -14,5 +14,7 @@ namespace KoiShowManagementSystem.Services
         public Task<bool> UpdateGroup(GroupDTO group);
         public Task<bool> DeleteGroup(int groupId);
         public Task<List<GroupModel>> GetAllGroupByShow(int showId);
+
+        public Task<List<GroupModel>> ReviewGroupScore(int showId);
     }
 }
