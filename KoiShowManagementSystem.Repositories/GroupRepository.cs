@@ -143,26 +143,45 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task<List<GroupModel>> GetAllGroupByShowAsync(int showId)
         {
-            var result = await _context.Groups
-                            .Where(g => g.ShowId == showId && g.Status == true)
-                            .Select(g => new GroupModel()
-                            {
-                                GroupId = g.Id,
-                                SizeMax = g.SizeMax,
-                                SizeMin = g.SizeMin,
-                                Varieties = g.Varieties.Select(v => new VarietyModel()
+            List<GroupModel> result = new List<GroupModel>();
+            var show = await _context.Shows
+                            .FirstOrDefaultAsync(s => s.Id == showId);
+            if (show != null && (show.Status!.Equals("up comming")|| show.Status!.Equals("on going"))) {
+                 result = await _context.Groups
+                                .Where(g => g.ShowId == showId && g.Status == true)
+                                .Select(g => new GroupModel()
                                 {
-                                    VarietyId = v.Id,
-                                    VarietyName = v.Name,
-                                }).ToList(),
-                                Criterion = g.Criteria.Select(c => new CriterionModel()
+                                    GroupId = g.Id,
+                                    SizeMax = g.SizeMax,
+                                    SizeMin = g.SizeMin,
+                                    Varieties = g.Varieties.Select(v => new VarietyModel()
+                                    {
+                                        VarietyId = v.Id,
+                                        VarietyName = v.Name,
+                                    }).ToList(),
+                                    Criterion = g.Criteria.Select(c => new CriterionModel()
+                                    {
+                                        CriterionId = c.Id,
+                                        CriterionName = c.Name,
+                                        Percentage = c.Percentage,
+                                        Description = c.Description,
+                                    }).ToList(),
+                                }).ToListAsync();
+            }
+            else
+            {
+                result = await _context.Groups
+                                .Include(g => g.Registrations)
+                                .Where(g => g.ShowId == showId && g.Status == true)
+                                .Select(g => new GroupModel()
                                 {
-                                    CriterionId = c.Id,
-                                    CriterionName = c.Name,
-                                    Percentage = c.Percentage,
-                                    Description = c.Description,
-                                }).ToList(),
-                            }).ToListAsync();
+                                    GroupId = g.Id,
+                                    SizeMax = g.SizeMax,
+                                    SizeMin = g.SizeMin,
+                                    Quantity_registration = g.Registrations.Count,
+                                    Quantity_scored_registration = g.Registrations.Count(r => r.TotalScore == null),
+                                }).ToListAsync();
+            }
             return result;
         }
     }

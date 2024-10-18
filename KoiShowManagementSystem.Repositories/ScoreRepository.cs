@@ -10,13 +10,15 @@ using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
 {
-    public class ScoreRepository : IScoreRepository
+      public class ScoreRepository : IScoreRepository
     {
         private readonly KoiShowManagementSystemContext _context;
         public ScoreRepository(KoiShowManagementSystemContext context)
         {
             this._context = context;
         }
+
+        
 
         public async Task<bool> SaveScoresAsync(RefereeScoreDTO refereeScore)
         {
@@ -74,6 +76,42 @@ namespace KoiShowManagementSystem.Repositories
                 Console.WriteLine($"An error occurred: {ex.Message}");
                 return false;
             }
+        }
+
+        public async Task CalculateTotalScoreAsync(int showId)
+        {
+            var show = _context.Shows
+                .Include(s => s.RefereeDetails)
+                .Include(s => s.Groups)
+                    .ThenInclude(g => g.Criteria)
+                .Include(s => s.Groups)
+                    .ThenInclude(g => g.Registrations.Where(r => r.TotalScore == null))
+                .ThenInclude(r => r.Scores)
+                .FirstOrDefault(s => s.Id == showId);
+            var groups = show!.Groups;
+            int refereeCountForShow = show.RefereeDetails.Count;
+
+            foreach (var group in groups)
+            {
+                var criterias = group.Criteria;
+                var registrations = group.Registrations;
+                int criteriaCountForGroup = criterias.Count;
+                int totalScoreRecords = criteriaCountForGroup * refereeCountForShow;
+                
+                foreach (var registration in registrations)
+                {
+                    if (registration.Scores.Count == totalScoreRecords)
+                    {
+                        decimal? totalScore = registration.Scores
+                                            .Sum(score => score.Score1 * criterias
+                                            .First(c => c.Id == score.CriteriaId).Percentage);
+                        totalScore /= refereeCountForShow;
+                        registration.TotalScore = totalScore;
+                    }
+                   
+                }
+            }
+            await _context.SaveChangesAsync();
         }
     }
 }
