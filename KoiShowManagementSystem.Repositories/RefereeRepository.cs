@@ -69,14 +69,18 @@ namespace KoiShowManagementSystem.Repositories
             var showsWithKoi = await _context.Shows
                 .Where(sh => sh.Status == "On Going" &&
                              sh.RefereeDetails.Any(rd => rd.UserId == userId))
-                .Include(sh => sh.Groups) // cái show thì liên quan group
-                .Include(g => g.Registrations) //thì qua group sẽ trỏ tới registration
-                    .ThenInclude(r => r.Koi) //rồi có thể trỏ tới Koi thông qua registraion
-                .Include(sh => sh.Groups) //tương tự
+                .Include(sh => sh.Groups)
+                .Include(sh => sh.Groups)
+                    .ThenInclude(g => g.Registrations)
+                    .ThenInclude(r => r.Koi)
+                .Include(sh => sh.Groups)
                     .ThenInclude(g => g.Criteria)
                 .Include(sh => sh.Groups)
                     .ThenInclude(g => g.Registrations)
                     .ThenInclude(r => r.Media)
+                .Include(sh => sh.Groups)
+                    .ThenInclude(g => g.Criteria)
+                    .ThenInclude(c => c.Scores)
                 .Select(sh => new ShowModel
                 {
                     ShowId = sh.Id,
@@ -86,8 +90,8 @@ namespace KoiShowManagementSystem.Repositories
                     {
                         GroupId = g.Id,
                         GroupName = g.Name,
-                        Scored = g.Registrations.Count(r => r.Status == "Scored"),//Đếm koi đã được chấm
-                        AmountNotScored = g.Registrations.Count(r => r.Status == "Accepted"), //Đếm Koi nào đã được duyệt
+                        Scored = g.Registrations.Count(r => r.Status == "Scored"), // Count the koi that have been scored
+                        AmountNotScored = g.Registrations.Count(r => r.Status == "Accepted"), // Count the koi that have been accepted
                         Kois = g.Registrations.Select(r => new KoiModel
                         {
                             KoiID = r.Koi.Id,
@@ -97,13 +101,17 @@ namespace KoiShowManagementSystem.Repositories
                             Image2 = r.Media.Image2,
                             Image3 = r.Media.Image3,
                             Video = r.Media.Video,
-                            isScored = r.Status,
+                            isScored = r.Status == "Scored",
                             criterions = g.Criteria.Select(c => new CriterionModel
                             {
                                 CriterionId = c.Id,
                                 CriterionName = c.Name,
                                 Percentage = c.Percentage,
-                                Description = c.Description
+                                Description = c.Description,
+                                Score1 = c.Scores
+                            .Where(score =>  score.CriteriaId == c.Id)
+                            .Select(score => score.Score1)
+                            .FirstOrDefault()
                             }).ToList()
                         }).ToList()
                     }).ToList()
@@ -112,6 +120,8 @@ namespace KoiShowManagementSystem.Repositories
 
             return showsWithKoi;
         }
+
+
 
 
         public async Task<List<RefereeModel>> GetAllRefereeByShowAsync(int showId)
