@@ -11,5 +11,10 @@ namespace KoiShowManagementSystem.Services
     {
         Task<List<VarietyModel>> GetAllVarietiesByShow(int showId);
         Task<List<VarietyModel>> GetAllVarieties();
-    }
+        Task<bool?> CreateVarietyAsync(VarietyModel model);
+        Task<bool?> UpdateVarietyAsync(VarietyModel model);
+        Task<bool> DeleteVarietyAsync(int id);
+
+
+        }
 }

@@ -86,8 +86,8 @@ namespace KoiShowManagementSystem.Repositories
                     {
                         GroupId = g.Id,
                         GroupName = g.Name,
-                        Scored = g.Registrations.Count(r => r.Status == "Scored"),
-                        AmountNotScored = g.Registrations.Count(r => r.Status == "Accepted"),
+                        Scored = g.Registrations.Count(r => r.Status == "Scored"),//Đếm koi đã được chấm
+                        AmountNotScored = g.Registrations.Count(r => r.Status == "Accepted"), //Đếm Koi nào đã được duyệt
                         Kois = g.Registrations.Select(r => new KoiModel
                         {
                             KoiID = r.Koi.Id,
@@ -97,10 +97,13 @@ namespace KoiShowManagementSystem.Repositories
                             Image2 = r.Media.Image2,
                             Image3 = r.Media.Image3,
                             Video = r.Media.Video,
+                            isScored = r.Status,
                             criterions = g.Criteria.Select(c => new CriterionModel
                             {
                                 CriterionId = c.Id,
-                                CriterionName = c.Name
+                                CriterionName = c.Name,
+                                Percentage = c.Percentage,
+                                Description = c.Description
                             }).ToList()
                         }).ToList()
                     }).ToList()

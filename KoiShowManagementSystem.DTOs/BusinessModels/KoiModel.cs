@@ -19,6 +19,7 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         //public decimal? TotalScore { get; set; }
         //public string? RegistrationStatus { get; set; }
         public bool?  KoiStatus { get; set; }
+        public string? isScored { get; set; }
         //public bool? IsBestVote { get; set; }
         //public bool? IsPaid { get; set; }
         //public string? GroupName { get; set; }

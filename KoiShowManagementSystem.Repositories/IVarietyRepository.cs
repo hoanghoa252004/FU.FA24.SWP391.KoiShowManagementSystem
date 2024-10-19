@@ -1,4 +1,5 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,9 @@ namespace KoiShowManagementSystem.Repositories
     {
         Task<List<VarietyModel>> GetAllVarietiesByShowAsync(int showId);
         Task<List<VarietyModel>> GetAllVarietiesAsync();
+        Task AddAsync(Variety variety);
+        Task UpdateAsync(Variety variety);
+        Task DeleteAsync(int id);
+        Task<Variety?> GetByIdAsync(int id);
     }
 }
