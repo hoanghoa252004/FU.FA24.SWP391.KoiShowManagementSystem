@@ -250,7 +250,7 @@ public partial class KoiShowManagementSystemContext : DbContext
             entity.Property(e => e.RefereeDetailId).HasColumnName("Referee_detail_id");
             entity.Property(e => e.RegistrationId).HasColumnName("Registration_Id");
             entity.Property(e => e.Score1)
-                .HasColumnType("decimal(2, 1)")
+                .HasColumnType("decimal(5, 2)")
                 .HasColumnName("Score");
 
             entity.HasOne(d => d.Criteria).WithMany(p => p.Scores)
