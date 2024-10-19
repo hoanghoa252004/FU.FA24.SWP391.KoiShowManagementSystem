@@ -147,7 +147,7 @@ namespace KoiShowManagementSystem.API.Controllers
 
         [Authorize(Roles = "Manager")]
         [HttpPost("update-show")]
-        public async Task<IActionResult> UpdateShow(ShowDTO dto)
+        public async Task<IActionResult> UpdateShow([FromForm]ShowDTO dto)
         {
 
             var result = await _koiShowService.UpdateShow(dto);
