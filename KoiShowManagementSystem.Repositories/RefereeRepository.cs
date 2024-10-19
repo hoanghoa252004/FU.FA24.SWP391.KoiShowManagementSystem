@@ -109,7 +109,7 @@ namespace KoiShowManagementSystem.Repositories
                                 Percentage = c.Percentage,
                                 Description = c.Description,
                                 Score1 = c.Scores
-                            .Where(score =>  score.CriteriaId == c.Id)
+                            .Where(score =>  score.CriteriaId == c.Id && score.RegistrationId == r.Id)
                             .Select(score => score.Score1)
                             .FirstOrDefault()
                             }).ToList()

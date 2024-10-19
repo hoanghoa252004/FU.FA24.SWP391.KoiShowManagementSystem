@@ -66,6 +66,8 @@ namespace KoiShowManagementSystem.Repositories
                             await _context.Scores.AddAsync(newScore);
                         }
                     }
+                    registration.Status = "Scored";
+                    _context.Registrations.Update(registration);
                 }
 
                 await _context.SaveChangesAsync();
