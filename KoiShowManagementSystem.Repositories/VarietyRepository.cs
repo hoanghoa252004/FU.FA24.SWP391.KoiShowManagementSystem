@@ -1,4 +1,5 @@
 ﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -38,6 +39,34 @@ namespace KoiShowManagementSystem.Repositories
                 VarietyName = v.Name
             }).ToListAsync();
             return reuslt;
+        }
+
+        public async Task AddAsync(Variety variety)
+        {
+            await _context.Varieties.AddAsync(variety);
+            await _context.SaveChangesAsync();
+        }
+
+        // UpdateAsync method in repository
+        public async Task UpdateAsync(Variety variety)
+        {
+            _context.Varieties.Update(variety);
+            await _context.SaveChangesAsync();
+        }
+
+        // DeleteAsync method in repository
+        public async Task DeleteAsync(int id)
+        {
+            var variety = await _context.Varieties.FindAsync(id);
+            if (variety != null)
+            {
+                _context.Varieties.Remove(variety);
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task<Variety?> GetByIdAsync(int id)
+        {
+            return await _context.Varieties.FindAsync(id);
         }
 
     }
