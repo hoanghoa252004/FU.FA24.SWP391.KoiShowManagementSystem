@@ -9,7 +9,7 @@ namespace KoiShowManagementSystem.Repositories
 {
     public interface IScoreRepository
     {
-        Task<bool> SaveScoresAsync(RefereeScoreDTO refereeScore);
+        Task<bool> SaveScoresAsync(RefereeScoreDTO refereeScore, int UserId);
         Task CalculateTotalScoreAsync(int showId);
     }
 }

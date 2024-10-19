@@ -8,7 +8,7 @@ namespace KoiShowManagementSystem.DTOs.Request
 {
     public class ScoreDetailDTO
     {
-        public int KoiId { get; set; }
+        public int RegistraionId { get; set; }
         public List<CriterionScoreDTO> Scores { get; set; } = new List<CriterionScoreDTO>();
     }
 }
