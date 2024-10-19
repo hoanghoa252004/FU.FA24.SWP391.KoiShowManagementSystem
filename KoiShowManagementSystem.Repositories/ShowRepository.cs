@@ -53,6 +53,7 @@ namespace KoiShowManagementSystem.Repositories
                                                                         KoiID = reg.KoiId ?? 0,
                                                                         Name = reg.Koi != null ? reg.Koi.Name : "Unknown",
                                                                         Rank = reg.Rank,
+                                                                        TotalScore = reg.TotalScore,
                                                                         IsBestVote = reg.IsBestVote
                                                                     }).ToList(),
                                                       Criterion = (from cri in _context.Criteria
