@@ -77,9 +77,10 @@ namespace KoiShowManagementSystem.API.Controllers
 
         //    return NotFound(new ApiResponse { Message = "Variety not found." });
         //}
+
         [Authorize(Roles = "Manager")]
         [HttpPost("create-variety")]
-        public async Task<IActionResult> CreateVariety([FromBody] VarietyModel variety)
+        public async Task<IActionResult> CreateVariety([FromForm] VarietyModel variety)
         {
             var result = await _varietyService.CreateVarietyAsync(variety);
             if (result != null)
@@ -96,9 +97,10 @@ namespace KoiShowManagementSystem.API.Controllers
                 Message = "Failed to create variety."
             });
         }
+
         [Authorize(Roles = "Manager")]
         [HttpPut("update-variety")]
-        public async Task<IActionResult> UpdateVariety([FromBody] VarietyModel variety)
+        public async Task<IActionResult> UpdateVariety([FromForm] VarietyModel variety)
         {
             var result = await _varietyService.UpdateVarietyAsync(variety);
             if (result != null)
@@ -115,6 +117,7 @@ namespace KoiShowManagementSystem.API.Controllers
                 Message = "Failed to update variety."
             });
         }
+
         [Authorize(Roles = "Manager")]
         [HttpDelete("delete-variety")]
         public async Task<IActionResult> DeleteVariety(int varietyId)
