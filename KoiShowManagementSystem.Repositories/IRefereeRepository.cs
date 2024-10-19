@@ -13,5 +13,8 @@ namespace KoiShowManagementSystem.Repositories
         Task<List<ShowModel>> GetListShowAsync();
         Task<List<KoiModel>> GetKoiDetailsByGroupIdAsync(int groupId);
         Task<List<ShowModel>> GetShowsWithKoiByUserIdAsync(int userId);
+
+        Task<List<RefereeModel>> GetAllRefereeByShowAsync(int showId);
+        Task<bool> AddRefereeToShowAsync(List<int> referees, int showId);
     }
 }

@@ -44,5 +44,16 @@ namespace KoiShowManagementSystem.Services
             var result = await _repository.Referees.GetShowsWithKoiByUserIdAsync(userId);
             return result;
         }
+        public async Task<List<RefereeModel>> GetAllRefereeByShow(int showId)
+        {
+            var result = await _repository.Referees.GetAllRefereeByShowAsync(showId);
+            return result;
+        }
+
+        public async Task<bool> AddRefereeToShow(List<int> referees, int showId)
+        {
+            var result = await _repository.Referees.AddRefereeToShowAsync(referees, showId);
+            return result;
+        }
     }
 }

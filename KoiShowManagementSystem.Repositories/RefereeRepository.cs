@@ -111,6 +111,53 @@ namespace KoiShowManagementSystem.Repositories
         }
 
 
+        public async Task<List<RefereeModel>> GetAllRefereeByShowAsync(int showId)
+        {
+            var show = await _context.Shows
+                .Include(s => s.RefereeDetails)
+                .ThenInclude(r => r.User)
+                .FirstOrDefaultAsync(s => s.Id == showId);
+
+            var referees = show!.RefereeDetails.Where(r => r.User!.Status == true)
+                                               .Select(rd => new RefereeModel
+                                                {
+                                                RefereeId = rd.Id,
+                                                RefereeName = rd.User!.Name,
+                                                }).ToList();
+
+            return referees;
+        }
+
+
+        public async Task<bool> AddRefereeToShowAsync(List<int> referees, int showId)
+        {
+            var show = await _context.Shows
+                .Include(s => s.RefereeDetails)
+                .FirstOrDefaultAsync(s => s.Id == showId);
+
+            // add referee to show
+            foreach (var refereeId in referees)
+            {
+                var referee = await _context.Users
+                                        .Where(u => u.RoleId == 3 && u.Status == true)
+                                        .FirstOrDefaultAsync(rd => rd.Id == refereeId);
+
+                if (referee != null && show!.RefereeDetails.Any(rd => rd.Id != refereeId))
+                {
+                    var refereeDetail = new RefereeDetail
+                    {
+                        ShowId = showId,
+                        UserId = refereeId
+                    };
+
+                    show!.RefereeDetails.Add(refereeDetail);
+                }
+            }
+
+            int result = await _context.SaveChangesAsync();
+            if (result == 0) return false;
+            return true;
+        }
 
 
 

@@ -107,8 +107,7 @@ namespace KoiShowManagementSystem.Repositories
                                             .First(c => c.Id == score.CriteriaId).Percentage);
                         totalScore /= refereeCountForShow;
                         registration.TotalScore = totalScore;
-                    }
-                   
+                    }                   
                 }
             }
             await _context.SaveChangesAsync();

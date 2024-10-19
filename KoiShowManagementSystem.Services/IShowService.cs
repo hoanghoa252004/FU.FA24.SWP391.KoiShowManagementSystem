@@ -16,5 +16,6 @@ namespace KoiShowManagementSystem.Services
         Task<List<ShowModel>> GetClosestShow();
         Task<int> CreateAShow(ShowDTO dto);
         Task<bool> UpdateShow(ShowDTO dto);
+        Task<List<ShowModel>> GetAllShow();
     }
 }
