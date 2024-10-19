@@ -9,7 +9,7 @@ namespace KoiShowManagementSystem.DTOs.Request
     public class CriterionScoreDTO
     {
         public int CriterionId { get; set; }
-        public decimal Score { get; set; }
+        public decimal? Score { get; set; }
     }
 
 }
