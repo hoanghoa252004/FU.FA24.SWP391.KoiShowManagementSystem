@@ -35,7 +35,8 @@ namespace KoiShowManagementSystem.Services
 
         public async Task<bool> SaveScoreFromReferee(RefereeScoreDTO dto)
         {
-            var result = await _repository.Scores.SaveScoresAsync(dto);
+            var userId = _jwtServices.GetIdAndRoleFromToken().userId;
+            var result = await _repository.Scores.SaveScoresAsync(dto, userId);
             return result;
         }
         public async Task<List<ShowModel>> GetShowsWithKoiByUserIdAsync()
