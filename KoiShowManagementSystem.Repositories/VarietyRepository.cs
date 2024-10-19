@@ -25,7 +25,8 @@ namespace KoiShowManagementSystem.Repositories
                 .Select(v => new VarietyModel
                 {
                     VarietyId = v.Id,
-                    VarietyName = v.Name
+                    VarietyName = v.Name,
+                    VarietyStatus = v.Status,
                 })
                 .ToListAsync();
             return varieties;
@@ -33,10 +34,11 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task<List<VarietyModel>> GetAllVarietiesAsync()
         {
-            var reuslt = await _context.Varieties.Select(v => new VarietyModel
+            var reuslt = await _context.Varieties.Where(v => v.Status == true).Select(v => new VarietyModel
             {
                 VarietyId = v.Id,
-                VarietyName = v.Name
+                VarietyName = v.Name,
+                VarietyStatus = v.Status,
             }).ToListAsync();
             return reuslt;
         }
