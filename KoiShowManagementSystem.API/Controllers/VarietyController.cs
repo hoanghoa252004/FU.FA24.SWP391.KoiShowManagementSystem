@@ -1,4 +1,5 @@
-﻿using KoiShowManagementSystem.DTOs.Response;
+﻿using KoiShowManagementSystem.DTOs.BusinessModels;
+using KoiShowManagementSystem.DTOs.Response;
 using KoiShowManagementSystem.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +18,13 @@ namespace KoiShowManagementSystem.API.Controllers
 
         [HttpGet("get-all-show-varieties")]
         public async Task<IActionResult> GetAllVarieties(int showId)
-        {    
+        {
             try
             {
                 var result = await _varietyService.GetAllVarietiesByShow(showId);
-                if (result == null) return NotFound(new ApiResponse { 
-                                            Message = "No varieties in show", 
-                                            Payload = result });
+                if (result == null) return NotFound(new ApiResponse {
+                    Message = "No varieties in show",
+                    Payload = result });
                 return Ok(new ApiResponse
                 {
                     Message = "Success",
@@ -31,7 +32,7 @@ namespace KoiShowManagementSystem.API.Controllers
                 });
             }
             catch (Exception ex)
-            {            
+            {
                 return BadRequest(new ApiResponse()
                 {
                     Message = ex.Message,
@@ -76,55 +77,69 @@ namespace KoiShowManagementSystem.API.Controllers
         //    return NotFound(new ApiResponse { Message = "Variety not found." });
         //}
 
-        //[HttpPost("create-variety")]
-        //public async Task<IActionResult> CreateVariety([FromBody] VarietyModel variety)
-        //{
-        //    var result = await _varietyService.CreateVariety(variety);
-        //    if (result != null)
-        //    {
-        //        return Ok(new ApiResponse
-        //        {
-        //            Message = "Success",
-        //            Payload = result
-        //        });
-        //    }
+        [HttpPost("create-variety")]
+        public async Task<IActionResult> CreateVariety([FromBody] VarietyModel variety)
+        {
+            var result = await _varietyService.CreateVarietyAsync(variety);
+            if (result != null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Message = "Success",
+                    Payload = result
+                });
+            }
 
-        //    return BadRequest(new ApiResponse { Message = "Failed to create variety." });
-        //}
+            return BadRequest(new ApiResponse
+            {
+                Message = "Failed to create variety."
+            });
+        }
 
-        //[HttpPut("update-variety")]
-        //public async Task<IActionResult> UpdateVariety([FromBody] VarietyModel variety)
-        //{
-        //    var result = await _varietyService.UpdateVariety(variety);
-        //    if (result != null)
-        //    {
-        //        return Ok(new ApiResponse
-        //        {
-        //            Message = "Success",
-        //            Payload = result
-        //        });
-        //    }
+        [HttpPut("update-variety")]
+        public async Task<IActionResult> UpdateVariety([FromBody] VarietyModel variety)
+        {
+            var result = await _varietyService.UpdateVarietyAsync(variety);
+            if (result != null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Message = "Success",
+                    Payload = result
+                });
+            }
 
-        //    return BadRequest(new ApiResponse { Message = "Failed to update variety." });
-        //}
+            return BadRequest(new ApiResponse
+            {
+                Message = "Failed to update variety."
+            });
+        }
 
-        //[HttpDelete("delete-variety")]
-        //public async Task<IActionResult> DeleteVariety(int varietyId)
-        //{
-        //    if (varietyId <= 0)
-        //    {
-        //        return BadRequest(new ApiResponse { Message = "Invalid Variety ID." });
-        //    }
+        [HttpDelete("delete-variety")]
+        public async Task<IActionResult> DeleteVariety(int varietyId)
+        {
+            if (varietyId <= 0)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Message = "Invalid Variety ID."
+                });
+            }
 
-        //    var result = await _varietyService.DeleteVariety(varietyId);
-        //    if (result)
-        //    {
-        //        return Ok(new ApiResponse { Message = "Success" });
-        //    }
+            var result = await _varietyService.DeleteVarietyAsync(varietyId);
+            if (result)
+            {
+                return Ok(new ApiResponse
+                {
+                    Message = "Success"
+                });
+            }
 
-        //    return BadRequest(new ApiResponse
-        //    {
-        //    });
-        //}
+            return BadRequest(new ApiResponse
+            {
+                Message = "Failed to delete"
+
+            });
+        }
     }
 }
