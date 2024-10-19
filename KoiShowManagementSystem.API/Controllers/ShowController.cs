@@ -61,7 +61,6 @@ namespace KoiShowManagementSystem.API.Controllers
         [HttpGet("closest-show")]
         public async Task<IActionResult> ClosestShow()
         {
-            //catch the exception from the service
             try
             {
                 var result = await _koiShowService.GetClosestShow();
@@ -146,7 +145,6 @@ namespace KoiShowManagementSystem.API.Controllers
             return NotFound(new ApiResponse { Message = "Not found", });
         }
 
-        //implement update show
         [Authorize(Roles = "Manager")]
         [HttpPost("update-show")]
         public async Task<IActionResult> UpdateShow(ShowDTO dto)
@@ -161,6 +159,21 @@ namespace KoiShowManagementSystem.API.Controllers
             return BadRequest(new ApiResponse { Message = "Failed to update show." });
 
 
+        }
+
+        [HttpGet("get-all-show")]
+        public async Task<IActionResult> GetAllShow()
+        {
+            var result = await _koiShowService.GetAllShow();
+            if (result != null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Message = "Success",
+                    Payload = result
+                });
+            }
+            return NotFound(new ApiResponse { Message = "No shows found", });
         }
     }
 }
