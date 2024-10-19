@@ -16,5 +16,7 @@ namespace KoiShowManagementSystem.Repositories
         Task<RegistrationModel?> GetRegistrationAsync(int registrationId);
         Task<RegistrationModel> UpdateRegistrationAsync(UpdateRegistrationModel dto);
         Task<IEnumerable<RegistrationModel>> GetAllRegistrationAsync();
+        Task<bool> CheckVote(int userId, int registrationId);
+        Task UpdateVotes(int registrationId, int memberId, bool vote);
     }
 }

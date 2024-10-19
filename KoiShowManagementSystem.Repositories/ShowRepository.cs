@@ -81,7 +81,7 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task<(int TotalItems, List<ShowModel>)> SearchShowAsync(int pageIndex, int pageSize, string keyword)
         {
-            var query = _context.Shows.Where(s => s.Title.Contains(keyword));
+            var query = _context.Shows.Where(s => s.Title.Contains(keyword)&&(s.Status != "up comming"));
 
             var totalItems = await query.CountAsync();
 
@@ -93,7 +93,7 @@ namespace KoiShowManagementSystem.Repositories
                     ShowId = s.Id,
                     ShowTitle = s.Title,
                     ShowBanner = s.Banner,
-                    ShowStatus = s.Status
+                    ShowStatus = s.Status 
 
                 }).ToListAsync();
 
