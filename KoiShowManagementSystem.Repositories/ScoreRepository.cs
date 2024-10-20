@@ -24,6 +24,7 @@ namespace KoiShowManagementSystem.Repositories
         {
             try
             {
+                var refereeId = await _context.RefereeDetails.Where(r => r.UserId == UserId).FirstOrDefaultAsync();
                 foreach (var scoreDetail in refereeScore.ScoreDetail)
                 {
                     var registration = await _context.Registrations
@@ -38,6 +39,7 @@ namespace KoiShowManagementSystem.Repositories
                     {
                         var criterion = await _context.Criteria
                             .FirstOrDefaultAsync(c => c.Id == score.CriterionId);
+
                         if (criterion == null)
                         {
                             Console.WriteLine($"Criterion not found for CriterionId: {score.CriterionId}");
@@ -47,7 +49,7 @@ namespace KoiShowManagementSystem.Repositories
                         var existingScore = await _context.Scores
                             .FirstOrDefaultAsync(s => s.RegistrationId == registration.Id
                                                    && s.CriteriaId == score.CriterionId
-                                                   && s.RefereeDetailId == UserId);
+                                                   && s.RefereeDetailId == refereeId.Id);
 
                         if (existingScore != null)
                         {
@@ -59,7 +61,7 @@ namespace KoiShowManagementSystem.Repositories
                             var newScore = new Score
                             {
                                 RegistrationId = registration.Id,
-                                RefereeDetailId = UserId,
+                                RefereeDetailId = refereeId.Id,
                                 Score1 = score.Score,
                                 CriteriaId = score.CriterionId,
                             };
