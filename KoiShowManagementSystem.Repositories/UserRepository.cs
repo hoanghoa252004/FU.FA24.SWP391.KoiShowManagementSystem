@@ -122,7 +122,8 @@ namespace KoiShowManagementSystem.Repositories
                     Phone = user.Phone,
                     Role = user.Role.Title,
                     DateOfBirth = user.DateOfBirth,
-                    Gender = user.Gender
+                    Gender = user.Gender,
+                    Password = user.Password
                 };
             return null!;
         }

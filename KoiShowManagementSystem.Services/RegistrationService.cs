@@ -40,17 +40,17 @@ namespace KoiShowManagementSystem.Services
             {
                 case "inprocess":
                     {
-                        result = myKoiRegistrations.Where(koi => koi.Status == "Accepted" || koi.Status == "Rejected" || koi.Status == "Pending").ToList();
+                        result = myKoiRegistrations.Where(r => r.Status == "Accepted" || r.Status == "Rejected" || r.Status == "Pending" &&r.IsPaid == true).ToList();
                         break;
                     }
                 case "scored":
                     {
-                        result = myKoiRegistrations.Where(koi => koi.Status == "Scored").ToList();
+                        result = myKoiRegistrations.Where(r => r.Status == "Scored" && r.IsPaid == true).ToList();
                         break;
                     }
                 case "draft":
                     {
-                        result = myKoiRegistrations.Where(koi => koi.Status == "Draft").ToList();
+                        result = myKoiRegistrations.Where(r => r.Status == "Draft" && r.IsPaid == false).ToList();
                         break;
                     }
             }
