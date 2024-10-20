@@ -10,5 +10,6 @@ namespace KoiShowManagementSystem.Services
     public interface IPaymentService
     {
         Task<bool> ProcessPaymentWebhookAsync(PaymentWebhookDto paymentData);
+        Task<bool> AreAllMemberRegistrationsPaidAsync();
     }
 }

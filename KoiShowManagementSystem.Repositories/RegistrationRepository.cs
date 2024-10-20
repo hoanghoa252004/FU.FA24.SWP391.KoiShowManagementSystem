@@ -319,5 +319,12 @@ namespace KoiShowManagementSystem.Repositories
                 }
             }
         }
+
+        public async Task<List<Registration>> GetRegistrationsByMemberIdAsync(int memberId)
+        {
+            return await _context.Registrations
+                                 .Where(r => r.Users.Any(u => u.Id == memberId))
+                                 .ToListAsync();
+        }
     }
 }
