@@ -160,6 +160,7 @@ namespace KoiShowManagementSystem.Repositories
                              KoiName = r.Koi.Name,
                              Image1 = r.Media!.Image1,
                              Image2 = r.Media.Image2,
+                             KoiSize = r.Size,
                              Image3 = r.Media.Image3,
                              Video = r.Media.Video,
                              isScored = r.Scores.Any(s => s.RegistrationId == r.Id && s.RefereeDetailId == sh.RefereeDetails.FirstOrDefault(rd => rd.UserId == userId)!.Id),
