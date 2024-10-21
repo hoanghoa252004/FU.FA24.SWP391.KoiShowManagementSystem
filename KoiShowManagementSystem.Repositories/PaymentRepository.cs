@@ -18,6 +18,16 @@ namespace KoiShowManagementSystem.Repositories
         {
             this._context = context;
         }
+        public async Task<bool> CheckIfPaymentIsCompleteAsync(int registrationId)
+        {
+            // Retrieve the registration with the specified ID and check if it is paid
+            var registration = await _context.Registrations
+                .FirstOrDefaultAsync(r => r.Id == registrationId);
+
+            // Return true if the registration is found and is paid, otherwise return false
+            return registration?.IsPaid == true;
+        }
+
 
         private static string GetContent(string data)
         {
