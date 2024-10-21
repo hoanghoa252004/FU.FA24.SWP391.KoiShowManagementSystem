@@ -230,13 +230,5 @@ namespace KoiShowManagementSystem.Repositories
             if (result == 0) return false;
             return true;
         }
-
-
-
-
-
-
-
-
     }
 }
