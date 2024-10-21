@@ -25,14 +25,10 @@ namespace KoiShowManagementSystem.Services
             return result;
         }
 
-        public async Task<bool> AreAllMemberRegistrationsPaidAsync()
+        public async Task<bool> AreAllRegistrationsPaidAsync(int registrationId)
         {
-            var userId = _jwtServices.GetIdAndRoleFromToken().userId;
-            // Lấy tất cả các đăng ký (registrations) liên quan đến thành viên từ database
-            var registrations = await _repository.Registrations.GetRegistrationsByMemberIdAsync(userId);
-
-            // Kiểm tra nếu tất cả các đăng ký đều đã được thanh toán
-            return registrations.All(r => r.IsPaid == true);
+            var result = await _repository.Payment.CheckIfPaymentIsCompleteAsync(registrationId);
+            return result;
         }
     }
 }
