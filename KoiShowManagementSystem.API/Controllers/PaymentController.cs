@@ -33,6 +33,7 @@ namespace KoiShowManagementSystem.API.Controllers
             return BadRequest(new { Message = "Failed to payment" });
         }
 
+
         [HttpGet("IsAllMemberRegistrationsPaid")]
         public async Task<IActionResult> IsAllMemberRegistrationsPaid()
         {
