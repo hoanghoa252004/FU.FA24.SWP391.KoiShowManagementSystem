@@ -24,7 +24,8 @@ namespace KoiShowManagementSystem.Repositories
         {
             try
             {
-                var refereeId = await _context.RefereeDetails.Where(r => r.UserId == UserId).FirstOrDefaultAsync();
+                var showId =  _context.Shows.Where(s => s.Status!.Equals("scoring")).Single().Id;
+                var refereeId = await _context.RefereeDetails.Where(r => r.UserId == UserId && r.ShowId == showId).FirstOrDefaultAsync();
                 foreach (var scoreDetail in refereeScore.ScoreDetail)
                 {
                     var registration = await _context.Registrations
@@ -68,7 +69,7 @@ namespace KoiShowManagementSystem.Repositories
                             await _context.Scores.AddAsync(newScore);
                         }
                     }
-                    registration.Status = "Scored";
+                    //registration.Status = "Scored";
                     _context.Registrations.Update(registration);
                 }
 
@@ -90,7 +91,7 @@ namespace KoiShowManagementSystem.Repositories
                     .ThenInclude(g => g.Criteria)
                 .Include(s => s.Groups)
                     .ThenInclude(g => g.Registrations.Where(r => r.TotalScore == null))
-                .ThenInclude(r => r.Scores)
+                           .ThenInclude(r => r.Scores)
                 .FirstOrDefault(s => s.Id == showId);
             var groups = show!.Groups;
             int refereeCountForShow = show.RefereeDetails.Count;
@@ -114,6 +115,7 @@ namespace KoiShowManagementSystem.Repositories
                     }                   
                 }
             }
+
             await _context.SaveChangesAsync();
         }
     }

@@ -168,7 +168,7 @@ namespace KoiShowManagementSystem.Repositories
                                     }).ToList(),
                                 }).ToListAsync();
             }
-            else
+            else if (show.Status!.Equals("scoring"))
             {
                 result = await _context.Groups
                                 .Include(g => g.Registrations)
