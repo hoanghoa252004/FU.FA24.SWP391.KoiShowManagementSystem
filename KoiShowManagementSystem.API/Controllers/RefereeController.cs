@@ -31,7 +31,7 @@ namespace KoiShowManagementSystem.API.Controllers
 
         [Authorize(Roles = "Manager")]
         [HttpPost("add-referees-to-show")]
-        public async Task<IActionResult> AddRefereeToShow([FromBody]List<int> referees, int showId)
+        public async Task<IActionResult> AddRefereeToShow([FromBody] List<int> referees, int showId)
         {
             var result = await _refereeService.AddRefereeToShow(referees, showId);
             if (result)
