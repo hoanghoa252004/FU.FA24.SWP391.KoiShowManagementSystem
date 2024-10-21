@@ -26,7 +26,7 @@ namespace KoiShowManagementSystem.Repositories
             var query = await _context.Shows
                         .Include(sh => sh.Groups)
                         .ThenInclude(g => g.Registrations)
-                        .OrderByDescending(sh => sh.Status == "On Going")
+                        .OrderByDescending(sh => sh.Status == "Scoring")
                         .Include(sh => sh.RefereeDetails)
                         .Select(sh => new ShowModel
                         {
@@ -37,8 +37,8 @@ namespace KoiShowManagementSystem.Repositories
                             {
                                 GroupId = g.Id,
                                 GroupName = g.Name,
-                                Scored = g.Registrations.Count(r => r.Status == "Scored"),
-                                AmountNotScored = g.Registrations.Count(r => r.Status == "Accepted")
+                                //Scored = g.Registrations.Count(r => r.Status == "Scored"),
+                                //AmountNotScored = g.Registrations.Count(r => r.Status == "Accepted")
                             }).ToList()
                         }).ToListAsync();
 
@@ -126,7 +126,7 @@ namespace KoiShowManagementSystem.Repositories
 
             var shows =  _context.Shows
                 .Include(s => s.RefereeDetails)
-                .Where(s => s.Status == "On Going" &&
+                .Where(s => s.Status == "Scoring" &&
                             s.RefereeDetails.Any(rd => rd.UserId == userId && s.Id == rd.ShowId))
 
                 .Include(s => s.Groups)
@@ -153,7 +153,7 @@ namespace KoiShowManagementSystem.Repositories
                          GroupName = g.Name,
                          //Scored = g.Registrations.Count(r => r.Status == "Scored"),
                          //AmountNotScored = g.Registrations.Count(r => r.Status == "Accepted"),
-                         Kois = g.Registrations.Select(r => new KoiModel
+                         Kois = g.Registrations.Where(r => r.Status.Equals("Accepted")).Select(r => new KoiModel
                          {
                              KoiID = r.Koi!.Id,
                              RegistrationId = r.Id,
