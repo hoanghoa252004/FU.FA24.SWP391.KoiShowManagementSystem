@@ -226,7 +226,20 @@ namespace KoiShowManagementSystem.Services
                                 if (koi.UserId != memberId)
                                     throw new Exception("Failed: New koi does not belong to you !");
                                 else
-                                    check = true;
+                                {
+                                    //
+                                    // V3: Con đó đã thi show đó chưa:
+                                    var ongoingShow = (await _repository.Show.GetAllShow())
+                                        .Where(s => s.ShowStatus!.Equals("On Going", StringComparison.OrdinalIgnoreCase))
+                                        .First();
+                                    var registInShow = await _repository.Registrations.GetRegistrationByShowAsync(ongoingShow.ShowId);
+                                    var checkKoiInShow = registInShow.Where(r => r.KoiID == dto.KoiId).ToList();
+                                    if (checkKoiInShow.Any() == true)
+                                        throw new Exception("Failed: Your Koi already registered for this Show");
+                                    //
+                                    else
+                                        check = true;
+                                }
                             }
                         }
                         else // Cập nhập con cũ
