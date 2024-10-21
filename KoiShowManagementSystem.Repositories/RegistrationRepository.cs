@@ -330,5 +330,7 @@ namespace KoiShowManagementSystem.Repositories
                                  .Where(r => r.Users.Any(u => u.Id == memberId))
                                  .ToListAsync();
         }
+
+
     }
 }
