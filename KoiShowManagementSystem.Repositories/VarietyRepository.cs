@@ -27,6 +27,7 @@ namespace KoiShowManagementSystem.Repositories
                     VarietyId = v.Id,
                     VarietyName = v.Name,
                     VarietyStatus = v.Status,
+                    VarietyOrigin = v.Origin,
                 })
                 .ToListAsync();
             return varieties;
@@ -39,6 +40,7 @@ namespace KoiShowManagementSystem.Repositories
                 VarietyId = v.Id,
                 VarietyName = v.Name,
                 VarietyStatus = v.Status,
+                VarietyOrigin = v.Origin,
             }).ToListAsync();
             return reuslt;
         }
