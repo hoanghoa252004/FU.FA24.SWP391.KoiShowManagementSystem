@@ -99,7 +99,7 @@ namespace KoiShowManagementSystem.Repositories
             foreach (var group in groups)
             {
                 var criterias = group.Criteria;
-                var registrations = group.Registrations.Where(r => r.TotalScore == null && r.Status!.Equals("accepted"));
+                var registrations = group.Registrations.Where(r => r.TotalScore == null && r.Status!.Equals("Accepted"));
                 int criteriaCountForGroup = criterias.Count;
                 int totalScoreRecords = criteriaCountForGroup * refereeCountForShow;
                 
@@ -118,5 +118,29 @@ namespace KoiShowManagementSystem.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task CalculateRankAsync(int showId)
+        {
+            var show = _context.Shows
+                .Include(s => s.Groups)
+                    .ThenInclude(g => g.Registrations)
+                .FirstOrDefault(s => s.Id == showId);
+            var groups = show!.Groups;
+
+            foreach (var group in groups)
+            {
+                var registrations = group.Registrations.Where(r => r.TotalScore != null && r.Status!.Equals("Accepted"));
+                var sortedRegistrations = registrations.OrderByDescending(r => r.TotalScore).ThenBy(r => r.Id);
+                int rank = 1;
+                foreach (var registration in sortedRegistrations)
+                {
+                    registration.Rank = rank;
+                    rank++;
+                    registration.Status = "Scored";
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        } 
     }
 }

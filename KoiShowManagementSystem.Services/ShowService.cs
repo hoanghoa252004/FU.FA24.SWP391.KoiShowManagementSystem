@@ -71,5 +71,6 @@ namespace KoiShowManagementSystem.Services
         {
             return await _repository.Show.GetAllShow();
         }
+       
     }
 }
