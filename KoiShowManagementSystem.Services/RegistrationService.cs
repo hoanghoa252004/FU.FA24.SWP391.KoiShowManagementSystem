@@ -149,7 +149,7 @@ namespace KoiShowManagementSystem.Services
         public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetRegistrationByShow(int pageIndex, int pageSize, int showId)
         {
             var registrationList = await _repository.Registrations.GetRegistrationByShowAsync(showId);
-            var list = registrationList.Where(regist => regist.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase)).ToList();
+            var list = registrationList.Where(regist => regist.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase) || regist.Status!.Equals("Scored", StringComparison.OrdinalIgnoreCase)).ToList();
             var count = list.Count();
             var result = list.Skip((pageIndex - 1) * pageSize).Take(pageSize);
             return (count, result);
@@ -437,6 +437,8 @@ namespace KoiShowManagementSystem.Services
                 }
             }
         }
+
+        // 8. VOTE:
         public async Task VoteRegistration(int registrationId, bool vote)
         {
             var userId = _jwtServices.GetIdAndRoleFromToken().userId;
