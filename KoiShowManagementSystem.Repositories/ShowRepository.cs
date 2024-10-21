@@ -112,6 +112,8 @@ namespace KoiShowManagementSystem.Repositories
                 {
                     ShowId = s.Id,
                     ShowTitle = s.Title,
+                    RegistrationStartDate = s.RegisterStartDate,
+                    RegistrationCloseDate = s.RegisterEndDate,
                     ShowBanner = s.Banner,
                     ShowDesc = s.Description,
                     ShowStatus = s.Status
