@@ -34,10 +34,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="fullchain1.pem">
+    <None Update="fullchain.pem">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="privkey1.pem">
+    <None Update="privkey.pem">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
