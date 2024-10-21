@@ -33,4 +33,13 @@
     <ProjectReference Include="..\KoiShowManagementSystem.Services\KoiShowManagementSystem.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="fullchain1.pem">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="privkey1.pem">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
