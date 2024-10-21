@@ -34,7 +34,7 @@ namespace KoiShowManagementSystem.Services
         {
             IEnumerable<RegistrationModel> result= null!;
             int id = _jwtServices.GetIdAndRoleFromToken().userId;
-            IEnumerable<RegistrationModel> myKoiRegistrations = await _repository.Registrations.GetRegistrationByUserIdAsync(id);
+            IEnumerable<RegistrationModel> myKoiRegistrations = (await _repository.Registrations.GetRegistrationByUserIdAsync(id)).ToList();
             status = status.ToLower();
             switch (status)
             {
