@@ -92,6 +92,7 @@ namespace KoiShowManagementSystem.Repositories
                                                         Image2 = med.Image1,
                                                         Image3 = med.Image1,
                                                         Video = med.Video,
+                                                        IsPaid = regist.IsPaid
                                                     };
             return result;
         }
