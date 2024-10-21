@@ -152,6 +152,7 @@ namespace KoiShowManagementSystem.Repositories
                                 .Select(g => new GroupModel()
                                 {
                                     GroupId = g.Id,
+                                    GroupName = g.Name,
                                     SizeMax = g.SizeMax,
                                     SizeMin = g.SizeMin,
                                     Varieties = g.Varieties.Select(v => new VarietyModel()
@@ -176,10 +177,11 @@ namespace KoiShowManagementSystem.Repositories
                                 .Select(g => new GroupModel()
                                 {
                                     GroupId = g.Id,
+                                    GroupName = g.Name,
                                     SizeMax = g.SizeMax,
                                     SizeMin = g.SizeMin,
-                                    Quantity_registration = g.Registrations.Count,
-                                    Quantity_scored_registration = g.Registrations.Count(r => r.TotalScore == null),
+                                    Quantity_registration = g.Registrations.Count(r => r.Status.Equals("accepted")),
+                                    Quantity_scored_registration = g.Registrations.Count(r => r.TotalScore != null),
                                 }).ToListAsync();
             }
             return result;

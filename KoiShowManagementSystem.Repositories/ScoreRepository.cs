@@ -90,7 +90,7 @@ namespace KoiShowManagementSystem.Repositories
                 .Include(s => s.Groups)
                     .ThenInclude(g => g.Criteria)
                 .Include(s => s.Groups)
-                    .ThenInclude(g => g.Registrations.Where(r => r.TotalScore == null))
+                    .ThenInclude(g => g.Registrations)
                            .ThenInclude(r => r.Scores)
                 .FirstOrDefault(s => s.Id == showId);
             var groups = show!.Groups;
@@ -99,7 +99,7 @@ namespace KoiShowManagementSystem.Repositories
             foreach (var group in groups)
             {
                 var criterias = group.Criteria;
-                var registrations = group.Registrations;
+                var registrations = group.Registrations.Where(r => r.TotalScore == null && r.Status!.Equals("accepted"));
                 int criteriaCountForGroup = criterias.Count;
                 int totalScoreRecords = criteriaCountForGroup * refereeCountForShow;
                 
@@ -109,7 +109,7 @@ namespace KoiShowManagementSystem.Repositories
                     {
                         decimal? totalScore = registration.Scores
                                             .Sum(score => score.Score1 * criterias
-                                            .First(c => c.Id == score.CriteriaId).Percentage);
+                                            .First(c => c.Id == score.CriteriaId).Percentage/100);
                         totalScore /= refereeCountForShow;
                         registration.TotalScore = totalScore;
                     }                   
