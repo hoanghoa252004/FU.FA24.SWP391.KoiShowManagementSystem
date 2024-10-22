@@ -17,7 +17,7 @@ namespace KoiShowManagementSystem.Services
         Task<RegistrationModel?> GetRegistrationById(int registrationId);
         Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetPendingRegistration(int pageIndex, int pageSize);
         Task UpdateRegistration(UpdateRegistrationModel dto);
-        Task PublishResult(int showId);
+        Task SendResult(int showId);
         Task VoteRegistration(int registrationId, bool vote);
         Task PublishScore(int showId);
         Task DeleteDraftRegistration(int registrationId);
