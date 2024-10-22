@@ -215,6 +215,28 @@ namespace KoiShowManagementSystem.API.Controllers
                 });
             }
         }
+
+        // 8. DELETE DRAFT REGISTRATION:
+        [Authorize(Roles = "Member")]
+        [HttpDelete("delte-draft-registration")]
+        public async Task<IActionResult> DeleteDraftRegistration(int registrationId)
+        {
+            try
+            {
+                await _registrationService.DeleteDraftRegistration(registrationId);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Delete Draft Registration Successfully",
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
         #endregion
     }
 }

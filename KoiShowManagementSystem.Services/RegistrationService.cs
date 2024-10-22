@@ -481,5 +481,23 @@ namespace KoiShowManagementSystem.Services
             else
                 throw new Exception("Failed: User/ Registration does not exist !");
         }
+
+        public async Task DeleteDraftRegistration(int registrationId)
+        {
+            var memberId = _jwtServices.GetIdAndRoleFromToken().userId;
+            var myRegistrations = await _repository.Registrations.GetRegistrationByUserIdAsync(memberId);
+            if(myRegistrations.Any() == true)
+            {
+                var check = myRegistrations.SingleOrDefault(r => r.Id == registrationId);
+                if (check != null)
+                {
+                    if (check.Status!.Equals("Draft", StringComparison.OrdinalIgnoreCase) == true && check.IsPaid == false)
+                        await _repository.Registrations.DeleteRegistration(registrationId);
+                    else throw new Exception("Failed: This registration can not be deleted!");
+                }
+                else
+                    throw new Exception("Failed: This registration does not belong to you !");
+            }
+        }
     }
 }
