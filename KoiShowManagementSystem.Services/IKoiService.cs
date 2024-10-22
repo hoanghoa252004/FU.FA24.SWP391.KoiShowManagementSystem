@@ -20,5 +20,6 @@ namespace KoiShowManagementSystem.Services
 
         Task<bool> UpdateKoi(KoiDTO koi);
         Task<bool> DeleteKoi(int koiId);
+        Task<List<KoiModel>> DashboardKoi();
     }
 }
