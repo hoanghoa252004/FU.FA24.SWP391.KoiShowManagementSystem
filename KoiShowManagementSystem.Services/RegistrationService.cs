@@ -493,10 +493,22 @@ namespace KoiShowManagementSystem.Services
         public async Task DeleteDraftRegistration(int registrationId)
         {
             var memberID = _jwtServices.GetIdAndRoleFromToken().userId;
+            // Lấy registration của Member Id:
             var registrations = await _repository.Registrations.GetRegistrationByUserIdAsync(memberID);
             if (registrations != null && registrations.Any() == true)
             {
-
+                // Lấy đơn đó:
+                var check = registrations.SingleOrDefault(r => r.Id == registrationId);
+                if (check != null)
+                {
+                    if (check.Status!.Equals("Draft", StringComparison.OrdinalIgnoreCase) == true
+                        && check.IsPaid == false)
+                        await _repository.Registrations.DeleteRegistration(registrationId);
+                    else
+                        throw new Exception("Failed: You can not delete this registration !");
+                }
+                else
+                    throw new Exception("Failed: Registration does not exist !");
             }
             else
                 throw new Exception("Failed: You have no registration !");
