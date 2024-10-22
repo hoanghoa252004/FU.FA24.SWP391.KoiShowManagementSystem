@@ -10,6 +10,6 @@ namespace KoiShowManagementSystem.Repositories
     public interface IPaymentRepository
     {
         Task<bool> ProcessPaymentWebhookAsync(PaymentWebhookDto paymentData);
-        Task<bool> CheckIfPaymentIsCompleteAsync(int registrationId);
+        Task<bool> CheckIfPaymentIsCompleteAsync(string content);
     }
 }

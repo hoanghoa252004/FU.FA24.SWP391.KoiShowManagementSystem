@@ -18,16 +18,32 @@ namespace KoiShowManagementSystem.Repositories
         {
             this._context = context;
         }
-        public async Task<bool> CheckIfPaymentIsCompleteAsync(int registrationId)
+
+        public  async Task<bool> CheckIfPaymentIsCompleteAsync(string content)
         {
-            // Retrieve the registration with the specified ID and check if it is paid
-            var registration = await _context.Registrations
-                .FirstOrDefaultAsync(r => r.Id == registrationId);
+            if (content.StartsWith("KoiShowReg"))
+            {
+                // Example content: "KoiShowReg 11 12 " where 11 and 12 are registration IDs
+                string registrationIdsString = content.Replace("KoiShowReg", "").Trim();
+                var registrationIds = registrationIdsString.Split("%20", StringSplitOptions.RemoveEmptyEntries);
 
-            // Return true if the registration is found and is paid, otherwise return false
-            return registration?.IsPaid == true;
+                foreach (var registrationId in registrationIds)
+                {
+                    if (int.TryParse(registrationId.Trim(), out int id))
+                    {
+                        var registration = await _context.Registrations.FindAsync(id);
+                        if (registration != null) {
+                            registration.IsPaid = true;
+                            return true;
+                        }
+                    
+                    }
+                }
+                return false;
+            }
+            return false;
         }
-
+      
 
         private static string GetContent(string data)
         {
@@ -87,7 +103,7 @@ namespace KoiShowManagementSystem.Repositories
                         {
                             registration.IsPaid = true;
                             registration.PaymentReferenceCode = paymentData.ReferenceCode;
-
+                            registration.Status = "Pending";
                             // Use repository method to classify and get the groupId
                             var groupId = await ClassifyRegistrationAsync((int)registration.KoiId!, (decimal)registration.Size!, (int)registration.ShowId!);
                             if (groupId != null)
