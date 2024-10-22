@@ -26,7 +26,7 @@ namespace KoiShowManagementSystem.Repositories
             var query = await _context.Shows
                         .Include(sh => sh.Groups)
                         .ThenInclude(g => g.Registrations)
-                        .OrderByDescending(sh => sh.Status == "Scoring")
+                        .OrderByDescending(sh => sh.Status == "scoring")
                         .Include(sh => sh.RefereeDetails)
                         .Select(sh => new ShowModel
                         {
@@ -126,7 +126,7 @@ namespace KoiShowManagementSystem.Repositories
 
             var shows =  _context.Shows
                 .Include(s => s.RefereeDetails)
-                .Where(s => s.Status == "Scoring" &&
+                .Where(s => s.Status == "scoring" &&
                             s.RefereeDetails.Any(rd => rd.UserId == userId && s.Id == rd.ShowId))
 
                 .Include(s => s.Groups)
@@ -153,7 +153,7 @@ namespace KoiShowManagementSystem.Repositories
                          GroupName = g.Name,
                          //Scored = g.Registrations.Count(r => r.Status == "Scored"),
                          //AmountNotScored = g.Registrations.Count(r => r.Status == "Accepted"),
-                         Kois = g.Registrations.Where(r => r.Status.Equals("Accepted")).Select(r => new KoiModel
+                         Kois = g.Registrations.Where(r => r.Status.ToLower().Equals("accepted")).Select(r => new KoiModel
                          {
                              KoiID = r.Koi!.Id,
                              RegistrationId = r.Id,

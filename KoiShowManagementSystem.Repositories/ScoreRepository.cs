@@ -24,7 +24,7 @@ namespace KoiShowManagementSystem.Repositories
         {
             try
             {
-                var showId =  _context.Shows.Where(s => s.Status!.Equals("scoring")).Single().Id;
+                var showId =  _context.Shows.Where(s => s.Status.ToLower()!.Equals("scoring")).Single().Id;
                 var refereeId = await _context.RefereeDetails.Where(r => r.UserId == UserId && r.ShowId == showId).FirstOrDefaultAsync();
                 foreach (var scoreDetail in refereeScore.ScoreDetail)
                 {
@@ -99,7 +99,7 @@ namespace KoiShowManagementSystem.Repositories
             foreach (var group in groups)
             {
                 var criterias = group.Criteria;
-                var registrations = group.Registrations.Where(r => r.TotalScore == null && r.Status!.Equals("Accepted"));
+                var registrations = group.Registrations.Where(r => r.TotalScore == null && r.Status!.ToLower().Equals("accepted"));
                 int criteriaCountForGroup = criterias.Count;
                 int totalScoreRecords = criteriaCountForGroup * refereeCountForShow;
                 
@@ -129,14 +129,14 @@ namespace KoiShowManagementSystem.Repositories
 
             foreach (var group in groups)
             {
-                var registrations = group.Registrations.Where(r => r.TotalScore != null && r.Status!.Equals("Accepted"));
+                var registrations = group.Registrations.Where(r => r.TotalScore != null && r.Status!.ToLower().Equals("accepted"));
                 var sortedRegistrations = registrations.OrderByDescending(r => r.TotalScore).ThenBy(r => r.Id);
                 int rank = 1;
                 foreach (var registration in sortedRegistrations)
                 {
                     registration.Rank = rank;
                     rank++;
-                    registration.Status = "Scored";
+                    registration.Status = "scored";
                 }
             }
 

@@ -64,7 +64,7 @@ namespace KoiShowManagementSystem.API.Controllers
             return Ok(new ApiResponse { Message = "Success", Payload = result });
         }
 
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         [HttpGet("review-group-score")]
         public async Task<IActionResult> ReviewGroupScore(int showId)
         {
