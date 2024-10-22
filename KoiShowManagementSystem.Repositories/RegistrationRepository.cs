@@ -331,6 +331,20 @@ namespace KoiShowManagementSystem.Repositories
                                  .ToListAsync();
         }
 
-
+        public async Task DeleteRegistration(int registrationId)
+        {
+            var registration = await _context.Registrations.SingleOrDefaultAsync(r => r.Id == registrationId);
+            if (registration != null)
+            {
+                // Xoa media:
+                var media = await _context.Media.SingleOrDefaultAsync(m => m.RegistrationId == registrationId);
+                if (media != null)
+                {
+                    _context.Media.Remove(media);
+                    _context.Registrations.Remove(registration);
+                    await _context.SaveChangesAsync();
+                }
+            }
+        }
     }
 }

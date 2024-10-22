@@ -481,11 +481,5 @@ namespace KoiShowManagementSystem.Services
             else
                 throw new Exception("Failed: User/ Registration does not exist !");
         }
-
-        public async Task PublishScore(int showId)
-        {
-            await _repository.Scores.CalculateRankAsync(showId);
-             await PublishResult(showId);
-        }
     }
 }

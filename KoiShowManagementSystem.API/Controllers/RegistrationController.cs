@@ -216,7 +216,7 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        // 8.PUBLISH SCORE
+        / 8.PUBLISH SCORE
         [Authorize(Roles = "Manager")]
         [HttpPost("publish-score")]
         public async Task<IActionResult> PublishScore(int showId)
@@ -227,6 +227,28 @@ namespace KoiShowManagementSystem.API.Controllers
                 return Ok(new ApiResponse()
                 {
                     Message = "Publish Score Successfully",
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
+
+        // 9. DELETE DRAFT REGISTRATION:
+        [Authorize(Roles = "Member")]
+        [HttpDelete("delte-draft-registration")]
+        public async Task<IActionResult> DeleteDraftRegistration(int registrationId)
+        {
+            try
+            {
+                await _registrationService.DeleteDraftRegistration(registrationId);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Delete Draft Registration Successfully",
                 });
             }
             catch (Exception ex)

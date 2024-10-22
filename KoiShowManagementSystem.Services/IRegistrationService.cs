@@ -20,5 +20,6 @@ namespace KoiShowManagementSystem.Services
         Task PublishResult(int showId);
         Task VoteRegistration(int registrationId, bool vote);
         Task PublishScore(int showId);
+        Task DeleteDraftRegistration(int registrationId);
     }
 }
