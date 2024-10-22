@@ -49,7 +49,7 @@ namespace KoiShowManagementSystem.API
             // Đăng kí Services Layer: OK
             builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("MailSettings"));
             builder.Services.AddScoped<IEmailService, EmailService>();
-            //builder.Services.AddScoped<S3UploadService>();
+            builder.Services.AddScoped<S3UploadService>();
             builder.Services.AddScoped<JwtServices>();
             builder.Services.AddScoped<Repository>();
             builder.Services.AddScoped<IShowService, ShowService>();
