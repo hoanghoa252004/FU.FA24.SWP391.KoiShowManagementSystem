@@ -25,9 +25,9 @@ namespace KoiShowManagementSystem.Services
             return result;
         }
 
-        public async Task<bool> AreAllRegistrationsPaidAsync(int registrationId)
+        public async Task<bool> AreAllRegistrationsPaidAsync(string content)
         {
-            var result = await _repository.Payment.CheckIfPaymentIsCompleteAsync(registrationId);
+            var result = await _repository.Payment.CheckIfPaymentIsCompleteAsync(content);
             return result;
         }
     }

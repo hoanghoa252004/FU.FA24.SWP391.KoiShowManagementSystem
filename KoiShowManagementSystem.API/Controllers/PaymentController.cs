@@ -35,9 +35,9 @@ namespace KoiShowManagementSystem.API.Controllers
 
 
         [HttpGet("IsAllMemberRegistrationsPaid")]
-        public async Task<IActionResult> IsAllMemberRegistrationsPaid(int registrationId)
+        public async Task<IActionResult> IsAllMemberRegistrationsPaid(string content)
         {
-            bool areAllPaid = await _paymentService.AreAllRegistrationsPaidAsync(registrationId);
+            bool areAllPaid = await _paymentService.AreAllRegistrationsPaidAsync(content);
             //return Ok(areAllPaid);
             if (areAllPaid == false)
             {
