@@ -28,5 +28,6 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public int? KoiID { get; set; }
         public int? GroupId{ get; set; }
         public bool? IsPaid { get; set; }
+        public int TotalVote {  get; set; } 
     }
 }

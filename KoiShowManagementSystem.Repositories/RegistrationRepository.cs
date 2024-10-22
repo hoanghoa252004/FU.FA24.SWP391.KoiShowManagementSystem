@@ -162,7 +162,8 @@ namespace KoiShowManagementSystem.Repositories
                                     Rank = reg.Rank,
                                     Id = reg.Id,
                                     GroupId = g.Id,
-                                   
+                                    TotalVote = reg.Users.Count()
+
                                 }).FirstOrDefaultAsync();
 
             return result!;
