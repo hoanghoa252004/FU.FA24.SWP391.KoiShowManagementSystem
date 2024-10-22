@@ -285,6 +285,7 @@ namespace KoiShowManagementSystem.Repositories
                              where med.RegistrationId == r.Id
                              select med.Video).First(),
                     GroupId = r.Group!.Id,
+                    Description = r.Description,
                 }).ToListAsync();
             return koiList;
         }
