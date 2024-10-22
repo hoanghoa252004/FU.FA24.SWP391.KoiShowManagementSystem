@@ -83,7 +83,7 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task<(int TotalItems, List<ShowModel>)> SearchShowAsync(int pageIndex, int pageSize, string keyword)
         {
-            var query = _context.Shows.Where(s => s.Title.Contains(keyword)&&(s.Status != "up comming"));
+            var query = _context.Shows.Where(s => s.Title.Contains(keyword)&&(s.Status.ToLower() != "up comming"));
 
             var totalItems = await query.CountAsync();
 
@@ -105,7 +105,7 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<List<ShowModel>> GetClosestShowAsync()
         {
             var shows = await _context.Shows
-                .Where(s => s.Status != "up comming")
+                .Where(s => s.Status.ToLower() != "up comming")
                 .Include(s => s.Groups)
                 .OrderByDescending(s => s.RegisterStartDate).Take(5)
                 .Select(s => new ShowModel
@@ -126,7 +126,7 @@ namespace KoiShowManagementSystem.Repositories
                 throw new Exception("No show found");
             }
 
-            if (firstShow.ShowStatus == "Finished")
+            if (firstShow.ShowStatus.Equals("finished", StringComparison.OrdinalIgnoreCase))
             {
                 var groups  = _context.Groups
                    .Where(g => g.ShowId == firstShow.ShowId && g.Status == true)
@@ -218,7 +218,7 @@ namespace KoiShowManagementSystem.Repositories
         {
             string[] validStatus = {"up comming", "on going", "finished", "scoring"};
 
-            if (!validStatus.Contains(status))
+            if (!validStatus.Contains(status.ToLower()))
             {
                 throw new ArgumentException("Invalid status");
             }
@@ -251,7 +251,7 @@ namespace KoiShowManagementSystem.Repositories
             decimal averageScore = scoreCount > 0 ? registration.Scores.Average(score => score.Score1 ?? 0) : 0;
 
             registration.TotalScore = averageScore;
-            registration.Status = "Scored";
+            registration.Status = "scored";
 
             int result = await _context.SaveChangesAsync();
             return result > 0;
@@ -277,7 +277,7 @@ namespace KoiShowManagementSystem.Repositories
             {
                 throw new Exception("Show not found");
             }
-            if (show.Status == "on going")
+            if (show.Status.ToLower() == "on going")
             {
                 throw new Exception("Show is on going");
             }
