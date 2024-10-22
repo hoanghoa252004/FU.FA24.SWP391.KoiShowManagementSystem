@@ -217,7 +217,7 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         // 8.PUBLISH SCORE
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         [HttpPost("publish-score")]
         public async Task<IActionResult> PublishScore(int showId)
         {

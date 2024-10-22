@@ -47,7 +47,7 @@ namespace KoiShowManagementSystem.Repositories
                 KoiSize = k.Size,
                 KoiDesc = k.Description,
                 KoiStatus = k.Status,
-                registrations = k.Registrations.Where(r => r.Status.Equals("Scored")).Select(r => new RegistrationModel
+                registrations = k.Registrations.Where(r => r.Status.ToLower().Equals("scored")).Select(r => new RegistrationModel
                 {
                     Id = r.Id,
                     Show = r.Group!.Show!.Title,

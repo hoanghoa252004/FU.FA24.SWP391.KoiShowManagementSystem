@@ -146,7 +146,7 @@ namespace KoiShowManagementSystem.Repositories
             List<GroupModel> result = new List<GroupModel>();
             var show = await _context.Shows
                             .FirstOrDefaultAsync(s => s.Id == showId);
-            if (show != null && (show.Status!.Equals("up comming")|| show.Status!.Equals("on going"))) {
+            if (show != null && (show.Status!.ToLower().Equals("up comming")|| show.Status!.ToLower().Equals("on going"))) {
                  result = await _context.Groups
                                 .Where(g => g.ShowId == showId && g.Status == true)
                                 .Select(g => new GroupModel()
@@ -169,7 +169,7 @@ namespace KoiShowManagementSystem.Repositories
                                     }).ToList(),
                                 }).ToListAsync();
             }
-            else if (show.Status!.Equals("scoring"))
+            else if (show.Status!.ToLower().Equals("scoring") || show.Status!.ToLower().Equals("finished"))
             {
                 result = await _context.Groups
                                 .Include(g => g.Registrations)
@@ -180,7 +180,7 @@ namespace KoiShowManagementSystem.Repositories
                                     GroupName = g.Name,
                                     SizeMax = g.SizeMax,
                                     SizeMin = g.SizeMin,
-                                    Quantity_registration = g.Registrations.Count(r => r.Status.Equals("accepted")),
+                                    Quantity_registration = g.Registrations.Count(r => r.Status.ToLower().Equals("accepted")),
                                     Quantity_scored_registration = g.Registrations.Count(r => r.TotalScore != null),
                                 }).ToListAsync();
             }
