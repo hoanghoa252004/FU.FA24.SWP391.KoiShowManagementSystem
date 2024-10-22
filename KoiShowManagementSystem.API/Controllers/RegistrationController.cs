@@ -240,7 +240,7 @@ namespace KoiShowManagementSystem.API.Controllers
 
         // 9. DELETE DRAFT REGISTRATION:
         [Authorize(Roles = "Member")]
-        [HttpDelete("delte-draft-registration")]
+        [HttpDelete("delete-draft-registration")]
         public async Task<IActionResult> DeleteDraftRegistration(int registrationId)
         {
             try
