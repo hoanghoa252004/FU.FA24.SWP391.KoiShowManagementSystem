@@ -172,27 +172,27 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
 
-        // 6. UPDATE PENDING REGISTRATION:
-        [Authorize(Roles = "Manager")]
-        [HttpGet("pulish-result")]
-        public async Task<IActionResult> PublishResult(int showId)
-        {
-            try
-            {
-                await _registrationService.PublishResult(showId);
-                return Ok(new ApiResponse()
-                {
-                    Message = "Publish Result Successfully",
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse()
-                {
-                    Message = ex.Message,
-                });
-            }
-        }
+        //// 6. UPDATE PENDING REGISTRATION:
+        //[Authorize(Roles = "Manager")]
+        //[HttpGet("pulish-result")]
+        //public async Task<IActionResult> PublishResult(int showId)
+        //{
+        //    try
+        //    {
+        //        await _registrationService.PublishResult(showId);
+        //        return Ok(new ApiResponse()
+        //        {
+        //            Message = "Publish Result Successfully",
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new ApiResponse()
+        //        {
+        //            Message = ex.Message,
+        //        });
+        //    }
+        //}
 
         // 7. VOTE REGISTRATION:
         [Authorize(Roles = "Member")]
@@ -217,7 +217,7 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         // 8.PUBLISH SCORE
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         [HttpPost("publish-score")]
         public async Task<IActionResult> PublishScore(int showId)
         {
