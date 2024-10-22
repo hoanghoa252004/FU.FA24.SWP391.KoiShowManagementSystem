@@ -485,9 +485,10 @@ namespace KoiShowManagementSystem.Services
         }
 
         
-        public Task PublishScore(int showId)
+        public async Task PublishScore(int showId)
         {
-            throw new NotImplementedException();
+            await _repository.Scores.CalculateRankAsync(showId);
+            await SendResult(showId);
         }
 
         // 9. DELETE DRAFT REGISTRATION:
@@ -513,11 +514,6 @@ namespace KoiShowManagementSystem.Services
             }
             else
                 throw new Exception("Failed: You have no registration !");
-        }
-
-        public Task PublishResult(int showId)
-        {
-            throw new NotImplementedException();
         }
     }
 }
