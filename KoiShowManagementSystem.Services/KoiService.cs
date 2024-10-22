@@ -53,5 +53,9 @@ namespace KoiShowManagementSystem.Services
             return result;
         }
 
+        public Task<List<KoiModel>> DashboardKoi()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

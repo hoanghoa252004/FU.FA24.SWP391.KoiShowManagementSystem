@@ -358,7 +358,7 @@ namespace KoiShowManagementSystem.Services
         }
 
         // 7. PUBLISH SCORE TO MEMBER:
-        public async Task PublishResult(int showId)
+        public async Task SendResult(int showId)
         {
             // Check Show whether it exists:
             var show = await _repository.Show.GetShowDetailsAsync(showId);
@@ -480,6 +480,30 @@ namespace KoiShowManagementSystem.Services
             }
             else
                 throw new Exception("Failed: User/ Registration does not exist !");
+        }
+
+        
+        public Task PublishScore(int showId)
+        {
+            throw new NotImplementedException();
+        }
+
+        // 9. DELETE DRAFT REGISTRATION:
+        public async Task DeleteDraftRegistration(int registrationId)
+        {
+            var memberID = _jwtServices.GetIdAndRoleFromToken().userId;
+            var registrations = await _repository.Registrations.GetRegistrationByUserIdAsync(memberID);
+            if (registrations != null && registrations.Any() == true)
+            {
+
+            }
+            else
+                throw new Exception("Failed: You have no registration !");
+        }
+
+        public Task PublishResult(int showId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

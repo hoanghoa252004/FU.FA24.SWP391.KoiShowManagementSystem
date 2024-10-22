@@ -33,5 +33,6 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public List<CriterionModel>? criterions { get; set; }
         public int? VarietyId { get; set; }
         public int? UserId { get; set; }
+        public int? NumOfAwards { get; set; }
     }
 }
