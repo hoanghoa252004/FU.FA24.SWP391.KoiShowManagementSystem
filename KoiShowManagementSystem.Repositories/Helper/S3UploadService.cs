@@ -26,7 +26,22 @@ namespace KoiShowManagementSystem.Repositories.Helper
             var awsSecretKey = configuration["AWS:SecretKey"];
             var awsRegion = configuration["AWS:Region"];
             _bucketName = configuration["AWS:BucketName"]!;
-
+            if(Environment.GetEnvironmentVariable("AWS_AccessKey") != null)
+            {
+                awsAccessKey = Environment.GetEnvironmentVariable("AWS_AccessKey");
+            }
+            if (Environment.GetEnvironmentVariable("AWS_SecretKey") != null)
+            {
+                awsSecretKey = Environment.GetEnvironmentVariable("AWS_SecretKey");
+            }
+            if (Environment.GetEnvironmentVariable("AWS_Region") != null)
+            {
+                awsRegion = Environment.GetEnvironmentVariable("AWS_Region");
+            }
+            if (Environment.GetEnvironmentVariable("AWS_BucketName") != null)
+            {
+                _bucketName = Environment.GetEnvironmentVariable("AWS_BucketName")!;
+            }
             _s3Client = new AmazonS3Client(awsAccessKey, awsSecretKey, RegionEndpoint.GetBySystemName(awsRegion));
         }
 
