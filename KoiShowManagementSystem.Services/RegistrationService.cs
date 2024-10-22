@@ -461,7 +461,8 @@ namespace KoiShowManagementSystem.Services
             {
                 if (registration.Status!.Equals("Draft", StringComparison.OrdinalIgnoreCase) == true 
                     || registration.Status!.Equals("Rejected", StringComparison.OrdinalIgnoreCase) == true
-                    || registration.Status!.Equals("Scored", StringComparison.OrdinalIgnoreCase) == true)
+                    || registration.Status!.Equals("Scored", StringComparison.OrdinalIgnoreCase) == true
+                    || registration.Status!.Equals("Pending", StringComparison.OrdinalIgnoreCase) == true)
                     throw new Exception("Failed: You can not vote this registration at this time.");
                 var list =  (await _repository.Registrations.GetRegistrationByUserIdAsync((int)member.Id!))
                 .Where(r => r.Id == registrationId);
