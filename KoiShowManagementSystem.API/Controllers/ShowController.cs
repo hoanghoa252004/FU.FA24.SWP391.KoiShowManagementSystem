@@ -82,7 +82,7 @@ namespace KoiShowManagementSystem.API.Controllers
 
 
         // implement create a show
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         [HttpPost("create-show")]
         public async Task<IActionResult> CreateShow([FromForm] ShowDTO show)
         {

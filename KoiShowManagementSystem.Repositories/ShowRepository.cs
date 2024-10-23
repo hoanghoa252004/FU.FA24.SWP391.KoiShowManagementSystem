@@ -10,7 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Group = KoiShowManagementSystem.Entities.Group;
 
 namespace KoiShowManagementSystem.Repositories
 {
@@ -195,7 +197,12 @@ namespace KoiShowManagementSystem.Repositories
                 ScoreEndDate = dto.ScoreEndDate,
                 Banner = await _s3Service.UploadShowBannerImage(dto.Banner!),
                 Status = "up comming",
-                Groups = dto.Groups!.Select(g => new Group
+                EntranceFee = dto.EntranceFee,
+
+            };
+            if (!dto.Groups.IsNullOrEmpty())
+            {
+                show.Groups = dto.Groups!.Select(g => new Group
                 {
                     Name = g.Name,
                     SizeMin = g.MinSize,
@@ -208,9 +215,8 @@ namespace KoiShowManagementSystem.Repositories
                         Description = c.Description,
                         Status = true,
                     }).ToList()
-                }).ToList(),
-                EntranceFee = dto.EntranceFee,
-            };
+                }).ToList();               
+            }
             
             _context.Shows.Add(show);                 
             result = await _context.SaveChangesAsync();
