@@ -19,5 +19,6 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public string? ShowStatus { get; set; }
         public List<GroupModel>? ShowGroups { get; set; }
         public List<RefereeModel>? ShowReferee { get; set; }
+        public decimal? EntranceFee { get; set; }
     }
 }

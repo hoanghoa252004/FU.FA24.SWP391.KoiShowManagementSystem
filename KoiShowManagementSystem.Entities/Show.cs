@@ -23,6 +23,8 @@ public partial class Show
 
     public DateOnly? ScoreEndDate { get; set; }
 
+    public decimal? EntranceFee { get; set; }
+
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
 
     public virtual ICollection<RefereeDetail> RefereeDetails { get; set; } = new List<RefereeDetail>();

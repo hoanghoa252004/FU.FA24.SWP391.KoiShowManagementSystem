@@ -20,5 +20,6 @@ namespace KoiShowManagementSystem.DTOs.Request
         public DateOnly? ScoreEndDate { get; set; }
         public IFormFile? Banner { get; set; }
         public List<GroupDTO>? Groups { get; set; }
+        public decimal? EntranceFee { get; set; }
     }
 }
