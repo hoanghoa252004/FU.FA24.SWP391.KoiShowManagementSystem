@@ -160,44 +160,32 @@ namespace KoiShowManagementSystem.Repositories
             List<GroupModel> result = new List<GroupModel>();
             var show = await _context.Shows
                             .FirstOrDefaultAsync(s => s.Id == showId);
-            if (show != null && (show.Status!.ToLower().Equals("up comming")|| show.Status!.ToLower().Equals("on going"))) {
-                 result = await _context.Groups
-                                .Where(g => g.ShowId == showId && g.Status == true)
-                                .Select(g => new GroupModel()
+
+            result = await _context.Groups
+                            .Where(g => g.ShowId == showId && g.Status == true)
+                            .Select(g => new GroupModel()
+                            {
+                                GroupId = g.Id,
+                                GroupName = g.Name,
+                                SizeMax = g.SizeMax,
+                                SizeMin = g.SizeMin,
+                                Varieties = g.Varieties.Select(v => new VarietyModel()
                                 {
-                                    GroupId = g.Id,
-                                    GroupName = g.Name,
-                                    SizeMax = g.SizeMax,
-                                    SizeMin = g.SizeMin,
-                                    Varieties = g.Varieties.Select(v => new VarietyModel()
-                                    {
-                                        VarietyId = v.Id,
-                                        VarietyName = v.Name,
-                                    }).ToList(),
-                                    Criterion = g.Criteria.Select(c => new CriterionModel()
-                                    {
-                                        CriterionId = c.Id,
-                                        CriterionName = c.Name,
-                                        Percentage = c.Percentage,
-                                        Description = c.Description,
-                                    }).ToList(),
-                                }).ToListAsync();
-            }
-            else if (show.Status!.ToLower().Equals("scoring") || show.Status!.ToLower().Equals("finished"))
-            {
-                result = await _context.Groups
-                                .Include(g => g.Registrations)
-                                .Where(g => g.ShowId == showId && g.Status == true)
-                                .Select(g => new GroupModel()
+                                    VarietyId = v.Id,
+                                    VarietyName = v.Name,
+                                }).ToList(),
+                                Criterion = g.Criteria.Select(c => new CriterionModel()
                                 {
-                                    GroupId = g.Id,
-                                    GroupName = g.Name,
-                                    SizeMax = g.SizeMax,
-                                    SizeMin = g.SizeMin,
-                                    Quantity_registration = g.Registrations.Count(r => r.Status.ToLower().Equals("accepted")),
-                                    Quantity_scored_registration = g.Registrations.Count(r => r.TotalScore != null),
-                                }).ToListAsync();
-            }
+                                    CriterionId = c.Id,
+                                    CriterionName = c.Name,
+                                    Percentage = c.Percentage,
+                                    Description = c.Description,
+                                }).ToList(),
+                                Quantity_registration = g.Registrations.Count(r => r.Status.ToLower().Equals("accepted") || r.Status.ToLower().Equals("scored")),
+                                Quantity_scored_registration = g.Registrations.Count(r => r.TotalScore != null),
+                            }).ToListAsync();
+
+            
             return result;
         }
     }
