@@ -43,7 +43,16 @@ namespace KoiShowManagementSystem.API
             // Đăng kí DBContext: OK
             builder.Services.AddDbContext<KoiShowManagementSystemContext>(option =>
             {
-                option.UseSqlServer(builder.Configuration.GetConnectionString("cnn"));
+                if (Environment.GetEnvironmentVariable("ConnectionString") != null)
+                {
+                    option.UseSqlServer(Environment.GetEnvironmentVariable("ConnectionString"));
+                    Console.WriteLine(Environment.GetEnvironmentVariable("ConnectionString"));
+                }
+                else
+                {
+                    option.UseSqlServer(builder.Configuration.GetConnectionString("cnn"));
+                    Console.WriteLine(builder.Configuration.GetConnectionString("cnn"));
+                }
             });
             builder.Services.AddHttpContextAccessor();
             // Đăng kí Services Layer: OK
