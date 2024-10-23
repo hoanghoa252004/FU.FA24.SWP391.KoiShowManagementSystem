@@ -274,6 +274,7 @@ public partial class KoiShowManagementSystemContext : DbContext
 
             entity.Property(e => e.Banner).HasMaxLength(255);
             entity.Property(e => e.Description).HasColumnType("text");
+            entity.Property(e => e.EntranceFee).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.RegisterEndDate).HasColumnName("Register_end_date");
             entity.Property(e => e.RegisterStartDate).HasColumnName("Register_start_date");
             entity.Property(e => e.ScoreEndDate).HasColumnName("Score_end_date");

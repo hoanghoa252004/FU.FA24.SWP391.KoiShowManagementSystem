@@ -39,7 +39,7 @@ namespace KoiShowManagementSystem.Repositories
                                     RegistrationCloseDate = sho.RegisterEndDate,
                                     ShowStatus = sho.Status ?? string.Empty,
                                     EndDate = sho.ScoreEndDate,
-
+                                    EntranceFee = sho.EntranceFee,
                                     ShowGroups = (from gro in _context.Groups
                                                   where gro.ShowId == sho.Id && gro.Status == true
                                                   select new GroupModel
@@ -95,8 +95,8 @@ namespace KoiShowManagementSystem.Repositories
                     ShowId = s.Id,
                     ShowTitle = s.Title,
                     ShowBanner = s.Banner,
-                    ShowStatus = s.Status 
-
+                    ShowStatus = s.Status, 
+                    EntranceFee = s.EntranceFee,
                 }).ToListAsync();
 
             return (totalItems, shows);
@@ -116,7 +116,8 @@ namespace KoiShowManagementSystem.Repositories
                     RegistrationCloseDate = s.RegisterEndDate,
                     ShowBanner = s.Banner,
                     ShowDesc = s.Description,
-                    ShowStatus = s.Status
+                    ShowStatus = s.Status,
+                    EntranceFee = s.EntranceFee
                 }).ToListAsync();
 
             var firstShow = shows.FirstOrDefault();
@@ -179,7 +180,10 @@ namespace KoiShowManagementSystem.Repositories
             {
                 throw new ArgumentException("Start date cannot be greater than end date");
             }
-
+            if(dto.EntranceFee == null || dto.EntranceFee <= 0)
+            {
+                throw new ArgumentException("Entrance fee can not null or negative");
+            }
             int result = 0;
             Show show = new()
             {
@@ -204,7 +208,8 @@ namespace KoiShowManagementSystem.Repositories
                         Description = c.Description,
                         Status = true,
                     }).ToList()
-                }).ToList()
+                }).ToList(),
+                EntranceFee = dto.EntranceFee,
             };
             
             _context.Shows.Add(show);                 
@@ -320,6 +325,10 @@ namespace KoiShowManagementSystem.Repositories
             if (dto.ScoreEndDate != null)
             {
                 show.ScoreEndDate = (DateOnly)dto.ScoreEndDate!;
+            }
+            if (dto.EntranceFee != null && dto.EntranceFee > 0)
+            {
+                show.EntranceFee = dto.EntranceFee;
             }
             int result = await _context.SaveChangesAsync();
             if (result == 0)
