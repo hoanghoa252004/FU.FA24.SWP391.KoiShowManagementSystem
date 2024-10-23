@@ -116,6 +116,20 @@ namespace KoiShowManagementSystem.Repositories
                 }).ToList(),
                 Varieties = _context.Varieties.Where(v => dto.Varieties!.Contains(v.Id)).ToList(),
             };
+            if (dto.Criterias.IsNullOrEmpty())
+            {
+                group.Criteria = dto.Criterias!.Select(c => new Criterion
+                {
+                    Name = c.Name,
+                    Percentage = c.Percentage,
+                    Description = c.Description,
+                    Status = true,
+                }).ToList();
+            }
+            if (dto.Criterias.IsNullOrEmpty())
+            {
+                group.Varieties = _context.Varieties.Where(v => dto.Varieties!.Contains(v.Id)).ToList();
+            }
             show.Groups.Add(group);
 
             int result = await _context.SaveChangesAsync();
