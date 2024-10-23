@@ -3,6 +3,7 @@ using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories.Helper;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -56,44 +57,76 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<IEnumerable<RegistrationModel>> GetRegistrationByUserIdAsync(int id)
         {
             // Lấy Koi của User:
-            IEnumerable<Koi> kois = (await _context.Set<Koi>().ToListAsync());
-                var koisssss = kois.Where(koi => koi.UserId == id).ToList();
+            IEnumerable<RegistrationModel> result = _context.Registrations
+                .Include(r => r.Koi)
+                    .ThenInclude(k => k.User)
+                .Include(r => r.Koi.Variety)
+                .Include(r => r.Show)
+                .Include(r => r.Group)
+                .Include(r => r.Media)
+                .Where(r => r.Koi.User.Id == id)
+                .Select( r => new RegistrationModel()
+                {
+                    Id = r.Id,
+                    Name = r.Koi.Name,
+                    KoiID = r.Koi.Id,
+                    Description = r.Description,
+                    Size = r.Size,
+                    Variety = r.Koi.Variety.Name,
+                    ShowId = r.Show.Id,
+                    Show = r.Show.Title,
+                    Group = r.Group.Name,
+                    GroupId = r.Group.Id,
+                    CreateDate = r.CreateDate,
+                    Rank = r.Rank,
+                    TotalScore = r.TotalScore,
+                    Status = r.Status,
+                    IsBestVote = r.IsBestVote,
+                    Image1 = r.Media.Image1,
+                    Image2 = r.Media.Image2,
+                    Image3 = r.Media.Image3,
+                    Video = r.Media.Video,
+                    IsPaid = r.IsPaid,
+                    EntranceFee = r.Show.EntranceFee,
+                });
+                //var koisssss = kois.Where(koi => koi.UserId == id).ToList();
             // Join lấy thông tin:
-            IEnumerable<Registration> registrations = await _context.Set<Registration>().ToListAsync();
-            IEnumerable<Show> shows = await _context.Set<Show>().ToListAsync();
-            IEnumerable<Group> groups = await _context.Set<Group>().ToListAsync();
-            IEnumerable<Media> media = await _context.Set<Media>().ToListAsync();
-            IEnumerable<Variety> varieties = await _context.Set<Variety>().ToListAsync();
-            IEnumerable<RegistrationModel> result = from koi in koisssss
-                                                    join var in varieties on koi.VarietyId equals var.Id
-                                                    join regist in registrations on koi.Id equals regist.KoiId
-                                                    join med in media on regist.Id equals med.RegistrationId
-                                                    join grp in groups on regist.GroupId equals grp.Id into registGroup
-                                                    from grp in registGroup.DefaultIfEmpty() // LEFT JOIN Group
-                                                    join show in shows on grp?.ShowId equals show.Id into registShow
-                                                    from show in registShow.DefaultIfEmpty() // LEFT JOIN Show
-                                                    select new RegistrationModel()
-                                                    {
-                                                        Id = regist.Id,
-                                                        Name = koi.Name,
-                                                        KoiID = koi.Id,
-                                                        Description = koi.Description,
-                                                        Size = regist.Size,
-                                                        Variety = var.Name,
-                                                        ShowId = show?.Id,
-                                                        Show = show?.Title,
-                                                        Group = grp?.Name,
-                                                        CreateDate = regist.CreateDate,
-                                                        Rank = regist.Rank,
-                                                        TotalScore = regist.TotalScore,
-                                                        Status = regist.Status,
-                                                        IsBestVote = regist.IsBestVote,
-                                                        Image1 = med.Image1,
-                                                        Image2 = med.Image1,
-                                                        Image3 = med.Image1,
-                                                        Video = med.Video,
-                                                        IsPaid = regist.IsPaid
-                                                    };
+            //IEnumerable<Registration> registrations = await _context.Set<Registration>().ToListAsync();
+            //IEnumerable<Show> shows = await _context.Set<Show>().ToListAsync();
+            //IEnumerable<Group> groups = await _context.Set<Group>().ToListAsync();
+            //IEnumerable<Media> media = await _context.Set<Media>().ToListAsync();
+            //IEnumerable<Variety> varieties = await _context.Set<Variety>().ToListAsync();
+            //IEnumerable<RegistrationModel> result = from koi in koisssss
+            //                                        join var in varieties on koi.VarietyId equals var.Id
+            //                                        join regist in registrations on koi.Id equals regist.KoiId
+            //                                        join med in media on regist.Id equals med.RegistrationId
+            //                                        join grp in groups on regist.GroupId equals grp.Id into registGroup
+            //                                        from grp in registGroup.DefaultIfEmpty() // LEFT JOIN Group
+            //                                        join show in shows on grp?.ShowId equals show.Id into registShow
+            //                                        from show in registShow.DefaultIfEmpty() // LEFT JOIN Show
+            //                                        select new RegistrationModel()
+            //                                        {
+            //                                            Id = regist.Id,
+            //                                            Name = koi.Name,
+            //                                            KoiID = koi.Id,
+            //                                            Description = koi.Description,
+            //                                            Size = regist.Size,
+            //                                            Variety = var.Name,
+            //                                            ShowId = show?.Id,
+            //                                            Show = show?.Title,
+            //                                            Group = grp?.Name,
+            //                                            CreateDate = regist.CreateDate,
+            //                                            Rank = regist.Rank,
+            //                                            TotalScore = regist.TotalScore,
+            //                                            Status = regist.Status,
+            //                                            IsBestVote = regist.IsBestVote,
+            //                                            Image1 = med.Image1,
+            //                                            Image2 = med.Image1,
+            //                                            Image3 = med.Image1,
+            //                                            Video = med.Video,
+            //                                            IsPaid = regist.IsPaid,
+            //                                            EntranceFee = show?.EntranceFee,
+            //                                        };
             return result;
         }
 
@@ -253,6 +286,7 @@ namespace KoiShowManagementSystem.Repositories
             var query = _context.Registrations
                 .Include(r => r.Koi) // Include Koi
                 .Include(r => r.Group)
+                .Include(gr => gr.Show)
                 .Include(r => r.Group!.Varieties) // Ensure Varieties can be included if needed
                 .Include(r => r.Media); // Include Media for images/videos
 
@@ -286,6 +320,7 @@ namespace KoiShowManagementSystem.Repositories
                              select med.Video).First(),
                     GroupId = r.Group!.Id,
                     Description = r.Description,
+                    EntranceFee = r.Show.EntranceFee
                 }).ToListAsync();
             return koiList;
         }
