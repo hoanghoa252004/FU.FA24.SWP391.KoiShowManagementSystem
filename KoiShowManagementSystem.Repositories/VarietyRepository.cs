@@ -20,7 +20,7 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<List<VarietyModel>> GetAllVarietiesByShowAsync(int showId)
         {
             var varieties = await _context.Groups
-                .Where(g => g.ShowId == showId)
+                .Where(g => g.ShowId == showId && g.Status == true)
                 .SelectMany(gr => gr.Varieties)
                 .Select(v => new VarietyModel
                 {

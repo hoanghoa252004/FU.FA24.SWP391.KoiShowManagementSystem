@@ -31,7 +31,7 @@ namespace KoiShowManagementSystem.API.Controllers
 
         [Authorize(Roles = "Manager")]
         [HttpPut("update-group")]
-        public async Task<IActionResult> UpdateGroup([FromForm] GroupDTO group)
+        public async Task<IActionResult> UpdateGroup([FromBody] GroupDTO group)
         {
             var result = await _groupService.UpdateGroup(group);
             if (result)
