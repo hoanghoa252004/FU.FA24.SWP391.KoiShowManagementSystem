@@ -94,7 +94,9 @@ namespace KoiShowManagementSystem.Repositories
         }
         public async Task<bool> CreateAGroupAsync(GroupDTO dto)
         {
-            
+            // check varieties of dto and eliminate the duplicate data
+
+
             var show = await _context.Shows
                             .FirstOrDefaultAsync(s => s.Id == dto.ShowId);
             if (show == null)

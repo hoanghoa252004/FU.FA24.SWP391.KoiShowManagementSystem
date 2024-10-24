@@ -13,7 +13,7 @@ namespace KoiShowManagementSystem.DTOs.Request
         public string? Name { get; set; }
         public decimal MinSize { get; set; }
         public decimal MaxSize { get; set; }
-        public HashSet<int>? Varieties { get; set; }
+        public List<int>? Varieties { get; set; }
         public List<CriteriaDTO>? Criterias { get; set; }
         public int ShowId { get; set; }
     }
