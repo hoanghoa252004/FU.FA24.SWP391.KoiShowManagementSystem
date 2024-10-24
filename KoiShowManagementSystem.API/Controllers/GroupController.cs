@@ -17,7 +17,7 @@ namespace KoiShowManagementSystem.API.Controllers
             _groupService = groupService;
         }
 
-        [Authorize(Roles = "Member")]
+        [Authorize(Roles = "Manager")]
         [HttpPost("add-group")]
         public async Task<IActionResult> AddGroup([FromForm] GroupDTO group)
         {
@@ -29,7 +29,7 @@ namespace KoiShowManagementSystem.API.Controllers
             return BadRequest(new ApiResponse { Message = "Failed" });
         }
 
-        [Authorize(Roles = "Member")]
+        [Authorize(Roles = "Manager")]
         [HttpPut("update-group")]
         public async Task<IActionResult> UpdateGroup([FromForm] GroupDTO group)
         {
@@ -41,7 +41,7 @@ namespace KoiShowManagementSystem.API.Controllers
             return BadRequest(new ApiResponse { Message = "Failed" });
         }
 
-        [Authorize(Roles = "Member")]
+        [Authorize(Roles = "Manager")]
         [HttpDelete("delete-group")]
         public async Task<IActionResult> DeleteGroup(int groupId)
         {
@@ -64,7 +64,7 @@ namespace KoiShowManagementSystem.API.Controllers
             return Ok(new ApiResponse { Message = "Success", Payload = result });
         }
 
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         [HttpGet("review-group-score")]
         public async Task<IActionResult> ReviewGroupScore(int showId)
         {
