@@ -117,6 +117,7 @@ namespace KoiShowManagementSystem.Repositories
                     Status = true,
                 }).ToList(),
                 Varieties = _context.Varieties.Where(v => dto.Varieties!.Contains(v.Id)).ToList(),
+                Status = true,
             };
             if (dto.Criterias.IsNullOrEmpty())
             {
