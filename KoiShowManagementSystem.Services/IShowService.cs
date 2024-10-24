@@ -17,5 +17,6 @@ namespace KoiShowManagementSystem.Services
         Task<int> CreateAShow(ShowDTO dto);
         Task<bool> UpdateShow(ShowDTO dto);
         Task<List<ShowModel>> GetAllShow();
+        Task ChangeStatusShow(string status, int showId);
     }
 }

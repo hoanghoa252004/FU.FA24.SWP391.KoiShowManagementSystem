@@ -175,5 +175,15 @@ namespace KoiShowManagementSystem.API.Controllers
             }
             return NotFound(new ApiResponse { Message = "No shows found", });
         }
+
+        // change status show
+        [Authorize(Roles = "Manager")]
+        [HttpPost("change-status-show")]
+        public async Task<IActionResult> ChangeStatusShow(string status, int showId)
+        {
+            await _koiShowService.ChangeStatusShow(status, showId);
+            return Ok(new ApiResponse { Message = "Success" });
+        }
+
     }
 }

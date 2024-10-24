@@ -71,6 +71,11 @@ namespace KoiShowManagementSystem.Services
         {
             return await _repository.Show.GetAllShow();
         }
-       
+
+        public async Task ChangeStatusShow(string status, int showId)
+        {
+            await _repository.Show.ChangeShowStatus(status, showId);
+        }
+
     }
 }
