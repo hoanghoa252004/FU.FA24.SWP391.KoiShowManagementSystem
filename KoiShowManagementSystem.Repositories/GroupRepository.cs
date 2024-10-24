@@ -109,13 +109,6 @@ namespace KoiShowManagementSystem.Repositories
                 SizeMax = dto.MaxSize,
                 SizeMin = dto.MinSize,
                 ShowId = dto.ShowId,
-                Criteria =dto.Criterias!.Select(c => new Criterion
-                {
-                    Name = c.Name,
-                    Percentage = c.Percentage,
-                    Description = c.Description,
-                    Status = true,
-                }).ToList(),
                 Status = true,
             };
             if (!dto.Criterias.IsNullOrEmpty())

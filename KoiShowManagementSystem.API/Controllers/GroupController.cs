@@ -19,7 +19,7 @@ namespace KoiShowManagementSystem.API.Controllers
 
         [Authorize(Roles = "Manager")]
         [HttpPost("add-group")]
-        public async Task<IActionResult> AddGroup([FromForm] GroupDTO group)
+        public async Task<IActionResult> AddGroup([FromBody] GroupDTO group)
         {
             var result = await _groupService.AddGroupToShow(group);
             if (result)
