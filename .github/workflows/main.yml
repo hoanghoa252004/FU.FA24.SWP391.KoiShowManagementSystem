@@ -1,3 +1,4 @@
+# Start of CI workflow file.
 name: Toi muon deploy
 
 #sẽ trigger cái job này khi đẩy code lên nhánh nào: => đẩy code lên main thì tự trigger
@@ -18,3 +19,5 @@ jobs:
     #build tại vps bằng docker thì sau đó con backend sẽ chạy ở docker trong vps
     - name: Run `docker compose`
       run: docker compose up --build -d
+      
+# End of CI workflow file.
