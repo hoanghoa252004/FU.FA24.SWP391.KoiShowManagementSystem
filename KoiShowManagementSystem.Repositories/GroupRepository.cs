@@ -116,10 +116,9 @@ namespace KoiShowManagementSystem.Repositories
                     Description = c.Description,
                     Status = true,
                 }).ToList(),
-                Varieties = _context.Varieties.Where(v => dto.Varieties!.Contains(v.Id)).ToList(),
                 Status = true,
             };
-            if (dto.Criterias.IsNullOrEmpty())
+            if (!dto.Criterias.IsNullOrEmpty())
             {
                 group.Criteria = dto.Criterias!.Select(c => new Criterion
                 {
@@ -129,7 +128,7 @@ namespace KoiShowManagementSystem.Repositories
                     Status = true,
                 }).ToList();
             }
-            if (dto.Criterias.IsNullOrEmpty())
+            if (!dto.Varieties.IsNullOrEmpty())
             {
                 group.Varieties = _context.Varieties.Where(v => dto.Varieties!.Contains(v.Id)).ToList();
             }
