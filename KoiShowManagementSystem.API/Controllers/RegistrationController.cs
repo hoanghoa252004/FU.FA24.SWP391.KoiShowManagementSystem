@@ -259,6 +259,34 @@ namespace KoiShowManagementSystem.API.Controllers
                 });
             }
         }
+
+        // get registration by group
+        [HttpGet("registrations-by-group")]
+
+        public async Task<IActionResult> GetRegistrationByGroup(int pageIndex, int pageSize, int groupId)
+        {
+            if (groupId <= 0)
+            {
+                return BadRequest(new ApiResponse { Message = "Invalid group ID." });
+            }
+
+            if (pageIndex < 1 || pageSize < 1)
+            {
+                return BadRequest(new ApiResponse { Message = "Page index or Page size must be greater than or equal to 1." });
+            }
+
+            var result = await _registrationService.GetRegistrationByGroup(pageIndex, pageSize, groupId);
+
+            return Ok(new
+            {
+                Message = "Success",
+                Payload = new
+                {
+                    TotalItems = result.TotalItems,
+                    Registrations = result.Registrations
+                }
+            });
+        }
         #endregion
     }
 }

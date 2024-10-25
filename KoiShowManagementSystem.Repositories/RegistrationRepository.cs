@@ -65,7 +65,7 @@ namespace KoiShowManagementSystem.Repositories
                 .Include(r => r.Group)
                 .Include(r => r.Media)
                 .Where(r => r.Koi.User.Id == id)
-                .Select( r => new RegistrationModel()
+                .Select(r => new RegistrationModel()
                 {
                     Id = r.Id,
                     Name = r.Koi.Name,
@@ -89,7 +89,7 @@ namespace KoiShowManagementSystem.Repositories
                     IsPaid = r.IsPaid,
                     EntranceFee = r.Show.EntranceFee,
                 });
-                //var koisssss = kois.Where(koi => koi.UserId == id).ToList();
+            //var koisssss = kois.Where(koi => koi.UserId == id).ToList();
             // Join lấy thông tin:
             //IEnumerable<Registration> registrations = await _context.Set<Registration>().ToListAsync();
             //IEnumerable<Show> shows = await _context.Set<Show>().ToListAsync();
@@ -188,7 +188,7 @@ namespace KoiShowManagementSystem.Repositories
                                     Description = koi.Description,
                                     Size = reg.Size,
                                     ShowId = s.Id,
-                                    Group =g.Name,
+                                    Group = g.Name,
                                     TotalScore = reg.TotalScore,
                                     IsBestVote = reg.IsBestVote,
                                     Status = reg.Status,
@@ -206,17 +206,17 @@ namespace KoiShowManagementSystem.Repositories
         {
             RegistrationModel result = null!;
             var updateRegistration = await _context.Registrations.Include(user => user.Koi).ThenInclude(k => k!.Variety).SingleOrDefaultAsync(r => r.Id == dto.Id);
-            if(updateRegistration != null)
+            if (updateRegistration != null)
             {
-                if(dto.Size != null)
+                if (dto.Size != null)
                 {
                     updateRegistration.Size = (int)dto.Size;
                 }
-                if(dto.KoiId != null)
+                if (dto.KoiId != null)
                 {
                     updateRegistration.KoiId = (int)dto.KoiId;
                 }
-                if(dto.GroupId != null)
+                if (dto.GroupId != null)
                 {
                     updateRegistration.GroupId = dto.GroupId;
                 }
@@ -254,7 +254,7 @@ namespace KoiShowManagementSystem.Repositories
                     }
                 }
                 await _context.SaveChangesAsync();
-                var showTitle = (await _context.Groups.Include(gr => gr.Show).SingleOrDefaultAsync(grp => grp.Id == updateRegistration.GroupId))?.Show?.Title ;
+                var showTitle = (await _context.Groups.Include(gr => gr.Show).SingleOrDefaultAsync(grp => grp.Id == updateRegistration.GroupId))?.Show?.Title;
                 var media = await _context.Media.SingleOrDefaultAsync(me => me.RegistrationId == updateRegistration.Id);
                 if (showTitle != null && media != null)
                 {
@@ -276,7 +276,7 @@ namespace KoiShowManagementSystem.Repositories
                         Variety = updateRegistration.Koi?.Variety?.Name,
                         Status = updateRegistration.Status,
                     };
-                }  
+                }
             }
             return result;
         }
@@ -297,8 +297,8 @@ namespace KoiShowManagementSystem.Repositories
                     KoiID = r.Koi!.Id,
                     Name = r.Koi.Name,
                     Image1 = (from med in _context.Media
-                             where med.RegistrationId ==r.Id
-                             select med.Image1).First(),
+                              where med.RegistrationId == r.Id
+                              select med.Image1).First(),
                     Image2 = (from med in _context.Media
                               where med.RegistrationId == r.Id
                               select med.Image2).First(),
@@ -331,7 +331,7 @@ namespace KoiShowManagementSystem.Repositories
             var registration = await _context.Registrations
                 .Include(r => r.Users)
                 .SingleOrDefaultAsync(r => r.Id == registrationId);
-            if(registration != null)
+            if (registration != null)
             {
                 var vote = registration.Users.Where(user => user.Id == userId);
                 if (vote.Any() == false)
@@ -348,7 +348,7 @@ namespace KoiShowManagementSystem.Repositories
             var member = await _context.Users.SingleOrDefaultAsync(r => r.Id == memberId);
             if (registration != null && member != null)
             {
-                if(vote == true)
+                if (vote == true)
                 {
                     registration.Users.Add(member);
                     await _context.SaveChangesAsync();
@@ -382,6 +382,25 @@ namespace KoiShowManagementSystem.Repositories
                     await _context.SaveChangesAsync();
                 }
             }
+        }
+
+        public async Task<List<RegistrationModel>> GetRegistrationByGroup(int groupId)
+        {
+            return await _context.Registrations.Where(r => (r.Status.ToLower().Equals("accepted") || r.Status.ToLower().Equals("scored")) && r.GroupId == groupId).Select
+                (r => new RegistrationModel
+                {
+                    Id = r.Id,
+                    Show = r.Group!.Show!.Title,
+                    Group = r.Group.Name,
+                    TotalScore = r.TotalScore,
+                    Size = r.Size,
+                    Status = r.Status,
+                    IsBestVote = r.IsBestVote,
+                    Image1 = r.Media!.Image1,
+                    Image2 = r.Media.Image2,
+                    Image3 = r.Media.Image3,
+                    Video = r.Media.Video,
+                }).ToListAsync();
         }
     }
 }

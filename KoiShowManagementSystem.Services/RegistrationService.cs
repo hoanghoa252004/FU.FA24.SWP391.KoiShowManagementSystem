@@ -518,5 +518,21 @@ namespace KoiShowManagementSystem.Services
             else
                 throw new Exception("Failed: You have no registration !");
         }
+
+
+        public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetRegistrationByGroup(int pageIndex, int pageSize, int groupId)
+        {
+            var query = _repository.Registrations.GetRegistrationByGroup(groupId);
+
+            var totalItems = query.Result.Count();
+
+            var registrations =  query.Result
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize).ToList();
+
+            return (totalItems, registrations);
+        }
+
+
     }
 }

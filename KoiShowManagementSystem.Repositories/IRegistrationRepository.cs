@@ -20,5 +20,6 @@ namespace KoiShowManagementSystem.Repositories
         Task UpdateVotes(int registrationId, int memberId, bool vote);
         Task<List<Registration>> GetRegistrationsByMemberIdAsync(int memberId);
         Task DeleteRegistration(int registrationId);
+        Task<List<RegistrationModel>> GetRegistrationByGroup(int groupId);
     }
 }
