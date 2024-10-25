@@ -16,5 +16,8 @@ namespace KoiShowManagementSystem.Repositories
 
         Task<List<RefereeModel>> GetAllRefereeByShowAsync(int showId);
         Task<bool> AddRefereeToShowAsync(List<int> referees, int showId);
+
+        Task<RefereeModel> GetRefereeDetailById(int refereeDetailId);
+        Task<bool> RemoveRefereeDetailFromShow(int refereeDetailId);
     }
 }

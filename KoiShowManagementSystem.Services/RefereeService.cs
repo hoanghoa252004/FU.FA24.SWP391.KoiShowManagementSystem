@@ -56,5 +56,28 @@ namespace KoiShowManagementSystem.Services
             var result = await _repository.Referees.AddRefereeToShowAsync(referees, showId);
             return result;
         }
+
+        // REMOVE REFEREE FROM SHOW:
+        public async Task<bool> RemoveRefereeFromShow(int refereeDetailId)
+        {
+            // V01: Check refereeDetail exists:
+            var refereeDetail = await _repository.Referees.GetRefereeDetailById(refereeDetailId);
+            if (refereeDetail == null)
+            {
+                throw new Exception("Failed: Referee does not exist !");
+            }
+            else
+            {
+                // V02: Check show status:
+                if (refereeDetail.ShowTookOnStatus!.Equals("Scoring", StringComparison.OrdinalIgnoreCase) == true
+                    || refereeDetail.ShowTookOnStatus!.Equals("Finished", StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    throw new Exception("Failed: Can not remove this referee from show !");
+                }    
+            }
+            // START:
+            bool result = await _repository.Referees.RemoveRefereeDetailFromShow(refereeDetailId);
+            return result;
+        }
     }
 }
