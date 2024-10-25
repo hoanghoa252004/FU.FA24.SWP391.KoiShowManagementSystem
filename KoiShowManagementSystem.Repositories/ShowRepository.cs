@@ -195,20 +195,20 @@ namespace KoiShowManagementSystem.Repositories
                 ScoreEndDate = dto.ScoreEndDate,
                 Banner = await _s3Service.UploadShowBannerImage(dto.Banner!),
                 Status = "up comming",
-                Groups = dto.Groups!.Select(g => new Group
-                {
-                    Name = g.Name,
-                    SizeMin = g.MinSize,
-                    SizeMax = g.MaxSize,
-                    Varieties = _context.Varieties.Where(v => g.Varieties!.Contains(v.Id)).ToList(),
-                    Criteria = g.Criterias!.Select(c => new Criterion
-                    {
-                        Name = c.Name,
-                        Percentage = c.Percentage,
-                        Description = c.Description,
-                        Status = true,
-                    }).ToList()
-                }).ToList(),
+                //Groups = dto.Groups!.Select(g => new Group
+                //{
+                //    Name = g.Name,
+                //    SizeMin = g.MinSize,
+                //    SizeMax = g.MaxSize,
+                //    Varieties = _context.Varieties.Where(v => g.Varieties!.Contains(v.Id)).ToList(),
+                //    Criteria = g.Criterias!.Select(c => new Criterion
+                //    {
+                //        Name = c.Name,
+                //        Percentage = c.Percentage,
+                //        Description = c.Description,
+                //        Status = true,
+                //    }).ToList()
+                //}).ToList(),
                 EntranceFee = dto.EntranceFee,
             };
             
