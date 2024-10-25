@@ -16,5 +16,6 @@ namespace KoiShowManagementSystem.Services
         Task<List<ShowModel>> GetShowsWithKoiByUserIdAsync();
         Task<List<RefereeModel>> GetAllRefereeByShow(int showId);
         Task<bool> AddRefereeToShow(List<int> referees, int showId);
+        Task<bool> RemoveRefereeFromShow(int refereeDetailId);
     }
 }
