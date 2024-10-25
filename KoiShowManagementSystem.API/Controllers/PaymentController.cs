@@ -41,7 +41,7 @@ namespace KoiShowManagementSystem.API.Controllers
             //return Ok(areAllPaid);
             if (areAllPaid == false)
             {
-                return BadRequest(new ApiResponse { Message = "Not Payment" });
+                return Ok(new ApiResponse { Message = "Not Payment", Payload = areAllPaid });
             }
             return Ok(new ApiResponse { Message = "Success", Payload = areAllPaid });
         }
