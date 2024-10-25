@@ -171,8 +171,8 @@ namespace KoiShowManagementSystem.Repositories
                                 }).ToList(),
                                 Criterion = g.Criteria.Select(c => new CriterionModel()
                                 {
-                                    CriterionId = c.Id,
-                                    CriterionName = c.Name,
+                                    Id = c.Id,
+                                    Name = c.Name,
                                     Percentage = c.Percentage,
                                     Description = c.Description,
                                 }).ToList(),

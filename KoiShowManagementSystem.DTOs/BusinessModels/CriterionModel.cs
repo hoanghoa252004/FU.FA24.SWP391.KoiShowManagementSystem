@@ -8,8 +8,8 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
 {
     public class CriterionModel
     {
-        public int CriterionId { get; set; }
-        public string? CriterionName { get; set; }
+        public int Id { get; set; }
+        public string? Name { get; set; }
         public decimal? Percentage { get; set; }
         public string? Description { get; set; }
         public decimal? Score1 { get; set; }

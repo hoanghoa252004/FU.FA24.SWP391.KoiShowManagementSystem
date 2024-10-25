@@ -55,8 +55,8 @@ namespace KoiShowManagementSystem.Repositories
                     KoiName = r.Koi.Name,
                     criterions = g.Criteria.Select(c => new CriterionModel
                     {
-                        CriterionId = c.Id,
-                        CriterionName = c.Name
+                        Id = c.Id,
+                        Name = c.Name
                     }).ToList()
                 })).ToListAsync();
 
@@ -167,8 +167,8 @@ namespace KoiShowManagementSystem.Repositories
                              //isScored = r.Status == "Scored",
                              criterions = g.Criteria.Select(c => new CriterionModel
                              {
-                                 CriterionId = c.Id,
-                                 CriterionName = c.Name,
+                                 Id = c.Id,
+                                 Name = c.Name,
                                  Percentage = c.Percentage,
                                  Description = c.Description,
                                  Score1 = c.Scores

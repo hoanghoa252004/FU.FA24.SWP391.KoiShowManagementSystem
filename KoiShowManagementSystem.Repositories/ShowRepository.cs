@@ -60,8 +60,8 @@ namespace KoiShowManagementSystem.Repositories
                                                                    where cri.GroupId == gro.Id
                                                                    select new CriterionModel()
                                                                    {
-                                                                       CriterionId = cri.Id,
-                                                                       CriterionName = cri.Name,    
+                                                                       Id = cri.Id,
+                                                                       Name = cri.Name,    
                                                                        Description = cri.Description,
                                                                        Percentage = cri.Percentage,
                                                                    }).ToList(),
