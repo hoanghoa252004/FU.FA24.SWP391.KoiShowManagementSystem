@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace KoiShowManagementSystem.Repositories
@@ -124,14 +125,14 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<List<ShowModel>> GetShowsWithKoiByUserIdAsync(int userId)
         {
 
-            var shows =  _context.Shows
+            var shows = _context.Shows
                 .Include(s => s.RefereeDetails)
                 .Where(s => s.Status == "scoring" &&
                             s.RefereeDetails.Any(rd => rd.UserId == userId && s.Id == rd.ShowId))
-
                 .Include(s => s.Groups)
                     .ThenInclude(g => g.Registrations)
                     .ThenInclude(r => r.Koi)
+                    .ThenInclude(v => v.Variety)
                 .Include(s => s.Groups)
                     .ThenInclude(g => g.Criteria)
                 .Include(s => s.Groups)
@@ -140,7 +141,6 @@ namespace KoiShowManagementSystem.Repositories
                 .Include(s => s.Groups)
                     .ThenInclude(g => g.Registrations)
                     .ThenInclude(r => r.Scores);
-
             var listShow = await shows.Select(sh => new ShowModel
                  {
                      ShowId = sh.Id,
@@ -151,8 +151,8 @@ namespace KoiShowManagementSystem.Repositories
                      {
                          GroupId = g.Id,
                          GroupName = g.Name,
-                         //Scored = g.Registrations.Count(r => r.Status == "Scored"),
-                         //AmountNotScored = g.Registrations.Count(r => r.Status == "Accepted"),
+                         //Scored = g.Registrations.Where(r => r.GroupId == g.Id ).Count(r => r.Status.ToLower().Equals("scored")),
+                         //AmountNotScored = g.Registrations.Where(r => r.GroupId == g.Id).Count(r => r.Status.ToLower().Equals("accepted")),
                          Kois = g.Registrations.Where(r => r.Status.ToLower().Equals("accepted")).Select(r => new KoiModel
                          {
                              KoiID = r.Koi!.Id,
@@ -163,6 +163,7 @@ namespace KoiShowManagementSystem.Repositories
                              KoiSize = r.Size,
                              Image3 = r.Media.Image3,
                              Video = r.Media.Video,
+                             VarietyName = r.Koi.Variety.Name,
                              isScored = r.Scores.Any(s => s.RegistrationId == r.Id && s.RefereeDetailId == sh.RefereeDetails.FirstOrDefault(rd => rd.UserId == userId)!.Id),
                              //isScored = r.Status == "Scored",
                              criterions = g.Criteria.Select(c => new CriterionModel
