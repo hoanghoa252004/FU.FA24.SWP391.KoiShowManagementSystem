@@ -174,11 +174,23 @@ namespace KoiShowManagementSystem.Services
                 throw new Exception("Failed: User does not exit !");
         }
 
-        public async Task<List<UserModel>> GetAllUser(int pageIndex, int pageSize, string role)
+        public async Task<List<UserModel>> GetAllUser(int pageIndex, int pageSize, string? role)
         {
-            var result = (await _repository.Users.GetAllUser()).Where(u => u.Role!.Equals(role,StringComparison.OrdinalIgnoreCase))
-                .Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-            return result;
+            if (role != null)
+            {
+                return (await _repository.Users.GetAllUser())
+                    .Where(u => u.Role!.Equals(role, StringComparison.OrdinalIgnoreCase))
+                    .OrderByDescending(u => u.Id)
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize).ToList();
+            }
+            else
+            {
+                return (await _repository.Users.GetAllUser())
+                    .OrderByDescending(u => u.Id)
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize).ToList();
+            }
         }
     }
 }
