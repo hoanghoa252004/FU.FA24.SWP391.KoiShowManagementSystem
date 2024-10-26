@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -337,6 +338,101 @@ namespace KoiShowManagementSystem.Repositories
             }
             return true;
         }
+
+
+        public async Task<List<DashboardRegistrationModel>> CountRegistrationsOfRecentShowAsync(int quantityOfShow)
+        {
+            List<DashboardRegistrationModel> result = new List<DashboardRegistrationModel>();
+            // Lấy n Show cần:
+            var shows = await _context.Shows
+                .Where(s => s.Status!.Equals("Finished"))
+                .Include(s => s.Registrations)
+                .OrderByDescending(s => s.RegisterStartDate)
+                .Take(quantityOfShow).ToListAsync();
+            // Tính total registration:
+            foreach (var show in shows)
+            {
+                int totalRegistration = 0;
+                foreach (var registration in show.Registrations)
+                {
+                    totalRegistration++;
+                }
+                result.Add(new DashboardRegistrationModel()
+                {
+                    ShowId = show.Id,
+                    ShowTitle = show.Title,
+                    StartRegisterDate = show.RegisterStartDate,
+                    Status = show.Status,
+                    TotalRegistrations = totalRegistration,
+                });
+            };
+            return result.OrderBy(r => r.StartRegisterDate).ToList();
+        }
+
+        public async Task<List<DashboardRevenueModel>> CalculateRevenueOfRecentShowAsync(int quantityOfShow)
+        {
+            List<DashboardRevenueModel> result = new List<DashboardRevenueModel>();
+            // Lấy n Show cần:
+            var shows = await _context.Shows
+                .Where(s => s.Status!.Equals("Finished"))
+                .Include(s => s.Registrations)
+                .OrderByDescending(s => s.RegisterStartDate)
+                .Take(quantityOfShow).ToListAsync();
+            // Tính total registration:
+            foreach (var show in shows)
+            {
+                int totalRegistration = 0;
+                foreach (var registration in show.Registrations)
+                {
+                    totalRegistration++;
+                }
+                result.Add(new DashboardRevenueModel()
+                {
+                    ShowId = show.Id,
+                    ShowTitle = show.Title,
+                    StartRegisterDate = show.RegisterStartDate,
+                    Status = show.Status,
+                    TotalRevenue = (decimal) show.EntranceFee! * totalRegistration,
+                });
+            };
+            return result.OrderBy(r => r.StartRegisterDate).ToList();
+        }
+
+        public async Task<List<DashboardVarietyModel>> CountKoiVarietyOfRecentShowAsync(int quantityOfShow)
+        {
+            List<DashboardVarietyModel> result = new List<DashboardVarietyModel>();
+            // Lấy n Show cần:
+            var shows = await _context.Shows
+                .Where(s => s.Status!.Equals("Finished"))
+                .Include(s => s.Registrations)
+                    .ThenInclude(r => r.Koi)
+                        .ThenInclude(k => k!.Variety)
+                .OrderByDescending(s => s.RegisterStartDate)
+                .Take(quantityOfShow).ToListAsync();
+            foreach (var show in shows)
+            {
+                foreach (var registration in show.Registrations)
+                {
+                    var variety = result.SingleOrDefault(v => v.VarietyId == registration.Koi!.VarietyId);
+                    // Kiểm tra nếu list variety chưa có loài này:
+                    if (variety == null)
+                    {
+                        result.Add(new DashboardVarietyModel()
+                        {
+                            VarietyId = registration.Koi!.Variety.Id,
+                            VarietyName = registration.Koi!.Variety.Name,
+                            Quantity = 1
+                        });
+                    }
+                    // Nếu đã có rồi:
+                    else
+                    {
+                        variety.Quantity += 1;
+                    }
+                }
+            };
+            return result.OrderByDescending(v => v.Quantity).ToList();
+        }
         //public async Task<bool> EditAShow(ShowDTO dto)
         //{
         //    var show = await _context.Shows.FindAsync(dto.Id);
@@ -526,6 +622,6 @@ namespace KoiShowManagementSystem.Repositories
                VarietyList = varietyModels,
            };
         }
-        */       
+        */
     }
 }

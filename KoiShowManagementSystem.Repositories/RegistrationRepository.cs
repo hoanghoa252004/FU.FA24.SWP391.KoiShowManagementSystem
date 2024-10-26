@@ -88,6 +88,7 @@ namespace KoiShowManagementSystem.Repositories
                     Video = r.Media.Video,
                     IsPaid = r.IsPaid,
                     EntranceFee = r.Show.EntranceFee,
+                    Note = r.Note,
                 });
             //var koisssss = kois.Where(koi => koi.UserId == id).ToList();
             // Join lấy thông tin:
