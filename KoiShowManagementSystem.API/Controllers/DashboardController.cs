@@ -1,6 +1,7 @@
 ﻿using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.DTOs.Response;
 using KoiShowManagementSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace KoiShowManagementSystem.API.Controllers
         }
         #region API
         // 1: DASHBOARD REGISTRATION:-----------------------------------------------------------------
+        [Authorize(Roles = "Manager")]
         [HttpGet("quantity-registrations-of-shows")]
         public async Task<IActionResult> GetRegistrationDashboard(int quantityOfRecentShow)
         {
@@ -39,6 +41,7 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         // 2: DASHBOARD REVENUE:-----------------------------------------------------------------
+        [Authorize(Roles = "Manager")]
         [HttpGet("renevnue-of-shows")]
         public async Task<IActionResult> GetRevenueDashboard(int quantityOfRecentShow)
         {
@@ -61,6 +64,7 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
         // 3: DASHBOARD VARIETY:-----------------------------------------------------------------
+        [Authorize(Roles = "Manager")]
         [HttpGet("quantity-of-each-variety-in-shows")]
         public async Task<IActionResult> GetVarietyDashboard(int quantityOfRecentShow)
         {
