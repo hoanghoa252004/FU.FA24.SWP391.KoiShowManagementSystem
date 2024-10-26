@@ -124,7 +124,7 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        // 6: CREATE USER:-----------------------------------------------------------
+        // 7: DELETE USER:-----------------------------------------------------------
         [Authorize(Roles = "Manager,Staff")]
         [HttpDelete("delete-user")]
         public async Task<IActionResult> DeleteUser(int userId)
@@ -135,6 +135,30 @@ namespace KoiShowManagementSystem.API.Controllers
                 return Ok(new ApiResponse()
                 {
                     Message = "Delete User Successfully ."
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
+
+
+        // 8: GET ALL USER:-----------------------------------------------------------
+        [Authorize(Roles = "Manager")]
+        [HttpGet("get-all-user")]
+        public async Task<IActionResult> GetAllUser(int pageIndex, int pageSize, string role)
+        {
+            try
+            {
+                var result = await _userService.GetAllUser(pageIndex, pageSize, role);
+                return Ok(new ApiResponse()
+                {
+                    Message = $"Get {role}s Successfully .",
+                    Payload = result
                 });
             }
             catch (Exception ex)

@@ -138,7 +138,8 @@ namespace KoiShowManagementSystem.Repositories
                 Phone = u.Phone,
                 Role = u.Role.Title,
                 DateOfBirth = u.DateOfBirth,
-                Password = u.Password
+                Gender = u.Gender,
+                Status = u.Status,
             }).ToListAsync();
             return result;
         }
