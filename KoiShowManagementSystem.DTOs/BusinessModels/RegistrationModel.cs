@@ -31,5 +31,6 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
         public int TotalVote {  get; set; } 
 
         public decimal? EntranceFee { get; set; }
+        public string? Note { get; set; }
     }
 }

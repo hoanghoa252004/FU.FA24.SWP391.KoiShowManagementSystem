@@ -71,6 +71,7 @@ namespace KoiShowManagementSystem.API
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IVarietyService, VarietyService>();
             builder.Services.AddScoped<IRoleService, RoleService>();
+            builder.Services.AddScoped<IDashboardService, DashboardService>();
 
             // Thêm Schema & Params dùng validate Token:
             builder.Services.AddAuthentication(options =>
