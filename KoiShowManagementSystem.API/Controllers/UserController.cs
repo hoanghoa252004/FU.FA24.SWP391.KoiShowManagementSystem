@@ -148,7 +148,7 @@ namespace KoiShowManagementSystem.API.Controllers
 
 
         // 8: GET ALL USER:-----------------------------------------------------------
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         [HttpGet("get-all-user")]
         public async Task<IActionResult> GetAllUser(int pageIndex, int pageSize, string? role)
         {
@@ -158,7 +158,11 @@ namespace KoiShowManagementSystem.API.Controllers
                 return Ok(new ApiResponse()
                 {
                     Message = $"Get {role}s Successfully .",
-                    Payload = result
+                    Payload = new
+                    {
+                        TotalItems = result.TotalItems,
+                        Users = result.Users,
+                    }
                 });
             }
             catch (Exception ex)
