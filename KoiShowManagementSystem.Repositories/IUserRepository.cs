@@ -17,6 +17,6 @@ namespace KoiShowManagementSystem.Repositories
         Task UpdatePasswordById(int id, string newPassword);
         Task<UserModel> GetUserById(int userId);
         Task<List<UserModel>> GetAllUser();
-        Task DeleteUser(int userId);
+        Task UpdateStatus(int userId, bool status);
     }
 }

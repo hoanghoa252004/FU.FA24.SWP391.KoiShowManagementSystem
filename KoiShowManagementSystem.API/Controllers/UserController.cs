@@ -124,17 +124,17 @@ namespace KoiShowManagementSystem.API.Controllers
             }
         }
 
-        // 7: DELETE USER:-----------------------------------------------------------
+        // 7: UPDATE USER STATUS:-----------------------------------------------------------
         [Authorize(Roles = "Manager,Staff")]
-        [HttpDelete("delete-user")]
-        public async Task<IActionResult> DeleteUser(int userId)
+        [HttpPut("update-user-status")]
+        public async Task<IActionResult> UpdateStatus(int userId, bool status)
         {
             try
             {
-                await _userService.DeleteUser(userId);
+                await _userService.UpdateStatus(userId, status);
                 return Ok(new ApiResponse()
                 {
-                    Message = "Delete User Successfully ."
+                    Message = "Update User Status Successfully ."
                 });
             }
             catch (Exception ex)
