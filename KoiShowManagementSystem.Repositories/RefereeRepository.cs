@@ -195,6 +195,7 @@ namespace KoiShowManagementSystem.Repositories
             var referees = show!.RefereeDetails.Where(r => r.User!.Status == true)
                                                .Select(rd => new RefereeModel
                                                 {
+                                                   Id = rd.User!.Id,
                                                 RefereeId = rd.Id,
                                                 RefereeName = rd.User!.Name,
                                                 }).ToList();
