@@ -112,7 +112,7 @@ namespace KoiShowManagementSystem.API
                 app.UseSwaggerUI();
             //}
             app.UseCors();
-
+            
             app.UseHttpsRedirection();
 
 
