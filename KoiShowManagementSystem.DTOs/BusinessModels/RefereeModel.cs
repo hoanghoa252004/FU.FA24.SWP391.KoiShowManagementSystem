@@ -8,7 +8,7 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
 {
     public class RefereeModel
     {
-
+        public int Id { get; set; } // UserId
         public int RefereeId { get; set; }
         public string? RefereeName { get; set; }
         public string? ShowTookOnStatus { get; set; } // Dùng để lưu luôn status của show mà nó đảm nhiệm 
