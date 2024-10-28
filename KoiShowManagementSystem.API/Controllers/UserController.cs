@@ -150,7 +150,7 @@ namespace KoiShowManagementSystem.API.Controllers
         // 8: GET ALL USER:-----------------------------------------------------------
         [Authorize(Roles = "Manager")]
         [HttpGet("get-all-user")]
-        public async Task<IActionResult> GetAllUser(int pageIndex, int pageSize, string? role)
+        public async Task<IActionResult> GetAllUser(int? pageIndex, int? pageSize, string? role)
         {
             try
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -183,7 +184,7 @@ namespace KoiShowManagementSystem.Services
                 throw new Exception("Failed: User does not exit !");
         }
 
-        public async Task<(int TotalItems, List<UserModel> Users)> GetAllUser(int pageIndex, int pageSize, string? role)
+        public async Task<(int? TotalItems, List<UserModel> Users)> GetAllUser(int? pageIndex, int? pageSize, string? role)
         {
             if (role != null)
             {
@@ -191,18 +192,40 @@ namespace KoiShowManagementSystem.Services
                     .Where(u => u.Role!.Equals(role, StringComparison.OrdinalIgnoreCase))
                     .OrderByDescending(u => u.Id);
                 var totlaResult = list.Count();
-                var usersResult = list.Skip((pageIndex - 1) * pageSize)
-                    .Take(pageSize).ToList();
-                return (totlaResult, usersResult);
+                if (pageIndex != null && pageSize != null)
+                {
+                    var usersResult = list.Skip((int)((pageIndex - 1) * pageSize))
+                    .Take((int)pageSize).ToList();
+                    return (totlaResult, usersResult);
+                }
+                else if (pageIndex == null && pageSize == null)
+                {
+                    return (totlaResult, list.ToList());
+                }
+                else
+                {
+                    throw new Exception("Failed: Lack of page index or page size !");
+                }
             }
             else
             {
                 var list = (await _repository.Users.GetAllUser())
                     .OrderByDescending(u => u.Id);
                 var totlaResult = list.Count();
-                var usersResult = list.Skip((pageIndex - 1) * pageSize)
-                    .Take(pageSize).ToList();
-                return (totlaResult, usersResult);
+                if (pageIndex != null && pageSize != null)
+                {
+                    var usersResult = list.Skip((int)((pageIndex - 1) * pageSize))
+                    .Take((int)pageSize).ToList();
+                    return (totlaResult, usersResult);
+                }
+                else if (pageIndex == null && pageSize == null)
+                {
+                    return (totlaResult, list.ToList());
+                }
+                else
+                {
+                    throw new Exception("Failed: Lack of page index or page size !");
+                }
             }
         }
     }
