@@ -1,5 +1,6 @@
 ﻿using KoiShowManagementSystem.DTOs.Request;
 using KoiShowManagementSystem.DTOs.Response;
+using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -42,5 +43,36 @@ namespace KoiShowManagementSystem.API.Controllers
         }
 
 
+        // 3. REMOVE REFEREE FROM SHOW:
+        [Authorize(Roles = "Manager")]
+        [HttpDelete("remove-referee-from-show")]
+        public async Task<IActionResult> RemoveRefereeFromShow(int refereeDetail)
+        {
+            try
+            {
+                bool result = await _refereeService.RemoveRefereeFromShow(refereeDetail);
+                if (result == true)
+                {
+                    return Ok(new ApiResponse()
+                    {
+                        Message = "Removew Referee From Show Successfully."
+                    });
+                }
+                else
+                {
+                    return BadRequest(new ApiResponse()
+                    {
+                        Message = "Failed To Remove Referee From Show !"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -147,12 +148,21 @@ namespace KoiShowManagementSystem.Services
         }
 
         // 7. DELETE USER:----------------------------------
-        public async Task DeleteUser(int userId)
+        public async Task UpdateStatus(int userId, bool status)
         {
             var actor = _jwtServices.GetIdAndRoleFromToken();
             var user = await _repository.Users.GetUserById(userId);
             if (user != null)
             {
+                // V00: Update nhiều lần 1 gái trị:
+                if(user.Status == true && status == true)
+                {
+                    throw new Exception("Failed: This user's active already !");
+                }
+                if (user.Status == false && status == false)
+                {
+                    throw new Exception("Failed: This user's inactive already !");
+                }
                 // V01: Tự xóa mình:
                 if (actor.userId == user.Id)
                     throw new Exception("Failed: Sorry, you're not able to perform this behavior !");
@@ -161,17 +171,62 @@ namespace KoiShowManagementSystem.Services
                     if(user.Role!.Equals("Manager") == true
                     || user.Role!.Equals("Referee") == true
                     || user.Role!.Equals("Staff") == true)
-                        throw new Exception("Failed: Staff does not have permission to delete Manager, Referee or other Staff !");
+                        throw new Exception("Failed: Staff does not have permission to do anything towards Manager, Referee or other Staff !");
                     else
-                        await _repository.Users.DeleteUser(userId);
+                        await _repository.Users.UpdateStatus(userId, status);
                 } 
                 else if (actor.role.Equals("Manager", StringComparison.OrdinalIgnoreCase) == true)
-                    await _repository.Users.DeleteUser(userId);
+                    await _repository.Users.UpdateStatus(userId, status);
                 else
-                    throw new Exception("Failed: You do not have permission to delete any user !");
+                    throw new Exception("Failed: You do not have permission to do anything towards any user !");
             }
             else
                 throw new Exception("Failed: User does not exit !");
+        }
+
+        public async Task<(int? TotalItems, List<UserModel> Users)> GetAllUser(int? pageIndex, int? pageSize, string? role)
+        {
+            if (role != null)
+            {
+                var list = (await _repository.Users.GetAllUser())
+                    .Where(u => u.Role!.Equals(role, StringComparison.OrdinalIgnoreCase))
+                    .OrderByDescending(u => u.Id);
+                var totlaResult = list.Count();
+                if (pageIndex != null && pageSize != null)
+                {
+                    var usersResult = list.Skip((int)((pageIndex - 1) * pageSize))
+                    .Take((int)pageSize).ToList();
+                    return (totlaResult, usersResult);
+                }
+                else if (pageIndex == null && pageSize == null)
+                {
+                    return (totlaResult, list.ToList());
+                }
+                else
+                {
+                    throw new Exception("Failed: Lack of page index or page size !");
+                }
+            }
+            else
+            {
+                var list = (await _repository.Users.GetAllUser())
+                    .OrderByDescending(u => u.Id);
+                var totlaResult = list.Count();
+                if (pageIndex != null && pageSize != null)
+                {
+                    var usersResult = list.Skip((int)((pageIndex - 1) * pageSize))
+                    .Take((int)pageSize).ToList();
+                    return (totlaResult, usersResult);
+                }
+                else if (pageIndex == null && pageSize == null)
+                {
+                    return (totlaResult, list.ToList());
+                }
+                else
+                {
+                    throw new Exception("Failed: Lack of page index or page size !");
+                }
+            }
         }
     }
 }

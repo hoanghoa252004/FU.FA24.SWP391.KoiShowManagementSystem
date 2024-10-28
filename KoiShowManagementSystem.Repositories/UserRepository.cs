@@ -123,7 +123,8 @@ namespace KoiShowManagementSystem.Repositories
                     Role = user.Role.Title,
                     DateOfBirth = user.DateOfBirth,
                     Gender = user.Gender,
-                    Password = user.Password
+                    Password = user.Password,
+                    Status = user.Status,
                 };
             return null!;
         }
@@ -138,17 +139,18 @@ namespace KoiShowManagementSystem.Repositories
                 Phone = u.Phone,
                 Role = u.Role.Title,
                 DateOfBirth = u.DateOfBirth,
-                Password = u.Password
+                Gender = u.Gender,
+                Status = u.Status,
             }).ToListAsync();
             return result;
         }
 
-        public async Task DeleteUser(int userId)
+        public async Task UpdateStatus(int userId, bool status)
         {
             var user = _context.Users.SingleOrDefault(u => u.Id == userId);
             if(user != null)
             {
-                user.Status = false;
+                user.Status = status;
                 await _context.SaveChangesAsync();
             }
         }

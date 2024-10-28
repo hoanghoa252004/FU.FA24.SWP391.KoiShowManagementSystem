@@ -16,6 +16,7 @@ namespace KoiShowManagementSystem.Services
         Task<ProfileModel> EditProfile(EditProfileModel dto);
         Task<bool> ChangePassword(ChangePasswordModel dto);
         Task CreateUser(CreateUserRequest user);
-        Task DeleteUser(int userId);
+        Task UpdateStatus(int userId, bool status);
+        Task<(int? TotalItems, List<UserModel> Users)> GetAllUser(int? pageIndex, int? pageSize, string? role);
     }
 }

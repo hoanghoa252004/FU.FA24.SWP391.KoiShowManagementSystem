@@ -195,6 +195,7 @@ namespace KoiShowManagementSystem.Repositories
             var referees = show!.RefereeDetails.Where(r => r.User!.Status == true)
                                                .Select(rd => new RefereeModel
                                                 {
+                                                   Id = rd.User!.Id,
                                                 RefereeId = rd.Id,
                                                 RefereeName = rd.User!.Name,
                                                 }).ToList();
@@ -231,6 +232,37 @@ namespace KoiShowManagementSystem.Repositories
             int result = await _context.SaveChangesAsync();
             if (result == 0) return false;
             return true;
+        }
+
+        public async Task<RefereeModel> GetRefereeDetailById(int refereeDetailId)
+        {
+            var refereeDetail = await _context.RefereeDetails
+                .Include(rd => rd.Show)
+                .Include(rd => rd.User)
+                .SingleOrDefaultAsync(r => r.Id == refereeDetailId);
+            RefereeModel result = null!;
+            if (refereeDetail != null)
+                result = new RefereeModel()
+                {
+                    RefereeId = refereeDetail.Id,
+                    RefereeName = refereeDetail.User!.Name,
+                    ShowTookOnStatus = refereeDetail.Show!.Status,
+                };
+            return result;
+        }
+
+        public async Task<bool> RemoveRefereeDetailFromShow(int refereeDetailId)
+        {
+            bool result = false;
+            var refereeDetail = await _context.RefereeDetails
+                .SingleOrDefaultAsync(r => r.Id == refereeDetailId);
+            if (refereeDetail != null)
+            {
+                _context.RefereeDetails.Remove(refereeDetail);
+                await _context.SaveChangesAsync();
+                result = true;
+            }
+            return result;
         }
     }
 }
