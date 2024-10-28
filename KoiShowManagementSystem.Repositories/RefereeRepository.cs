@@ -217,7 +217,7 @@ namespace KoiShowManagementSystem.Repositories
                                         .Where(u => u.RoleId == 3 && u.Status == true)
                                         .FirstOrDefaultAsync(rd => rd.Id == refereeId);
 
-                if (referee != null && !show!.RefereeDetails.Any(rd => rd.Id == refereeId))
+                if (referee != null && !show!.RefereeDetails.Any(rd => rd.UserId == refereeId))
                 {
                     var refereeDetail = new RefereeDetail
                     {
