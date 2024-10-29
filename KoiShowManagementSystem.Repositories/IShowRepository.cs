@@ -24,5 +24,6 @@ namespace KoiShowManagementSystem.Repositories
         Task<List<DashboardRegistrationModel>> CountRegistrationsOfRecentShowAsync(int quantityRecOfShow);
         Task<List<DashboardRevenueModel>> CalculateRevenueOfRecentShowAsync(int quantityOfShow);
         Task<List<DashboardVarietyModel>> CountKoiVarietyOfRecentShowAsync(int quantityOfShow);
+        Task<bool> DeleteShowAsync(int showId);
     }
 }

@@ -185,5 +185,18 @@ namespace KoiShowManagementSystem.API.Controllers
             return Ok(new ApiResponse { Message = "Success" });
         }
 
+        [Authorize(Roles = "Manager")]
+        [HttpDelete("delete-show")]
+        public async Task<IActionResult> DeleteShow(int showId)
+        {
+            var result = await _koiShowService.DeleteShow(showId);
+            if (result)
+            {
+                return Ok(new ApiResponse { Message = "Success" });
+            }
+
+            return BadRequest(new ApiResponse { Message = "Failed to delete show." });
+        }
+
     }
 }

@@ -37,7 +37,7 @@ namespace KoiShowManagementSystem.Services
             return (totalItems, shows);
         }
 
-        
+
 
         public async Task<List<ShowModel>> GetClosestShow()
         {
@@ -57,7 +57,7 @@ namespace KoiShowManagementSystem.Services
 
         public async Task<int> CreateAShow(ShowDTO dto)
         {
-            
+
             return await _repository.Show.AddNewShow(dto);
         }
 
@@ -77,5 +77,10 @@ namespace KoiShowManagementSystem.Services
             await _repository.Show.ChangeShowStatus(status, showId);
         }
 
+        public async Task<bool> DeleteShow(int showId)
+        {
+            return await _repository.Show.DeleteShowAsync(showId);
+
+        }
     }
 }

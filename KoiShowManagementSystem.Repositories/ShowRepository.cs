@@ -433,6 +433,43 @@ namespace KoiShowManagementSystem.Repositories
             };
             return result.OrderByDescending(v => v.Quantity).ToList();
         }
+
+        // implement method delete a show by showId , delete group, criterion, refereeDetail , groupDetail
+        public async Task<bool> DeleteShowAsync(int showId)
+        {
+            var show = await _context.Shows
+                            .Include(s => s.Groups)
+                                .ThenInclude(g => g.Criteria)
+                            .Include(s => s.Groups)
+                                .ThenInclude(g => g.Varieties)
+                            .Include(s => s.RefereeDetails).SingleAsync(s => s.Id == showId);
+
+            if (show.Status!.ToLower() != "up comming")
+            {
+                throw new Exception("This is not an up comming show");
+            }
+            
+            if (!show.Groups.IsNullOrEmpty())
+            {
+                // delete all criteria and varieties of all groups
+                foreach (var group in show.Groups)
+                {
+                    _context.Criteria.RemoveRange(group.Criteria);
+                    _context.Varieties.RemoveRange(group.Varieties);
+                }
+                // delete all groups
+                _context.Groups.RemoveRange(show.Groups);
+            }
+
+            // delete all refereeDetails
+            _context.RefereeDetails.RemoveRange(show.RefereeDetails);
+
+            _context.Shows.Remove(show);
+            int result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
+
+
         //public async Task<bool> EditAShow(ShowDTO dto)
         //{
         //    var show = await _context.Shows.FindAsync(dto.Id);
