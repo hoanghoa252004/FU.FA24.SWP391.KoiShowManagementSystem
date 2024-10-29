@@ -79,5 +79,11 @@ namespace KoiShowManagementSystem.Services
             bool result = await _repository.Referees.RemoveRefereeDetailFromShow(refereeDetailId);
             return result;
         }
+
+        public async Task<List<UserModel>> GetAllReferee()
+        {
+            var result = await _repository.Referees.GetAllRefereeAsync();
+            return result;
+        }
     }
 }

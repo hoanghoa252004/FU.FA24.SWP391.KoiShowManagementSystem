@@ -74,5 +74,17 @@ namespace KoiShowManagementSystem.API.Controllers
                 });
             }
         }
+
+        [Authorize]
+        [HttpGet("get-all-referee")]
+        public async Task<IActionResult> GetAllReferee()
+        {
+            var result = await _refereeService.GetAllReferee();
+            if (result == null)
+            {
+                return BadRequest(new ApiResponse { Message = "Failed" });
+            }
+            return Ok(new ApiResponse { Message = "Success", Payload = result });
+        }
     }
 }
