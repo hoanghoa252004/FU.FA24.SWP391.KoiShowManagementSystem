@@ -244,6 +244,7 @@ namespace KoiShowManagementSystem.Services
                         }
                         else // Cập nhập con cũ
                         {
+                            dto.Status = "Pending";
                             check = true;
                         }
                     }
