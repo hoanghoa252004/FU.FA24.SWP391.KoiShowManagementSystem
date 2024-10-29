@@ -321,7 +321,8 @@ namespace KoiShowManagementSystem.Repositories
                              select med.Video).First(),
                     GroupId = r.Group!.Id,
                     Description = r.Description,
-                    EntranceFee = r.Show.EntranceFee
+                    EntranceFee = r.Show!.EntranceFee,
+                    Note = r.Note,
                 }).ToListAsync();
             return koiList;
         }
