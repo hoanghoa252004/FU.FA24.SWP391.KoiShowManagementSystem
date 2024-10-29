@@ -196,8 +196,8 @@ namespace KoiShowManagementSystem.Repositories
                                                .Select(rd => new RefereeModel
                                                 {
                                                    Id = rd.User!.Id,
-                                                RefereeId = rd.Id,
-                                                RefereeName = rd.User!.Name,
+                                                    RefereeId = rd.Id,
+                                                    RefereeName = rd.User!.Name,
                                                 }).ToList();
 
             return referees;
@@ -263,6 +263,20 @@ namespace KoiShowManagementSystem.Repositories
                 result = true;
             }
             return result;
+        }
+
+        public async Task<List<UserModel>> GetAllRefereeAsync()
+        {
+            var referees = await _context.Users
+                .Where(u => u.RoleId == 3 && u.Status == true)
+                .Select(u => new UserModel
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    
+         }).ToListAsync();
+
+            return referees;
         }
     }
 }
