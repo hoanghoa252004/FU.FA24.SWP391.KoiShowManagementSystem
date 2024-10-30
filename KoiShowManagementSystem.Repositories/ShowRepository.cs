@@ -51,10 +51,11 @@ namespace KoiShowManagementSystem.Repositories
                                                                     where reg.GroupId == gro.Id
                                                                     select new RegistrationModel
                                                                     {
+                                                                        Id = reg.Id,
                                                                         KoiID = reg.KoiId ?? 0,
                                                                         Name = reg.Koi != null ? reg.Koi.Name : "Unknown",
                                                                         Rank = reg.Rank,
-                                                                        Image1 = reg.Media.Image1,
+                                                                        Image1 = reg.Media!.Image1,
                                                                         TotalScore = reg.TotalScore,
                                                                         IsBestVote = reg.IsBestVote
                                                                     }).OrderBy(r => r.Rank).ToList(),
