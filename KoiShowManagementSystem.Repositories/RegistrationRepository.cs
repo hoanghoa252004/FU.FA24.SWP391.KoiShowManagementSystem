@@ -391,17 +391,40 @@ namespace KoiShowManagementSystem.Repositories
             return await _context.Registrations.Where(r => (r.Status.ToLower().Equals("accepted") || r.Status.ToLower().Equals("scored")) && r.GroupId == groupId).Select
                 (r => new RegistrationModel
                 {
+                    //Id = r.Id,
+                    //Show = r.Group!.Show!.Title,
+                    //Group = r.Group.Name,
+                    //TotalScore = r.TotalScore,
+                    //Size = r.Size,
+                    //Status = r.Status,
+                    //IsBestVote = r.IsBestVote,
+                    //Image1 = r.Media!.Image1,
+                    //Image2 = r.Media.Image2,
+                    //Image3 = r.Media.Image3,
+                    //Video = r.Media.Video,
+
                     Id = r.Id,
-                    Show = r.Group!.Show!.Title,
-                    Group = r.Group.Name,
-                    TotalScore = r.TotalScore,
+                    Name = r.Koi!.Name,
+                    KoiID = r.Koi.Id,
+                    Description = r.Description,
                     Size = r.Size,
+                    Variety = r.Koi.Variety.Name,
+                    ShowId = r.Show!.Id,
+                    Show = r.Show.Title,
+                    Group = r.Group!.Name,
+                    GroupId = r.Group.Id,
+                    CreateDate = r.CreateDate,
+                    Rank = r.Rank,
+                    TotalScore = r.TotalScore,
                     Status = r.Status,
                     IsBestVote = r.IsBestVote,
                     Image1 = r.Media!.Image1,
                     Image2 = r.Media.Image2,
                     Image3 = r.Media.Image3,
                     Video = r.Media.Video,
+                    IsPaid = r.IsPaid,
+                    EntranceFee = r.Show.EntranceFee,
+                    Note = r.Note,
                 }).ToListAsync();
         }
     }
