@@ -525,7 +525,7 @@ namespace KoiShowManagementSystem.Services
         public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetRegistrationByGroup(int pageIndex, int pageSize, int groupId)
         {
             var query =  _repository.Registrations.GetRegistrationByGroup(groupId);
-
+            query.Result.OrderBy(r => r.Rank);
             var totalItems = query.Result.Count();
 
             var registrations =  query.Result
