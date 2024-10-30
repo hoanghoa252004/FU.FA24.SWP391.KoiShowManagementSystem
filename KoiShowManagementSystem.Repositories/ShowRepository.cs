@@ -56,7 +56,7 @@ namespace KoiShowManagementSystem.Repositories
                                                                         Rank = reg.Rank,
                                                                         TotalScore = reg.TotalScore,
                                                                         IsBestVote = reg.IsBestVote
-                                                                    }).ToList(),
+                                                                    }).OrderBy(r => r.Rank).ToList(),
                                                       Criterion = (from cri in _context.Criteria
                                                                    where cri.GroupId == gro.Id
                                                                    select new CriterionModel()
