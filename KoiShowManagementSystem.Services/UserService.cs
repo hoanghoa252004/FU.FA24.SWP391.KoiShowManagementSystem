@@ -36,9 +36,7 @@ namespace KoiShowManagementSystem.Services
                 if (user.Status == true)
                 {
                     user.Token = _jwtServices.GenerateAccessToken(user);
-                    user.Id = null;
                     user.Password = null;
-                    user.Status = null;
                 }
                 else
                     throw new Exception("Failed: Your account has been banned !");
