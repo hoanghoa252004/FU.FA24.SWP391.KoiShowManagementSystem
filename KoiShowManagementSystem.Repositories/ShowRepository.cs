@@ -54,6 +54,7 @@ namespace KoiShowManagementSystem.Repositories
                                                                         KoiID = reg.KoiId ?? 0,
                                                                         Name = reg.Koi != null ? reg.Koi.Name : "Unknown",
                                                                         Rank = reg.Rank,
+                                                                        Image1 = reg.Media.Image1,
                                                                         TotalScore = reg.TotalScore,
                                                                         IsBestVote = reg.IsBestVote
                                                                     }).OrderBy(r => r.Rank).ToList(),
