@@ -34,7 +34,8 @@ namespace KoiShowManagementSystem.Services
             {
                 Name = model.VarietyName,
                 Origin = model.VarietyOrigin,
-                Status = model.VarietyStatus
+                Status = model.VarietyStatus,
+                Description = model.VarietyDescription
             };
 
             await _repository.Varieties.AddAsync(variety);
@@ -55,6 +56,7 @@ namespace KoiShowManagementSystem.Services
             existingVariety.Name = model.VarietyName;
             existingVariety.Origin = model.VarietyOrigin;
             existingVariety.Status = model.VarietyStatus;
+            existingVariety.Description = model.VarietyDescription;
 
             await _repository.Varieties.UpdateAsync(existingVariety);
 

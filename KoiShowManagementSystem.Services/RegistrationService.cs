@@ -6,6 +6,7 @@ using KoiShowManagementSystem.Repositories;
 using KoiShowManagementSystem.Repositories.Helper;
 using KoiShowManagementSystem.Services.Helper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -523,8 +524,8 @@ namespace KoiShowManagementSystem.Services
 
         public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetRegistrationByGroup(int pageIndex, int pageSize, int groupId)
         {
-            var query = _repository.Registrations.GetRegistrationByGroup(groupId);
-
+            var query =  _repository.Registrations.GetRegistrationByGroup(groupId);
+            query.Result.OrderBy(r => r.Rank);
             var totalItems = query.Result.Count();
 
             var registrations =  query.Result

@@ -15,5 +15,8 @@ namespace KoiShowManagementSystem.DTOs.BusinessModels
 
         public bool VarietyStatus { get; set; }
 
+        public string? VarietyDescription { get; set; }
+
+
     }
 }

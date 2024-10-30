@@ -4,6 +4,7 @@ using KoiShowManagementSystem.Entities;
 using KoiShowManagementSystem.Repositories.Helper;
 using KoiShowManagementSystem.Repositories.MyDbContext;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -117,11 +118,16 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task<bool> DeleteKoiAsync(int koiId)
         {
-            var koiToDelete = await _context.Kois.FirstOrDefaultAsync(k => k.Id == koiId);
+            var koiToDelete = await _context.Kois.Include(k => k.Registrations).FirstOrDefaultAsync(k => k.Id == koiId);
+
             if (koiToDelete == null) return false;
-            koiToDelete.Status = false;
+            if (koiToDelete.Registrations.IsNullOrEmpty())
+            {
+                koiToDelete.Status = false;
+            }
             await _context.SaveChangesAsync();
             return true;
         }
+
     }
 }

@@ -311,7 +311,7 @@ public partial class KoiShowManagementSystemContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__Variety__3214EC07DC081C4A");
 
             entity.ToTable("Variety");
-
+            entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.Origin).HasMaxLength(100);
             entity.Property(e => e.Status).HasDefaultValue(true);
