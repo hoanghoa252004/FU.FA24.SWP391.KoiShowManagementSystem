@@ -14,7 +14,5 @@ namespace KoiShowManagementSystem.Services
         Task<bool?> CreateVarietyAsync(VarietyModel model);
         Task<bool?> UpdateVarietyAsync(VarietyModel model);
         Task<bool> DeleteVarietyAsync(int id);
-
-
-        }
+    }
 }
