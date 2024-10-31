@@ -427,5 +427,25 @@ namespace KoiShowManagementSystem.Repositories
                     Note = r.Note,
                 }).ToListAsync();
         }
+
+        public async Task<UserModel?> GetUserInfoByRegistration(int registrationId)
+        {
+            return await _context.Registrations
+                                 .Where(r => r.Id == registrationId && r.Koi != null)
+                                 .Select(r => r.Koi!.User)
+                                 .Select(u => new UserModel
+                                 {
+                                     Name = u.Name,
+                                     Email = u.Email,
+                                     Phone = u.Phone,
+                                     DateOfBirth = u.DateOfBirth,
+                                     Gender = u.Gender,
+                                     Status = u.Status,
+                                 }).FirstOrDefaultAsync();
+        }
+
+
+
+
     }
 }
