@@ -124,6 +124,7 @@ namespace KoiShowManagementSystem.Repositories
             var show = _context.Shows
                 .Include(s => s.Groups)
                     .ThenInclude(g => g.Registrations)
+                         .ThenInclude(r => r.Users)
                 .FirstOrDefault(s => s.Id == showId);
             var groups = show!.Groups;
 
@@ -138,6 +139,9 @@ namespace KoiShowManagementSystem.Repositories
                     rank++;
                     registration.Status = "scored";
                 }
+
+                sortedRegistrations = sortedRegistrations.OrderByDescending(r => r.Users.Count());
+                sortedRegistrations.First().IsBestVote = true;
             }
 
             await _context.SaveChangesAsync();
