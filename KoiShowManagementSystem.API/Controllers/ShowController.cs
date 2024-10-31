@@ -150,14 +150,21 @@ namespace KoiShowManagementSystem.API.Controllers
         public async Task<IActionResult> UpdateShow([FromForm]ShowDTO dto)
         {
 
-            var result = await _koiShowService.UpdateShow(dto);
-            if (result)
+            try
             {
-                return Ok(new ApiResponse { Message = "Success" });
+                 await _koiShowService.UpdateShow(dto);
+                return Ok(new ApiResponse()
+                {
+                    Message = "Update Show Successfully",
+                });
             }
-
-            return BadRequest(new ApiResponse { Message = "Failed to update show." });
-
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    Message = ex.Message,
+                });
+            }
 
         }
 

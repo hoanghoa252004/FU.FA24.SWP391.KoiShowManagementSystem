@@ -277,7 +277,7 @@ namespace KoiShowManagementSystem.Repositories
             }).ToListAsync();
         }
 
-        public async Task<bool> UpdateAShow(ShowDTO dto)
+        public async Task UpdateAShow(ShowDTO dto)
         {
             var show = await _context.Shows.FindAsync(dto.Id);
 
@@ -313,6 +313,7 @@ namespace KoiShowManagementSystem.Repositories
             {
                 show.Banner = await _s3Service.UpdateImageAsync(show.Banner!, dto.Banner!);
             }
+
             if (dto.ScoreStartDate != null)
             {
                 show.ScoreStartDate = (DateOnly)dto.ScoreStartDate!;
@@ -334,11 +335,6 @@ namespace KoiShowManagementSystem.Repositories
                 show.EntranceFee = dto.EntranceFee;
             }
             int result = await _context.SaveChangesAsync();
-            if (result == 0)
-            {
-                return false;
-            }
-            return true;
         }
 
 
