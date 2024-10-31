@@ -388,7 +388,7 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task<List<RegistrationModel>> GetRegistrationByGroup(int groupId)
         {
-            return await _context.Registrations.Where(r => (r.Status.ToLower().Equals("accepted") || r.Status.ToLower().Equals("scored")) && r.GroupId == groupId).Select
+            return await _context.Registrations.Where(r => !r.Status.ToLower().Equals("draft") && r.GroupId == groupId).Select
                 (r => new RegistrationModel
                 {
                     //Id = r.Id,
