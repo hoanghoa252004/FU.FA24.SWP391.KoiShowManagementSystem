@@ -137,6 +137,7 @@ namespace KoiShowManagementSystem.Repositories
             {
                 // Get groups for the given show
                 var groups = await _context.Groups
+                    .Include(g => g.Varieties)
                     .Where(g => g.ShowId == showId)
                     .ToListAsync();
 
