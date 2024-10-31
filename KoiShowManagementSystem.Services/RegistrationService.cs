@@ -341,8 +341,8 @@ namespace KoiShowManagementSystem.Services
                                                 <img src='{WEBSITE_LOGO}' alt='Logo' style='max-width: 50px; height: auto;' />
                                                 <span style='font-size: 14px; font-weight: bold;'>Koi Show Management System FPTU FA24 SWP391</span><br />
                                                 <span>Website: 
-                                                    <a href='{"https://github.com/hoanghoa252004/FU.FA24.SWP391.KoiShowManagementSystem"}'>
-                                                        {"https://github.com/hoanghoa252004/FU.FA24.SWP391.KoiShowManagementSystem"}
+                                                    <a href='{"https://koikoisystem.netlify.app"}'>
+                                                        {"https://koikoisystem.netlify.app"}
                                                     </a>
                                                 </span>
                                             </div>
@@ -350,7 +350,7 @@ namespace KoiShowManagementSystem.Services
                                         </html>";
                         await _emailService.SendEmail(new EmailModel()
                         {
-                            To = "hoathse184053@fpt.edu.vn",
+                            To = member!.Email,
                             Subject = subject,
                             Content = content,
                         });
@@ -430,8 +430,8 @@ namespace KoiShowManagementSystem.Services
                                                 </tr>
                                                 <tr>
                                                     <td>Website: 
-                                                        <a href='https://github.com/hoanghoa252004/FU.FA24.SWP391.KoiShowManagementSystem'>
-                                                            https://github.com/hoanghoa252004/FU.FA24.SWP391.KoiShowManagementSystem
+                                                        <a href='https://koikoisystem.netlify.app'>
+                                                            https://koikoisystem.netlify.app
                                                         </a>
                                                     </td>
                                                 </tr>

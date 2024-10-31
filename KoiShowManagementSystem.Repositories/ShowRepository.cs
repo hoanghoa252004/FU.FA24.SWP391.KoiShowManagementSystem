@@ -48,8 +48,8 @@ namespace KoiShowManagementSystem.Repositories
                                                       GroupId = gro.Id,
                                                       GroupName = gro.Name ?? string.Empty,
                                                       Registrations = (from reg in _context.Registrations
-                                                                    where reg.GroupId == gro.Id
-                                                                    select new RegistrationModel
+                                                                    where reg.GroupId == gro.Id && (reg.Rank == 1 || reg.Rank == 2 || reg.Rank == 3) || reg.IsBestVote == true
+                                                                       select new RegistrationModel
                                                                     {
                                                                         Id = reg.Id,
                                                                         KoiID = reg.KoiId ?? 0,
