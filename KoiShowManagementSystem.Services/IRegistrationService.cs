@@ -22,5 +22,6 @@ namespace KoiShowManagementSystem.Services
         Task PublishScore(int showId);
         Task DeleteDraftRegistration(int registrationId);
         Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetRegistrationByGroup(int pageIndex, int pageSize, int groupId);
+        Task<UserModel?> GetUserInfoFromRegistration(int registrationId);
     }
 }

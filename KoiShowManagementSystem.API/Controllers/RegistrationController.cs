@@ -287,6 +287,24 @@ namespace KoiShowManagementSystem.API.Controllers
                 }
             });
         }
+
+        [HttpGet("user-info")]
+
+        public async Task<IActionResult> GetUserInfoByRegistration(int registrationId)
+        {
+            if (registrationId <= 0)
+            {
+                return BadRequest(new ApiResponse { Message = "Invalid group ID." });
+            }
+
+            var result = await _registrationService.GetUserInfoFromRegistration(registrationId);
+
+            return Ok(new
+            {
+                Message = "Success",
+                Payload = result
+            });
+        }
         #endregion
     }
 }

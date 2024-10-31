@@ -21,5 +21,6 @@ namespace KoiShowManagementSystem.Repositories
         Task<List<Registration>> GetRegistrationsByMemberIdAsync(int memberId);
         Task DeleteRegistration(int registrationId);
         Task<List<RegistrationModel>> GetRegistrationByGroup(int groupId);
+        Task<UserModel?> GetUserInfoByRegistration(int registrationId);
     }
 }
