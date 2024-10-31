@@ -98,7 +98,7 @@ namespace KoiShowManagementSystem.API
             builder.Services.AddCors(options =>
             {
                 options.AddDefaultPolicy(policy =>
-                    policy.WithOrigins("http://localhost:9999") // Allow the frontend's origin
+                    policy.WithOrigins("http://localhost:9999", "https://koikoisystem.netlify.app") // Allow the frontend's origin
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials()); // If you're using credentials (cookies, Authorization headers, etc.)
