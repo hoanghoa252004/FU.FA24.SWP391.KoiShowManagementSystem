@@ -20,7 +20,7 @@ namespace KoiShowManagementSystem.Repositories
         //Task<bool> EditAShow(ShowDTO dto);
         Task<bool> ChangeShowStatus(string status, int showId);
 
-        Task<bool> UpdateAShow(ShowDTO dto);
+        Task UpdateAShow(ShowDTO dto);
         Task<List<DashboardRegistrationModel>> CountRegistrationsOfRecentShowAsync(int quantityRecOfShow);
         Task<List<DashboardRevenueModel>> CalculateRevenueOfRecentShowAsync(int quantityOfShow);
         Task<List<DashboardVarietyModel>> CountKoiVarietyOfRecentShowAsync(int quantityOfShow);

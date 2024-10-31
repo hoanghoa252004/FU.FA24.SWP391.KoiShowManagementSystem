@@ -62,9 +62,9 @@ namespace KoiShowManagementSystem.Services
         }
 
 
-        public async Task<bool> UpdateShow(ShowDTO dto)
+        public async Task UpdateShow(ShowDTO dto)
         {
-            return await _repository.Show.UpdateAShow(dto);
+             await _repository.Show.UpdateAShow(dto);
         }
 
         public async Task<List<ShowModel>> GetAllShow()

@@ -536,5 +536,10 @@ namespace KoiShowManagementSystem.Services
         }
 
 
+        public async Task<UserModel?> GetUserInfoFromRegistration(int registrationId)
+        {
+            return await _repository.Registrations.GetUserInfoByRegistration(registrationId);
+        }
+
     }
 }
