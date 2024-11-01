@@ -144,6 +144,15 @@ namespace KoiShowManagementSystem.Repositories
             {
                 return false;
             }
+            // Xóa criteria của group:
+            var criteria = _context.Criteria.Where(cr => cr.GroupId == groupId);
+            if(criteria.Any() == true)
+            {
+                foreach(var item in criteria)
+                {
+                    _context.Criteria.Remove(item);
+                }
+            }
             _context.Groups.Remove(group);
             int result = await _context.SaveChangesAsync();
             if (result > 0) return true;
