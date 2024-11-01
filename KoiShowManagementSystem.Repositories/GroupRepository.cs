@@ -153,6 +153,8 @@ namespace KoiShowManagementSystem.Repositories
                     _context.Criteria.Remove(item);
                 }
             }
+            // Xóa Variety trong group:
+            group.Varieties = null!;
             _context.Groups.Remove(group);
             int result = await _context.SaveChangesAsync();
             if (result > 0) return true;
