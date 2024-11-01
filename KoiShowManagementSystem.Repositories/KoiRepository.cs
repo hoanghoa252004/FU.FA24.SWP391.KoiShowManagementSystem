@@ -135,5 +135,21 @@ namespace KoiShowManagementSystem.Repositories
             return result > 0;
         }
 
+        public async Task<UserModel> GetKoiUser(int koiId)
+        {
+            var koi = await _context.Kois
+                .Include(k => k.User).SingleOrDefaultAsync(k => k.Id == koiId);
+            if(koi != null)
+            {
+                return new UserModel()
+                {
+                    Email = koi!.User.Email,
+                };
+            }
+            else
+            {
+                return null!;
+            }
+        }
     }
 }
