@@ -126,12 +126,14 @@ namespace KoiShowManagementSystem.Repositories
                     .ThenInclude(g => g.Registrations)
                          .ThenInclude(r => r.Users)
                 .FirstOrDefault(s => s.Id == showId);
+
             var groups = show!.Groups;
 
             foreach (var group in groups)
             {
-                var registrations = group.Registrations.Where(r => r.TotalScore != null && r.Status!.ToLower().Equals("accepted"));
-                var sortedRegistrations = registrations.OrderByDescending(r => r.TotalScore).ThenBy(r => r.Id);
+                var registrations = group.Registrations.Where(r => r.TotalScore != null && r.Status!.ToLower().Equals("accepted")).ToList();
+                var sortedRegistrations = registrations.OrderByDescending(r => r.TotalScore).ThenBy(r => r.Id).ToList();
+
                 int rank = 1;
                 foreach (var registration in sortedRegistrations)
                 {
@@ -140,11 +142,16 @@ namespace KoiShowManagementSystem.Repositories
                     registration.Status = "scored";
                 }
 
-                sortedRegistrations = sortedRegistrations.OrderByDescending(r => r.Users.Count());
-                sortedRegistrations.First().IsBestVote = true;
+                // Sort again by Users.Count() and mark the first one as BestVote
+                var bestVoteRegistration = sortedRegistrations.OrderByDescending(r => r.Users.Count()).FirstOrDefault();
+                if (bestVoteRegistration != null)
+                {
+                    bestVoteRegistration.IsBestVote = true;
+                }
             }
 
             await _context.SaveChangesAsync();
-        } 
+        }
+
     }
 }
