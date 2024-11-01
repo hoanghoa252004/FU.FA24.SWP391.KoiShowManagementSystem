@@ -192,7 +192,7 @@ namespace KoiShowManagementSystem.API.Controllers
             return Ok(new ApiResponse { Message = "Success" });
         }
 
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         [HttpDelete("delete-show")]
         public async Task<IActionResult> DeleteShow(int showId)
         {
