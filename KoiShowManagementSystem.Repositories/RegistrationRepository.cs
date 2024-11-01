@@ -443,9 +443,5 @@ namespace KoiShowManagementSystem.Repositories
                                      Status = u.Status,
                                  }).FirstOrDefaultAsync();
         }
-
-
-
-
     }
 }
