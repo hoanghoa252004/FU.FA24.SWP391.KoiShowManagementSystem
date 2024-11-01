@@ -453,7 +453,7 @@ namespace KoiShowManagementSystem.Repositories
                 foreach (var group in show.Groups)
                 {
                     _context.Criteria.RemoveRange(group.Criteria);
-                    _context.Varieties.RemoveRange(group.Varieties);
+                    group.Varieties = null!;
                 }
                 // delete all groups
                 _context.Groups.RemoveRange(show.Groups);
