@@ -144,7 +144,7 @@ namespace KoiShowManagementSystem.Repositories
             {
                 return false;
             }
-            group.Status = false;
+            _context.Groups.Remove(group);
             int result = await _context.SaveChangesAsync();
             if (result > 0) return true;
             return false;
