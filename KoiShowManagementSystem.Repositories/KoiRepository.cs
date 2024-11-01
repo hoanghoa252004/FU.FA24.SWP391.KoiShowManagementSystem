@@ -90,7 +90,8 @@ namespace KoiShowManagementSystem.Repositories
         public async Task<bool> UpdateKoiAsync(KoiDTO koi)
         {
             if (koi == null) throw new ArgumentNullException(nameof(koi));
-            var koiToUpdate = await _context.Kois.FirstOrDefaultAsync(k => k.Id == koi.Id);
+            var koiToUpdate = await _context.Kois.Include(k => k.Registrations).FirstOrDefaultAsync(k => k.Id == koi.Id);
+            
             if (koiToUpdate == null) return false;
             if (koi.Name != null)
             {
@@ -104,10 +105,14 @@ namespace KoiShowManagementSystem.Repositories
             {
                 koiToUpdate.Size = koi.Size;
             }
+
             if (koi.VarietyId != 0)
             {
-                koiToUpdate.VarietyId =koi.VarietyId;
+                if (koiToUpdate.Registrations.IsNullOrEmpty())
+                    koiToUpdate.VarietyId = koi.VarietyId;
+                else throw new ArgumentException("This Koi has joined a show");
             }
+
             if (koi.Image != null)
             {
                 koiToUpdate.Image = await _s3UploadService.UpdateImageAsync(koiToUpdate.Image!, koi.Image!);
@@ -124,9 +129,10 @@ namespace KoiShowManagementSystem.Repositories
             if (koiToDelete.Registrations.IsNullOrEmpty())
             {
                 koiToDelete.Status = false;
+                
             }
-            await _context.SaveChangesAsync();
-            return true;
+            int result = await _context.SaveChangesAsync();
+            return result > 0;
         }
 
     }
