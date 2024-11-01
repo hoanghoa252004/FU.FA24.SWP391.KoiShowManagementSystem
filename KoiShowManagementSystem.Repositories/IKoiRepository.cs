@@ -15,5 +15,6 @@ namespace KoiShowManagementSystem.Repositories
         Task<bool> CreateKoiAsync(KoiDTO koi, int userId);
         Task<bool> UpdateKoiAsync(KoiDTO koi);
         Task<bool> DeleteKoiAsync(int koiId);
+        Task<UserModel> GetKoiUser(int koiId);
     }
 }

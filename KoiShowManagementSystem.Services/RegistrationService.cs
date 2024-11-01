@@ -269,7 +269,7 @@ namespace KoiShowManagementSystem.Services
                     RegistrationModel result = await _repository.Registrations.UpdateRegistrationAsync(dto);
                     if(result != null && result.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase))
                     {
-                        var member = await _repository.Users.GetUserById(memberId);
+                        var member = await _repository.Koi.GetKoiUser((int)result.KoiID!);
                         string subject = $"[{result.Show?.ToUpper()}] REGISTER KOI FOR SHOW SUCCESSFULLY !";
                         string content = $@"
                                         <!DOCTYPE html>
