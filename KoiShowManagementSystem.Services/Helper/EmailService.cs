@@ -17,7 +17,7 @@ namespace KoiShowManagementSystem.Services.Helper
         {
             _emailConfig = emailConfig.Value;
         }
-        public void SendEmail(EmailModel emailRequest)
+        public async Task SendEmail(EmailModel emailRequest)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace KoiShowManagementSystem.Services.Helper
                     }
                 }
 
-                smtpClient.Send(mailMessage);
+                await smtpClient.SendMailAsync(mailMessage);
             }
             catch
             {
