@@ -388,7 +388,9 @@ namespace KoiShowManagementSystem.Repositories
 
         public async Task<List<RegistrationModel>> GetRegistrationByGroup(int groupId)
         {
-            return await _context.Registrations.Where(r => !r.Status.ToLower().Equals("draft") && r.GroupId == groupId).Select
+            var group = await _context.Groups.Include(g => g.Show).SingleOrDefaultAsync(g => g.Id == groupId);
+
+            var regisrations = _context.Registrations.Where(r => !r.Status!.ToLower().Equals("draft") && r.GroupId == groupId).Select
                 (r => new RegistrationModel
                 {
                     //Id = r.Id,
@@ -425,7 +427,13 @@ namespace KoiShowManagementSystem.Repositories
                     IsPaid = r.IsPaid,
                     EntranceFee = r.Show.EntranceFee,
                     Note = r.Note,
-                }).ToListAsync();
+                });
+            if (group!.Show!.Status!.ToLower().Equals("scoring"))
+            {
+                regisrations.Where(r => !r.Status!.ToLower().Equals("rejected"));
+            }
+            return await regisrations.ToListAsync();
+
         }
 
         public async Task<UserModel?> GetUserInfoByRegistration(int registrationId)
