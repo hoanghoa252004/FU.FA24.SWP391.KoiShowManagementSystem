@@ -8,6 +8,7 @@ using KoiShowManagementSystem.Services.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -149,11 +150,31 @@ namespace KoiShowManagementSystem.Services
         // 3. GET REGISTRATIONS BY SHOW:
         public async Task<(int TotalItems, IEnumerable<RegistrationModel> Registrations)> GetRegistrationByShow(int pageIndex, int pageSize, int showId)
         {
-            var registrationList = await _repository.Registrations.GetRegistrationByShowAsync(showId);
-            var list = registrationList.Where(regist => regist.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase) || regist.Status!.Equals("Scored", StringComparison.OrdinalIgnoreCase)).ToList();
-            var count = list.Count();
-            var result = list.Skip((pageIndex - 1) * pageSize).Take(pageSize);
-            return (count, result);
+            var show = await _repository.Show.GetShowDetailsAsync(showId);
+            if(show != null)
+            {
+                if(show.ShowStatus!.Equals("Finished",StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    var registrationList = await _repository.Registrations.GetRegistrationByShowAsync(showId);
+                    var list = registrationList.Where(regist => regist.Status!.Equals("Scored", StringComparison.OrdinalIgnoreCase))
+                        .ToList().OrderBy(r => r.Rank).ThenBy(r => r.GroupId);
+                    var count = list.Count();
+                    var result = list.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+                    return (count, result);
+                }
+                else
+                {
+                    var registrationList = await _repository.Registrations.GetRegistrationByShowAsync(showId);
+                    var list = registrationList.Where(regist => regist.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase)).ToList();
+                    var count = list.Count();
+                    var result = list.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+                    return (count, result);
+                }
+            }
+            else
+            {
+                throw new Exception("Failed: Show does not exist !");
+            }
         }
 
         // 4. GET REGISTRATION BY ID:
@@ -348,7 +369,7 @@ namespace KoiShowManagementSystem.Services
                                             </div>
                                         </body>
                                         </html>";
-                        await _emailService.SendEmail(new EmailModel()
+                        _emailService.SendEmail(new EmailModel()
                         {
                             To = member!.Email,
                             Subject = subject,
@@ -442,7 +463,7 @@ namespace KoiShowManagementSystem.Services
                             </body>
                             </html>";
                         string subject = @$"[{show.ShowTitle?.ToUpper()} ANNOUCEMENT RESULT]";
-                        await _emailService.SendEmail(new EmailModel()
+                        _emailService.SendEmail(new EmailModel()
                         {
                             To = member!.Email,
                             Subject = subject,
