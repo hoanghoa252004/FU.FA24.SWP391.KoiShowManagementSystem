@@ -369,7 +369,7 @@ namespace KoiShowManagementSystem.Services
                                             </div>
                                         </body>
                                         </html>";
-                        _emailService.SendEmail(new EmailModel()
+                        await _emailService.SendEmail(new EmailModel()
                         {
                             To = member!.Email,
                             Subject = subject,
@@ -463,7 +463,7 @@ namespace KoiShowManagementSystem.Services
                             </body>
                             </html>";
                         string subject = @$"[{show.ShowTitle?.ToUpper()} ANNOUCEMENT RESULT]";
-                        _emailService.SendEmail(new EmailModel()
+                        await _emailService.SendEmail(new EmailModel()
                         {
                             To = member!.Email,
                             Subject = subject,

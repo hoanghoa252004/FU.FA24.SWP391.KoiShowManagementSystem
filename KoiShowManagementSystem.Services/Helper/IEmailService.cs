@@ -9,6 +9,6 @@ namespace KoiShowManagementSystem.Services.Helper
 {
     public interface IEmailService
     {
-        void SendEmail(EmailModel emailRequest);
+        Task SendEmail(EmailModel emailRequest);
     }
 }
