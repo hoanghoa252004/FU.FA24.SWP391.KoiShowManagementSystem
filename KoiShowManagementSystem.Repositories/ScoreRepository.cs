@@ -131,23 +131,24 @@ namespace KoiShowManagementSystem.Repositories
 
             foreach (var group in groups)
             {
+               
                 var registrations = group.Registrations.Where(r => r.TotalScore != null && r.Status!.ToLower().Equals("accepted")).ToList();
-                var sortedRegistrations = registrations.OrderByDescending(r => r.TotalScore).ThenBy(r => r.Id).ToList();
-
-                int rank = 1;
-                foreach (var registration in sortedRegistrations)
+                var sortedRegistrations = registrations.OrderByDescending(r => r.TotalScore).ThenBy(r => r.Id);
+                if (registrations.Count == group.Registrations.Count)
                 {
-                    registration.Rank = rank;
-                    rank++;
-                    registration.Status = "scored";
-                }
-
-                // Sort again by Users.Count() and mark the first one as BestVote
-                var bestVoteRegistration = sortedRegistrations.OrderByDescending(r => r.Users.Count()).FirstOrDefault();
-                if (bestVoteRegistration != null)
-                {
-                    bestVoteRegistration.IsBestVote = true;
-                }
+                    int rank = 1;
+                    foreach (var registration in sortedRegistrations)
+                    {
+                        registration.Rank = rank;
+                        rank++;
+                        registration.Status = "scored";
+                    }
+                    var bestVoteRegistration = sortedRegistrations.OrderByDescending(r => r.Users.Count()).FirstOrDefault();
+                    if (bestVoteRegistration != null)
+                    {
+                        bestVoteRegistration.IsBestVote = true;
+                    }
+                }                
             }
 
             await _context.SaveChangesAsync();

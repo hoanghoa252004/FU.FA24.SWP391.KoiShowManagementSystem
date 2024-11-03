@@ -513,8 +513,13 @@ namespace KoiShowManagementSystem.Services
         
         public async Task PublishScore(int showId)
         {
-            await _repository.Scores.CalculateRankAsync(showId);
+            //await _repository.Scores.CalculateRankAsync(showId);
             await SendResult(showId);
+        }
+
+        public async Task CalculateRank(int showId)
+        {
+            await _repository.Scores.CalculateRankAsync(showId);
         }
 
         // 9. DELETE DRAFT REGISTRATION:
