@@ -44,6 +44,7 @@ namespace KoiShowManagementSystem.Services
         {
             await _repository.Scores.CalculateTotalScoreAsync(showId);
             await _repository.Scores.CalculateRankAsync(showId);
+            await _repository.Scores.CalculateBestVote(showId);
             return await _repository.Groups.GetAllGroupByShowAsync(showId);
         }
     }

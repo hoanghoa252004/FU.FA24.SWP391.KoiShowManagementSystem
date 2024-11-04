@@ -12,5 +12,7 @@ namespace KoiShowManagementSystem.Repositories
         Task<bool> SaveScoresAsync(RefereeScoreDTO refereeScore, int UserId);
         Task CalculateTotalScoreAsync(int showId);
         Task CalculateRankAsync(int showId);
+
+        Task CalculateBestVote(int showId);
     }
 }

@@ -180,6 +180,24 @@ namespace KoiShowManagementSystem.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task CalculateBestVote(int showId)
+        {
+            var show = _context.Shows.Include(s => s.Groups).ThenInclude(g => g.Registrations).ThenInclude(r => r.Users).FirstOrDefault(s => s.Id == showId);
+            var groups = show!.Groups;
+            foreach (var group in groups) {
+                var bestVoteRegistration = group.Registrations.Where(r => r.Status!
+                                                        .Equals("Scored", StringComparison.OrdinalIgnoreCase))
+                                                        .OrderByDescending(r => r.Users.Count())
+                                                        .FirstOrDefault();
+                if (bestVoteRegistration != null)
+                {
+                    bestVoteRegistration.IsBestVote = true;
+                }
+            }
+            await _context.SaveChangesAsync();
+        }
+
+
 
     }
 }
