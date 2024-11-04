@@ -124,10 +124,10 @@ namespace KoiShowManagementSystem.Repositories
             var show = _context.Shows
                 .Include(s => s.Groups)
                     .ThenInclude(g => g.Registrations)
-                         .ThenInclude(r => r.Users)
+                        .ThenInclude(r => r.Users)
                     .ThenInclude(g => g.Registrations)
-                         .ThenInclude(r => r.Scores)
-                             .ThenInclude(s => s.Criteria)
+                        .ThenInclude(r => r.Scores)
+                            .ThenInclude(s => s.Criteria)
                 .Include(s => s.Groups)
                     .ThenInclude(g => g.Criteria)
                 .FirstOrDefault(s => s.Id == showId);
@@ -135,43 +135,51 @@ namespace KoiShowManagementSystem.Repositories
             var groups = show!.Groups;
 
             foreach (var group in groups)
-            {              
-                var registrations = group.Registrations.Where(r => r.TotalScore != null && r.Status!.ToLower().Equals("accepted"))
-                                                       .Select(r => new
-                                                       {
-                                                           Registration = r,
-                                                           ScoreList = _context.Scores
-                                                                                .Where(s => s.RegistrationId == r.Id)
-                                                                                .GroupBy(s => s.CriteriaId)
-                                                                                 .Select(g => new
-                                                                                 {
-                                                                                     CriteriaId = g.Key,
-                                                                                     TotalScoreByCriteria = g.Average(s => s.Score1) * g.First().Criteria!.Percentage / 100,
-                                                                                     Percentage = g.First().Criteria!.Percentage,
-                                                                                 })
-                                                                                 .OrderByDescending(x => x.Percentage).ToList(),
-                                                       }).OrderByDescending(x => x.ScoreList.Sum(sl => sl.TotalScoreByCriteria));
+            {
+                int scoredRegistration = group.Registrations.Count(r => r.TotalScore != null);
+                int expectedScoredRegistration = group.Registrations.Count(r => r.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase));
 
-
-
-                int quantityCriteriaInGroup = group.Criteria.Count;
-                
-
-                for (int index = 0; index < quantityCriteriaInGroup; index++)
+                if (scoredRegistration == expectedScoredRegistration)
                 {
-                    registrations = registrations.ThenByDescending(x => x.ScoreList.ElementAt(index).TotalScoreByCriteria);
-                }
+                    var registrations = group.Registrations
+                        .Where(r => r.TotalScore != null && r.Status!.Equals("Accepted", StringComparison.OrdinalIgnoreCase))
+                        .Select(r => new
+                        {
+                            Registration = r,
+                            ScoreList = _context.Scores
+                                .Where(s => s.RegistrationId == r.Id)
+                                .GroupBy(s => s.CriteriaId)
+                                .Select(g => new
+                                {
+                                    CriteriaId = g.Key,
+                                    TotalScoreByCriteria = g.Average(s => s.Score1) * g.First().Criteria!.Percentage / 100,
+                                    Percentage = g.First().Criteria!.Percentage,
+                                })
+                                .OrderByDescending(x => x.Percentage)
+                                .ToList(),
+                        })
+                        .OrderByDescending(x => x.ScoreList.Sum(sl => sl.TotalScoreByCriteria));
 
-                int rank = 1;
-                foreach (var regist in registrations.ToList())
-                {
-                    regist.Registration.Rank = rank;
-                    rank++;
-                    regist.Registration.Status = "Scored";
+                    int quantityCriteriaInGroup = group.Criteria.Count;
+
+                    for (int index = 0; index < quantityCriteriaInGroup; index++)
+                    {
+                        registrations = registrations.ThenByDescending(x => x.ScoreList.ElementAtOrDefault(index)?.TotalScoreByCriteria ?? 0);
+                    }
+
+                    int rank = 1;
+                    foreach (var regist in registrations)
+                    {
+                        regist.Registration.Rank = rank;
+                        rank++;
+                        regist.Registration.Status = "Scored";
+                    }
                 }
             }
+
             await _context.SaveChangesAsync();
         }
+
 
     }
 }
