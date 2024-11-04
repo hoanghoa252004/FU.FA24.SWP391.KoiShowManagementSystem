@@ -43,6 +43,7 @@ namespace KoiShowManagementSystem.Services
         public Task<List<GroupModel>> ReviewGroupScore(int showId)
         {
             _repository.Scores.CalculateTotalScoreAsync(showId);
+            _repository.Scores.CalculateRankAsync(showId);
             return _repository.Groups.GetAllGroupByShowAsync(showId);
         }
     }

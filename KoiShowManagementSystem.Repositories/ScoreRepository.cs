@@ -151,7 +151,12 @@ namespace KoiShowManagementSystem.Repositories
                                                                                  })
                                                                                  .OrderByDescending(x => x.Percentage).ToList(),
                                                        }).OrderByDescending(x => x.ScoreList.Sum(sl => sl.TotalScoreByCriteria));
+
+
+
                 int quantityCriteriaInGroup = group.Criteria.Count;
+                
+
                 for (int index = 0; index < quantityCriteriaInGroup; index++)
                 {
                     registrations = registrations.ThenByDescending(x => x.ScoreList.ElementAt(index).TotalScoreByCriteria);
@@ -162,6 +167,7 @@ namespace KoiShowManagementSystem.Repositories
                 {
                     regist.Registration.Rank = rank;
                     rank++;
+                    regist.Registration.Status = "Scored";
                 }
             }
             await _context.SaveChangesAsync();

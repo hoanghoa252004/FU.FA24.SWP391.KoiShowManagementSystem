@@ -517,11 +517,6 @@ namespace KoiShowManagementSystem.Services
             await SendResult(showId);
         }
 
-        public async Task CalculateRank(int showId)
-        {
-            await _repository.Scores.CalculateRankAsync(showId);
-        }
-
         // 9. DELETE DRAFT REGISTRATION:
         public async Task DeleteDraftRegistration(int registrationId)
         {

@@ -305,26 +305,6 @@ namespace KoiShowManagementSystem.API.Controllers
                 Payload = result
             });
         }
-
-        [HttpPost("calculate-rank")]
-        public async Task<IActionResult> CalculateRank(int showId)
-        {
-            try
-            {
-                await _registrationService.CalculateRank(showId);
-                return Ok(new ApiResponse()
-                {
-                    Message = "Calculate Rank Successfully",
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse()
-                {
-                    Message = ex.Message,
-                });
-            }
-        }
         #endregion
     }
 }
