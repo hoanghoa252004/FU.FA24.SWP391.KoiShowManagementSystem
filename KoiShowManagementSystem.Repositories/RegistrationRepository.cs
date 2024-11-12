@@ -390,7 +390,9 @@ namespace KoiShowManagementSystem.Repositories
         {
             var group = await _context.Groups.Include(g => g.Show).SingleOrDefaultAsync(g => g.Id == groupId);
 
-            var regisrations = _context.Registrations.Where(r => !r.Status!.ToLower().Equals("draft") && r.GroupId == groupId).Select
+            var regisrations = _context.Registrations
+                .Include(r => r.Users)
+                .Where(r => !r.Status!.ToLower().Equals("draft") && r.GroupId == groupId).Select
                 (r => new RegistrationModel
                 {
                     //Id = r.Id,
@@ -427,6 +429,7 @@ namespace KoiShowManagementSystem.Repositories
                     IsPaid = r.IsPaid,
                     EntranceFee = r.Show.EntranceFee,
                     Note = r.Note,
+                    TotalVote = r.Users.Count(),
                 });
             if (group!.Show!.Status!.ToLower().Equals("scoring"))
             {
