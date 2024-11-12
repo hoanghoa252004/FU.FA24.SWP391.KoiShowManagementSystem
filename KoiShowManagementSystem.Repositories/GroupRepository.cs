@@ -138,23 +138,22 @@ namespace KoiShowManagementSystem.Repositories
             {
                 return false;
             }
-            var group = await _context.Groups
+            var group = await _context.Groups.Include(g => g.Varieties)
                                .FirstOrDefaultAsync(g => g.Id == groupId);
             if (group == null)
             {
                 return false;
             }
-            // Xóa criteria của group:
             var criteria = _context.Criteria.Where(cr => cr.GroupId == groupId);
-            if(criteria.Any() == true)
+            if (criteria != null)
             {
-                foreach(var item in criteria)
-                {
-                    _context.Criteria.Remove(item);
-                }
+                _context.Criteria.RemoveRange(criteria);
             }
-            // Xóa Variety trong group:
-            group.Varieties = null!;
+
+            if (group.Varieties != null)
+            {
+                group.Varieties.Clear();
+            }
             _context.Groups.Remove(group);
             int result = await _context.SaveChangesAsync();
             if (result > 0) return true;
